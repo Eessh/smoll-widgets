@@ -25,10 +25,7 @@ struct smoll_context {
 result_smoll_context_ptr smoll_context_create() {
   smoll_context* context = (smoll_context*)calloc(1, sizeof(smoll_context));
   if (!context) {
-    return (result_smoll_context_ptr) {
-      .ok = false,
-      .error = "Unable to allocate memory for smoll context!"
-    };
+    return error(result_smoll_context_ptr, "Unable to allocate memory for smoll context!");
   }
 
   context->root = NULL;
@@ -49,26 +46,17 @@ result_smoll_context_ptr smoll_context_create() {
 
   result_command_buffer_ptr _ = command_buffer_new();
   if (!_.ok) {
-    return (result_smoll_context_ptr) {
-      .ok = false,
-      .error = _.error
-    };
+    return error(result_smoll_context_ptr, _.error);
   }
 
   context->cmd_buffer = _.value;
 
-  return (result_smoll_context_ptr) {
-    .ok = true,
-    .value = context
-  };
+  return ok(result_smoll_context_ptr, context);
 }
 
 result_void base_widget_recursive_free(base_widget* widget) {
   if (!widget) {
-    return (result_void) {
-      .ok = false,
-      .error = "Attempt to free a NULL pointed base widget!"
-    };
+    return error(result_void, "Attempt to free a NULL pointed base widget!");
   }
 
   if (widget->children_head) {
@@ -101,18 +89,12 @@ result_void base_widget_recursive_free(base_widget* widget) {
     return _;
   }
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
 
 result_void smoll_context_destroy(smoll_context* context) {
   if (!context) {
-    return (result_void) {
-      .ok = false,
-      .error = "Attempt to free a NULL pointed smoll context!"
-    };
+    return error(result_void, "Attempt to free a NULL pointed smoll context!");
   }
 
   if (context->root) {
@@ -129,24 +111,15 @@ result_void smoll_context_destroy(smoll_context* context) {
 
   free(context);
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
 
 result_base_widget_ptr smoll_context_get_mouse_focused_widget(const smoll_context* context) {
   if (!context) {
-    return (result_base_widget_ptr) {
-      .ok = false,
-      .error = "Cannot get mouse focused widget of smoll context, with context pointing to NULL!"
-    };
+    return error(result_base_widget_ptr, "Cannot get mouse focused widget of smoll context, with context pointing to NULL!");
   }
 
-  return (result_base_widget_ptr) {
-    .ok = true,
-    .value = context->mouse_focused_widget
-  };
+  return ok(result_base_widget_ptr, context->mouse_focused_widget);
 }
 
 result_const_char_ptr smoll_context_get_font(const smoll_context* context) {
@@ -183,16 +156,10 @@ result_command_buffer_ptr smoll_context_get_command_buffer(const smoll_context* 
 
 result_void smoll_context_set_mouse_focused_widget(smoll_context* context, base_widget* widget) {
   if (!context) {
-    return (result_void) {
-      .ok = false,
-      .error = "Cannot set mouse focused of smoll context, with context pointing to NULL!"
-    };
+    return error(result_void, "Cannot set mouse focused of smoll context, with context pointing to NULL!");
   }
 
   context->mouse_focused_widget = widget;
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
