@@ -423,13 +423,13 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget) {
 
   result_uint8 __ = smoll_context_get_font_size(widget->context);
   if (!__.ok) {
-    return error(result_bool, _.error);
+    return error(result_bool, __.error);
   }
   uint8 font_size = __.value;
 
   result_text_dimensions ___ = backend_api_get_text_dimensions(btn->text, font, font_size);
   if (!___.ok) {
-    return error(result_bool, _.error);
+    return error(result_bool, ___.error);
   }
   text_dimensions dimens = ___.value;
 
