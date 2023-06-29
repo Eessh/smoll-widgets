@@ -4,10 +4,7 @@
 result_command_ptr command_new() {
   command* cmd = (command*)calloc(1, sizeof(command));
   if (!cmd) {
-    return (result_command_ptr) {
-      .ok = false,
-      .error = "Unable to allocate memory for command!"
-    };
+    return error(result_command_ptr, "Unable to allocate memory for command!");
   }
 
   cmd->type = RENDER_RECT;
@@ -16,10 +13,7 @@ result_command_ptr command_new() {
   cmd->text = NULL;
   cmd->text_color = (color){0, 0, 0, 255};
 
-  return (result_command_ptr) {
-    .ok = true,
-    .value = cmd
-  };
+  return ok(result_command_ptr, cmd);
 }
 
 result_command_ptr command_new_render_rect(const rect bounding_rect, const color rect_color) {
@@ -33,18 +27,12 @@ result_command_ptr command_new_render_rect(const rect bounding_rect, const color
   cmd->bounding_rect = bounding_rect;
   cmd->rect_color = rect_color;
 
-  return (result_command_ptr) {
-    .ok = true,
-    .value = cmd
-  };
+  return ok(result_command_ptr, cmd);
 }
 
 result_command_ptr command_new_render_text(const char* text, const color text_color, const rect bounding_rect, const color rect_color) {
   if (!text) {
-    return (result_command_ptr) {
-      .ok = false,
-      .error = "Cannot create command for rendering text, with text pointing to NULL!"
-    };
+    return error(result_command_ptr, "Cannot create command for rendering text, with text pointing to NULL!");
   }
 
   result_command_ptr _ = command_new();
@@ -58,94 +46,61 @@ result_command_ptr command_new_render_text(const char* text, const color text_co
   cmd->text = text;
   cmd->text_color = text_color;
 
-  return (result_command_ptr) {
-    .ok = true,
-    .value = cmd
-  };
+  return ok(result_command_ptr, cmd);
 }
 
 result_void command_free(command* cmd) {
   if (!cmd) {
-    return (result_void) {
-      .ok = false,
-      .error = "Attempt to free a NULL pointed command!"
-    };
+    return error(result_void, "Attempt to free a NULL pointed command!");
   }
 
   free(cmd);
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
 
 result_command_buffer_ptr command_buffer_new() {
   command_buffer* buffer = (command_buffer*)calloc(1, sizeof(command_buffer));
   if (!buffer) {
-    return (result_command_buffer_ptr) {
-      .ok = false,
-      .error = "Unable to allocate memory for command buffer!"
-    };
+    return error(result_command_buffer_ptr, "Unable to allocate memory for command buffer!");
   }
 
   buffer->head = NULL;
   buffer->tail = NULL;
 
-  return (result_command_buffer_ptr) {
-    .ok = true,
-    .value = buffer
-  };
+  return ok(result_command_buffer_ptr, buffer);
 }
 
 result_void command_buffer_add_command(command_buffer* buffer, command* cmd) {
   if (!buffer) {
-    return (result_void) {
-      .ok = false,
-      .error = "Cannot add command to NULL pointed command buffer!"
-    };
+    return error(result_void, "Cannot add command to NULL pointed command buffer!");
   }
 
   if (!cmd) {
-    return (result_void) {
-      .ok = false,
-      .error = "Cannot add NULL pointed command to command buffer!"
-    };
+    return error(result_void, "Cannot add NULL pointed command to command buffer!");
   }
 
   if (!buffer->head) {
     buffer->head = cmd;
     buffer->tail = cmd;
 
-    return (result_void) {
-      .ok = true,
-      .error = NULL
-    };
+    return ok_void();
   }
 
   buffer->tail->next = cmd;
   buffer->tail = cmd;
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
 
 result_void command_buffer_add_render_rect_command(command_buffer* buffer, const rect bounding_rect, const color rect_color) {
   if (!buffer) {
-    return (result_void) {
-      .ok = false,
-      .error = "Cannot add command to NULL pointed command buffer!"
-    };
+    return error(result_void, "Cannot add command to NULL pointed command buffer!");
   }
 
   result_command_ptr _ = command_new_render_rect(bounding_rect, rect_color);
   if (!_.ok) {
-    return (result_void) {
-      .ok = false,
-      .error = _.error
-    };
+    return error(result_void, _.error);
   }
 
   command* cmd = _.value;
@@ -154,33 +109,21 @@ result_void command_buffer_add_render_rect_command(command_buffer* buffer, const
     return __;
   }
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
 
 result_void command_buffer_add_render_text_command(command_buffer* buffer, const char* text, const color text_color, const rect bounding_rect, const color rect_color) {
   if (!buffer) {
-    return (result_void) {
-      .ok = false,
-      .error = "Cannot add command to NULL pointed command buffer!"
-    };
+    return error(result_void, "Cannot add command to NULL pointed command buffer!");
   }
 
   if (!text) {
-    return (result_void) {
-      .ok = false,
-      .error = "Cannot add a render text command, with text pointing to NULL!"
-    };
+    return error(result_void, "Cannot add a render text command, with text pointing to NULL!");
   }
 
   result_command_ptr _ = command_new_render_text(text, text_color, bounding_rect, rect_color);
   if (!_.ok) {
-    return (result_void) {
-      .ok = false,
-      .error = _.error
-    };
+    return error(result_void, _.error);
   }
 
   command* cmd = _.value;
@@ -189,27 +132,18 @@ result_void command_buffer_add_render_text_command(command_buffer* buffer, const
     return __;
   }
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
 
 result_void command_buffer_process_commands(command_buffer* buffer) {
   // TODO: Command buffer process commands
 
-  return (result_void) {
-    .ok = false,
-    .error = "Un-implemented!"
-  };
+  return error(result_void, "Un-implemented!");
 }
 
 result_void command_buffer_free(command_buffer* buffer) {
   if (!buffer) {
-    return (result_void) {
-      .ok = false,
-      .error = "Attempt to free a NULL pointed command buffer!"
-    };
+    return error(result_void, "Attempt to free a NULL pointed command buffer!");
   }
 
   if (buffer->head) {
@@ -232,8 +166,5 @@ result_void command_buffer_free(command_buffer* buffer) {
 
   free(buffer);
 
-  return (result_void) {
-    .ok = true,
-    .error = NULL
-  };
+  return ok_void();
 }
