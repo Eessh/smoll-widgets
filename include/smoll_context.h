@@ -20,7 +20,7 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context, con
 result_void smoll_context_process_mouse_wheel_event(smoll_context* context, const mouse_scroll_event event);
 result_void smoll_context_destroy(smoll_context* context);
 
-result_base_widget_ptr smoll_context_get_mouse_focused_widget(smoll_context* context);
+result_base_widget_ptr smoll_context_get_mouse_focused_widget(const smoll_context* context);
 result_const_char_ptr smoll_context_get_font(const smoll_context* context);
 result_uint8 smoll_context_get_font_size(const smoll_context* context);
 result_command_buffer_ptr smoll_context_get_command_buffer(const smoll_context* context);

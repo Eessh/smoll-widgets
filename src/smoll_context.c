@@ -135,7 +135,7 @@ result_void smoll_context_destroy(smoll_context* context) {
   };
 }
 
-result_base_widget_ptr smoll_context_get_mouse_focused_widget(smoll_context* context) {
+result_base_widget_ptr smoll_context_get_mouse_focused_widget(const smoll_context* context) {
   if (!context) {
     return (result_base_widget_ptr) {
       .ok = false,
