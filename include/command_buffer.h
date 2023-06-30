@@ -51,6 +51,7 @@ result_void command_buffer_add_render_rect_command(command_buffer* buffer, const
 result_void command_buffer_add_render_text_command(command_buffer* buffer, const char* text, const color text_color, const rect bounding_rect, const color rect_color);
 result_uint16 command_buffer_get_length(const command_buffer* buffer);
 result_void command_buffer_process_commands(command_buffer* buffer);
+result_void command_buffer_clear_commands(command_buffer* buffer);
 result_void command_buffer_free(command_buffer* buffer);
 
 #endif

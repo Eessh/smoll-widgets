@@ -68,6 +68,7 @@ result_command_buffer_ptr command_buffer_new() {
 
   buffer->head = NULL;
   buffer->tail = NULL;
+  buffer->length = 0;
 
   return ok(result_command_buffer_ptr, buffer);
 }
@@ -80,6 +81,8 @@ result_void command_buffer_add_command(command_buffer* buffer, command* cmd) {
   if (!cmd) {
     return error(result_void, "Cannot add NULL pointed command to command buffer!");
   }
+
+  buffer->length += 1;
 
   if (!buffer->head) {
     buffer->head = cmd;
@@ -148,6 +151,43 @@ result_void command_buffer_process_commands(command_buffer* buffer) {
   // TODO: Command buffer process commands
 
   return error(result_void, "Un-implemented!");
+}
+
+result_void command_buffer_clear_commands(command_buffer* buffer) {
+  if (!buffer) {
+    return error(result_void, "Cannot clear commands in NULL pointed command buffer!");
+  }
+
+  // TODO: Maybe we should use dynamic array
+  // for storing these commands
+  // as this linked list entirely depends on speed
+  // of random access of memory
+
+  if (!buffer->head) {
+    return ok_void();
+  }
+
+  command* prev_cmd = buffer->head;
+  command* cmd = prev_cmd->next;
+
+  while (cmd) {
+    result_void _ = command_free(prev_cmd);
+    if (!_.ok) {
+      return _;
+    }
+
+    prev_cmd = cmd;
+    cmd = cmd->next;
+  }
+  result_void _ = command_free(prev_cmd);
+  if (!_.ok) {
+    return _;
+  }
+
+  buffer->head = NULL;
+  buffer->tail = NULL;
+
+  return ok_void();
 }
 
 result_void command_buffer_free(command_buffer* buffer) {
