@@ -2,6 +2,7 @@
 #include "../../include/backend_api.h"
 #include "../../include/smoll_context.h"
 #include "../../include/command_buffer.h"
+#include "../../include/macros.h"
 #include <stdlib.h>
 #include <string.h>
 

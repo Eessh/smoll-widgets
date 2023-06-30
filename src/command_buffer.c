@@ -1,4 +1,5 @@
 #include "../include/command_buffer.h"
+#include "../include/macros.h"
 #include <stdio.h>
 
 result_command_ptr command_new() {

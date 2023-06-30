@@ -59,10 +59,6 @@ typedef struct color {
   uint8 r, g, b, a;
 } color;
 
-#define ok_void() (result_void) { .ok = true, .error = NULL }
-#define ok(result_type, result_value) (result_type) { .ok = true, .value = result_value }
-#define error(result_type, result_error) (result_type) { .ok = false, .error = result_error }
-
 typedef struct result_void {
   bool ok;
   const char* error;
