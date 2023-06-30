@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "events.h"
+#include "command_buffer.h"
 
 typedef struct smoll_context smoll_context;
 
