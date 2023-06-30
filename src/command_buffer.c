@@ -136,6 +136,14 @@ result_void command_buffer_add_render_text_command(command_buffer* buffer, const
   return ok_void();
 }
 
+result_uint16 command_buffer_get_length(const command_buffer* buffer) {
+  if (!buffer) {
+    return error(result_uint16, "Cannot get length of NULL pointing command buffer!");
+  }
+
+  return ok(result_uint16, buffer->length);
+}
+
 result_void command_buffer_process_commands(command_buffer* buffer) {
   // TODO: Command buffer process commands
 
