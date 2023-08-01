@@ -56,7 +56,7 @@ typedef struct internal_context
   command_buffer* cmd_buffer;
 
   /// @brief Backend.
-  backend* bknd;
+  render_backend* backend;
 } internal_context;
 
 /// @brief Gets the deepest widget which encloses the point.
@@ -88,14 +88,14 @@ result_void internal_context_process_mouse_motion_event(
 /// @brief Processes internal mouse button event.
 /// @param context pointer to internal context.
 /// @param internal_event poiinter to internal mouse button event.
-/// @return void result.
+/// @return Void result.
 result_void internal_context_process_mouse_button_event(
   internal_context* context, internal_mouse_button_event* internal_event);
 
 /// @brief Processes internal mouse scroll event.
 /// @param context pointer to internal context.
 /// @param internal_event poiinter to internal mouse scroll event.
-/// @return void result.
+/// @return Void result.
 result_void internal_context_process_mouse_scroll_event(
   internal_context* context, internal_mouse_scroll_event* internal_event);
 

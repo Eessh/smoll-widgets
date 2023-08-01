@@ -1,52 +1,58 @@
 #ifndef SMOLL_WIDGETS__SMOLL_CONTEXT_H
 #define SMOLL_WIDGETS__SMOLL_CONTEXT_H
 
-#include "backend.h"
-#include "command_buffer.h"
 #include "events.h"
-#include "types.h"
 
+/// @brief Smoll Context.
+///        Holds all the data of UI, processes events.
 typedef struct smoll_context smoll_context;
 
-// Forward declaration
-typedef struct base_widget base_widget;
-typedef struct result_base_widget_ptr result_base_widget_ptr;
+/// @brief Sets root widget for smoll context.
+///        Root widget must be set first. Assigning of widgets follows a order,
+///        it starts from top of UI tree, assign root widget to context, then
+///        assign children to this root widget, then assign children to root
+///        widget's children and so on ...
+/// @param context pointer to smoll context.
+/// @param widget pointer to base widget of root widget.
+/// @return Void result.
+result_void smoll_context_set_root_widget(smoll_context* context,
+                                          base_widget* root_widget_base);
 
-typedef struct result_smoll_context_ptr
-{
-  bool ok;
-  union
-  {
-    smoll_context* value;
-    const char* error;
-  };
-} result_smoll_context_ptr;
+/// @brief Processes the mouse motion event on the given smoll context.
+///        The event should be externally constructed by the backend provider.
+///        Smoll context, cannot construct events itself, it just processes
+///        the events it got from the event loop of backend.
+/// @param context pointer to smoll context.
+/// @param event mouse motion event struct.
+/// @return Void result.
+result_void smoll_context_process_mouse_motion_event(smoll_context* context,
+                                                     mouse_motion_event event);
 
-result_smoll_context_ptr smoll_context_create();
-result_void
-smoll_context_process_mouse_motion_event(smoll_context* context,
-                                         const mouse_motion_event event);
-result_void
-smoll_context_process_mouse_button_event(smoll_context* context,
-                                         const mouse_button_event event);
-result_void
-smoll_context_process_mouse_wheel_event(smoll_context* context,
-                                        const mouse_scroll_event event);
+/// @brief Processes the mouse button event on the given smoll context.
+///        The event should be externally constructed by the backend provider.
+///        Smoll context, cannot construct events itself, it just processes
+///        the events it got from the event loop of backend.
+/// @param context pointer to smoll context.
+/// @param event mouse motion event struct.
+/// @return Void result.
+result_void smoll_context_process_mouse_button_event(smoll_context* context,
+                                                     mouse_button_event event);
+
+/// @brief Processes the mouse scroll event on the given smoll context.
+///        The event should be externally constructed by the backend provider.
+///        Smoll context, cannot construct events itself, it just processes
+///        the events it got from the event loop of backend.
+/// @param context pointer to smoll context.
+/// @param event mouse motion event struct.
+/// @return Void result.
+result_void smoll_context_process_mouse_wheel_event(smoll_context* context,
+                                                    mouse_scroll_event event);
+
+/// @brief Registers render backend to this context.
+/// @param context pointer to smoll context.
+/// @param backend pointer to render backend.
+/// @return Void result.
 result_void smoll_context_register_backend(smoll_context* context,
-                                           backend* backend_);
-result_void smoll_context_destroy(smoll_context* context);
-
-result_base_widget_ptr
-smoll_context_get_mouse_focused_widget(const smoll_context* context);
-result_uint16 smoll_context_get_mouse_x(const smoll_context* context);
-result_uint16 smoll_context_get_mouse_y(const smoll_context* context);
-result_const_char_ptr smoll_context_get_font(const smoll_context* context);
-result_uint8 smoll_context_get_font_size(const smoll_context* context);
-result_command_buffer_ptr
-smoll_context_get_command_buffer(const smoll_context* context);
-result_backend_ptr smoll_context_get_backend(const smoll_context* context);
-
-result_void smoll_context_set_mouse_focused_widget(smoll_context* context,
-                                                   base_widget* widget);
+                                           render_backend* backend);
 
 #endif

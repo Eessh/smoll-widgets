@@ -1,73 +1,123 @@
 #include "../include/smoll_context.h"
-#include <stdlib.h>
 #include "../include/backend.h"
 #include "../include/base_widget.h"
-#include "../include/command_buffer.h"
+#include "../include/internal_context.h"
 #include "../include/macros.h"
 
+/// @brief Smoll Context.
+///        Acts as a wrapper for Internal Context.
+///        Hides Internal Context from users, while all widgets can access
+///        Internal Context publicly.
 struct smoll_context
 {
-  base_widget* root;
-
-  base_widget* overlay_widget;
-  base_widget* active_scrollbar;
-  base_widget* keyboard_focused_widget;
-  base_widget* mouse_focused_widget;
-
-  uint16 mouse_x, mouse_y;
-  uint16 global_mouse_x, global_mouse_y;
-
-  uint16 viewport_w, viewport_h;
-
-  char* font;
-  uint8 font_size;
-
-  command_buffer* cmd_buffer;
-
-  backend* backend_;
+  /// @brief Internal Context, the actual context which holds all data of UI.
+  internal_context internal_ctx;
 };
 
-result_smoll_context_ptr smoll_context_create()
+result_void smoll_context_set_root_widget(smoll_context* context,
+                                          base_widget* root_widget_base)
 {
-  smoll_context* context = (smoll_context*)calloc(1, sizeof(smoll_context));
   if(!context)
   {
-    return error(result_smoll_context_ptr,
-                 "Unable to allocate memory for smoll context!");
+    return error(result_void,
+                 "Cannot set root widget to NULL pointed context!");
   }
 
-  context->root = NULL;
+  if(!root_widget_base)
+  {
+    return error(result_void,
+                 "Cannot set NULL pointed root widget to context!");
+  }
 
-  context->overlay_widget = NULL;
-  context->active_scrollbar = NULL;
-  context->keyboard_focused_widget = NULL;
-  context->mouse_focused_widget = NULL;
+  // setting context's root widget.
+  context->internal_ctx.root = root_widget_base;
 
-  context->mouse_x = 0;
-  context->mouse_y = 0;
+  // setting root widget's context.
+  root_widget_base->context = &context->internal_ctx;
 
-  context->global_mouse_x = 0;
-  context->global_mouse_y = 0;
+  return ok_void();
+}
 
-  context->viewport_w = 0;
-  context->viewport_h = 0;
+result_void smoll_context_process_mouse_motion_event(smoll_context* context,
+                                                     mouse_motion_event event)
+{
+  if(!context)
+  {
+    return error(result_void,
+                 "Cannot process mouse motion event on NULL pointed context!");
+  }
 
-  context->font = NULL;
-  context->font_size = 0;
-
-  result_command_buffer_ptr _ = command_buffer_new();
+  result_base_widget_ptr _ =
+    internal_context_get_deepest_widget_with_point_and_event_type(
+      &context->internal_ctx, event.x, event.y, MOUSE_MOTION);
   if(!_.ok)
   {
-    return error(result_smoll_context_ptr, _.error);
+    return error(result_void, _.error);
   }
 
-  context->cmd_buffer = _.value;
+  // constructing event object.
+  internal_mouse_motion_event internal_event = {
+    .event = event, .propagation = true, .state = AT_TARGET, .target = _.value};
 
-  return ok(result_smoll_context_ptr, context);
+  return internal_context_process_mouse_motion_event(&context->internal_ctx,
+                                                     &internal_event);
+}
+
+result_void smoll_context_process_mouse_button_event(smoll_context* context,
+                                                     mouse_button_event event)
+{
+  if(!context)
+  {
+    return error(result_void,
+                 "Cannot process mouse button event on NULL pointed context!");
+  }
+
+  result_base_widget_ptr _ =
+    internal_context_get_deepest_widget_with_point_and_event_type(
+      &context->internal_ctx, event.x, event.y, MOUSE_BUTTON);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  // constructing event object.
+  internal_mouse_button_event internal_event = {
+    .event = event, .propagation = true, .state = AT_TARGET, .target = _.value};
+
+  return internal_context_process_mouse_button_event(&context->internal_ctx,
+                                                     &internal_event);
+}
+
+result_void smoll_context_process_mouse_scroll_event(smoll_context* context,
+                                                     mouse_scroll_event event)
+{
+  if(!context)
+  {
+    return error(result_void,
+                 "Cannot process mouse scroll event on NULL pointed context!");
+  }
+
+  result_base_widget_ptr _ =
+    internal_context_get_deepest_widget_with_point_and_event_type(
+      &context->internal_ctx,
+      context->internal_ctx.mouse_x,
+      context->internal_ctx.mouse_y,
+      MOUSE_MOTION);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  // constructing event object.
+  internal_mouse_scroll_event internal_event = {.event = event,
+                                                .target = _.value};
+
+  return internal_context_process_mouse_scroll_event(&context->internal_ctx,
+                                                     &internal_event);
 }
 
 result_void smoll_context_register_backend(smoll_context* context,
-                                           backend* backend_)
+                                           render_backend* backend)
 {
   if(!context)
   {
@@ -75,13 +125,13 @@ result_void smoll_context_register_backend(smoll_context* context,
                  "Cannot register backend to NULL pointing context!");
   }
 
-  if(!backend_)
+  if(!backend)
   {
     return error(result_void,
                  "Cannot register NULL pointed backend to context!");
   }
 
-  context->backend_ = backend_;
+  context->internal_ctx.backend = backend;
 
   return ok_void();
 }
@@ -129,138 +179,6 @@ result_void base_widget_recursive_free(base_widget* widget)
   {
     return _;
   }
-
-  return ok_void();
-}
-
-result_void smoll_context_destroy(smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_void, "Attempt to free a NULL pointed smoll context!");
-  }
-
-  if(context->root)
-  {
-    result_void _ = base_widget_recursive_free(context->root);
-    if(!_.ok)
-    {
-      return _;
-    }
-  }
-
-  result_void _ = command_buffer_free(context->cmd_buffer);
-  if(!_.ok)
-  {
-    return _;
-  }
-
-  free(context);
-
-  return ok_void();
-}
-
-result_base_widget_ptr
-smoll_context_get_mouse_focused_widget(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_base_widget_ptr,
-                 "Cannot get mouse focused widget of smoll context, with "
-                 "context pointing to NULL!");
-  }
-
-  return ok(result_base_widget_ptr, context->mouse_focused_widget);
-}
-
-result_uint16 smoll_context_get_mouse_x(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_uint16,
-                 "Cannot get mouse x-coordinate of NULL pointed context!");
-  }
-
-  return ok(result_uint16, context->mouse_x);
-}
-
-result_uint16 smoll_context_get_mouse_y(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_uint16,
-                 "Cannot get mouse y-coordinate of NULL pointed context!");
-  }
-
-  return ok(result_uint16, context->mouse_y);
-}
-
-result_const_char_ptr smoll_context_get_font(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_const_char_ptr,
-                 "Cannot get font from NULL pointed context!");
-  }
-
-  if(!context->font)
-  {
-    return error(result_const_char_ptr, "No font is loaded in the context!");
-  }
-
-  return ok(result_const_char_ptr, context->font);
-}
-
-result_uint8 smoll_context_get_font_size(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_uint8,
-                 "Cannot get font size from NULL pointed context!");
-  }
-
-  if(!context->font)
-  {
-    return error(result_uint8, "No font is loaded in the context!");
-  }
-
-  return ok(result_uint8, context->font_size);
-}
-
-result_command_buffer_ptr
-smoll_context_get_command_buffer(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_command_buffer_ptr,
-                 "Cannot get command buffer from a NULL pointed context!");
-  }
-
-  return ok(result_command_buffer_ptr, context->cmd_buffer);
-}
-
-result_backend_ptr smoll_context_get_backend(const smoll_context* context)
-{
-  if(!context)
-  {
-    return error(result_backend_ptr,
-                 "Cannot get backend for NULL pointed context!");
-  }
-
-  return ok(result_backend_ptr, context->backend_);
-}
-
-result_void smoll_context_set_mouse_focused_widget(smoll_context* context,
-                                                   base_widget* widget)
-{
-  if(!context)
-  {
-    return error(result_void,
-                 "Cannot set mouse focused of smoll context, with "
-                 "context pointing to NULL!");
-  }
-
-  context->mouse_focused_widget = widget;
 
   return ok_void();
 }

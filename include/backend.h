@@ -19,7 +19,7 @@ typedef struct result_text_dimensions
   };
 } result_text_dimensions;
 
-typedef struct backend
+typedef struct render_backend
 {
   const char8* name;
   struct
@@ -34,14 +34,14 @@ typedef struct backend
                                                 uint8 font_size);
 
   result_void (*process_command)(const command* cmd);
-} backend;
+} render_backend;
 
 typedef struct result_backend_ptr
 {
   bool ok;
   union
   {
-    backend* value;
+    render_backend* value;
     const char* error;
   };
 } result_backend_ptr;
