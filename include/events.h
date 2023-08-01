@@ -3,6 +3,13 @@
 
 #include "types.h"
 
+typedef enum event_type
+{
+  MOUSE_MOTION,
+  MOUSE_BUTTON,
+  MOUSE_SCROLL
+} event_type;
+
 typedef struct mouse_motion_event
 {
   uint16 x, y;
