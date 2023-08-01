@@ -9,6 +9,10 @@
 
 /// @brief Internal context.
 ///        This is public to all widgets.
+///        Use `internal_context_new()` to create this context.
+///        Do not allocate this on stack, as there will be high possibility
+///        of memory leak by not freeing UI tree when the context
+///        goes out of scope.
 typedef struct internal_context
 {
   /// @brief Local mouse x-coordinate.
@@ -58,6 +62,26 @@ typedef struct internal_context
   /// @brief Backend.
   render_backend* backend;
 } internal_context;
+
+/// @brief Internal context pointer result.
+typedef struct result_internal_context_ptr
+{
+  bool ok;
+  union
+  {
+    internal_context* value;
+    const char* error;
+  };
+} result_internal_context_ptr;
+
+/// @brief Creates a new internal context.
+/// @return Internal context pointer result.
+result_internal_context_ptr internal_context_create();
+
+/// @brief Frees resources used by internal context.
+/// @param context pointer to internal context.
+/// @return Void result.
+result_void internal_context_destroy(internal_context* context);
 
 /// @brief Gets the deepest widget which encloses the point.
 /// @param context const pointer to internal context.

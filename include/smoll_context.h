@@ -5,7 +5,31 @@
 
 /// @brief Smoll Context.
 ///        Holds all the data of UI, processes events.
+///        Use `smoll_context_new()` to create this context.
+///        Do not allocate this on stack, as there will be high possibility
+///        of memory leak by not freeing UI tree when the context
+///        goes out of scope.
 typedef struct smoll_context smoll_context;
+
+/// @brief Smoll context pointer result.
+typedef struct result_smoll_context_ptr
+{
+  bool ok;
+  union
+  {
+    smoll_context* value;
+    const char* error;
+  };
+} result_smoll_context_ptr;
+
+/// @brief Creates smoll context.
+/// @return Smoll context pointer result.
+result_smoll_context_ptr smoll_context_create();
+
+/// @brief Frees resources used by smoll context.
+/// @param context pointer to smoll context.
+/// @return Void result.
+result_void smoll_context_destroy(smoll_context* context);
 
 /// @brief Sets root widget for smoll context.
 ///        Root widget must be set first. Assigning of widgets follows a order,

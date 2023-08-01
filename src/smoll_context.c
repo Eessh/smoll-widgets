@@ -1,4 +1,5 @@
 #include "../include/smoll_context.h"
+#include <stdlib.h>
 #include "../include/backend.h"
 #include "../include/base_widget.h"
 #include "../include/internal_context.h"
@@ -11,8 +12,43 @@
 struct smoll_context
 {
   /// @brief Internal Context, the actual context which holds all data of UI.
-  internal_context internal_ctx;
+  internal_context* internal_ctx;
 };
+
+result_smoll_context_ptr smoll_context_create()
+{
+  smoll_context* context = (smoll_context*)calloc(1, sizeof(smoll_context));
+  if(!context)
+  {
+    return error(result_smoll_context_ptr,
+                 "Unable to allocate memory for smoll context!");
+  }
+
+  result_internal_context_ptr _ = internal_context_create();
+  if(!_.ok)
+  {
+    return error(result_smoll_context_ptr, _.error);
+  }
+
+  context->internal_ctx = _.value;
+
+  return ok(result_smoll_context_ptr, context);
+}
+
+result_void smoll_context_destroy(smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_void, "Attempt to free a NULL pointed smoll context!");
+  }
+
+  // ignoring if any errors occurred while destroying internal context
+  result_void _ = internal_context_destroy(context->internal_ctx);
+
+  free(context);
+
+  return ok_void();
+}
 
 result_void smoll_context_set_root_widget(smoll_context* context,
                                           base_widget* root_widget_base)
@@ -30,7 +66,7 @@ result_void smoll_context_set_root_widget(smoll_context* context,
   }
 
   // setting context's root widget.
-  context->internal_ctx.root = root_widget_base;
+  context->internal_ctx->root = root_widget_base;
 
   // setting root widget's context.
   root_widget_base->context = &context->internal_ctx;
@@ -100,8 +136,8 @@ result_void smoll_context_process_mouse_scroll_event(smoll_context* context,
   result_base_widget_ptr _ =
     internal_context_get_deepest_widget_with_point_and_event_type(
       &context->internal_ctx,
-      context->internal_ctx.mouse_x,
-      context->internal_ctx.mouse_y,
+      context->internal_ctx->mouse_x,
+      context->internal_ctx->mouse_y,
       MOUSE_MOTION);
   if(!_.ok)
   {
@@ -131,54 +167,7 @@ result_void smoll_context_register_backend(smoll_context* context,
                  "Cannot register NULL pointed backend to context!");
   }
 
-  context->internal_ctx.backend = backend;
-
-  return ok_void();
-}
-
-result_void base_widget_recursive_free(base_widget* widget)
-{
-  if(!widget)
-  {
-    return error(result_void, "Attempt to free a NULL pointed base widget!");
-  }
-
-  if(widget->children_head)
-  {
-    base_widget_child_node* prev_node = widget->children_head;
-    base_widget_child_node* node = prev_node->next;
-    while(node)
-    {
-      result_void _ = base_widget_recursive_free(prev_node->child);
-      if(!_.ok)
-      {
-        return _;
-      }
-      _ = base_widget_child_node_free(prev_node);
-      if(!_.ok)
-      {
-        return _;
-      }
-      prev_node = node;
-      node = node->next;
-    }
-    result_void _ = base_widget_recursive_free(prev_node->child);
-    if(!_.ok)
-    {
-      return _;
-    }
-    _ = base_widget_child_node_free(prev_node);
-    if(!_.ok)
-    {
-      return _;
-    }
-  }
-
-  result_void _ = base_widget_free(widget);
-  if(!_.ok)
-  {
-    return _;
-  }
+  context->internal_ctx->backend = backend;
 
   return ok_void();
 }
