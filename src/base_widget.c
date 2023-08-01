@@ -450,6 +450,7 @@ result_bool default_internal_mouse_motion_callback(
                                                           internal_event);
   }
 
+  // this widget is target
   // setting context's mouse focused widget and calling mouse enter callback
   if(widget->context->mouse_focused_widget != widget)
   {
@@ -475,82 +476,67 @@ result_bool default_internal_mouse_motion_callback(
                                                         internal_event);
 }
 
-// result_bool default_internal_mouse_button_callback(
-//   base_widget* widget, const mouse_button_event event, const callback_type type)
-// {
-//   if(!widget)
-//   {
-//     return (result_bool){.ok = true,
-//                          .error = "Cannot process internal mouse button "
-//                                   "callback, with widget pointing to NULL!"};
-//   }
+result_bool default_internal_mouse_button_callback(
+  base_widget* widget, internal_mouse_button_event* internal_event)
+{
+  if(!widget)
+  {
+    return (result_bool){.ok = true,
+                         .error = "Cannot process internal mouse button "
+                                  "callback, with widget pointing to NULL!"};
+  }
 
-//   if(type < PASSING_DOWN || type > BUBBLING_UP)
-//   {
-//     return (result_bool){.ok = false,
-//                          .error = "Cannot process internal mouse button "
-//                                   "callback, with invalid callback type!"};
-//   }
+  if(internal_event->state == BUBBLING_UP)
+  {
+    // call callbacks if present
+    if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
+    {
+      if(widget->mouse_button_down_callback)
+      {
+        widget->mouse_button_down_callback(widget, internal_event->event);
+      }
+    }
+    else
+    {
+      if(widget->mouse_button_up_callback)
+      {
+        widget->mouse_button_up_callback(widget, internal_event->event);
+      }
+    }
 
-//   if(type == PASSING_DOWN)
-//   {
-//     result_base_widget_ptr _ =
-//       get_deepest_child_with_point(widget, event.x, event.y);
-//     if(!_.ok)
-//     {
-//       return (result_bool){.ok = true, .value = false};
-//     }
+    // return if parent doesn't exist (root element)
+    if(!widget->parent)
+    {
+      return ok(result_bool, true);
+    }
 
-//     base_widget* deepest_widget = _.value;
+    // still bubble up if parent exists
+    return widget->parent->internal_mouse_button_callback(widget->parent,
+                                                          internal_event);
+  }
 
-//     if(event.button_state == MOUSE_BUTTON_DOWN)
-//     {
-//       if(deepest_widget->mouse_button_down_callback)
-//       {
-//         return (result_bool){
-//           .ok = true,
-//           .value =
-//             deepest_widget->mouse_button_down_callback(deepest_widget, event)};
-//       }
-//     }
-//     else
-//     {
-//       if(deepest_widget->mouse_button_up_callback)
-//       {
-//         return (result_bool){.ok = true,
-//                              .value = deepest_widget->mouse_button_up_callback(
-//                                deepest_widget, event)};
-//       }
-//     }
-//   }
+  // this widget is target
+  if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
+  {
+    if(widget->mouse_button_down_callback)
+    {
+      widget->mouse_button_down_callback(widget, internal_event->event);
+    }
+  }
+  else
+  {
+    if(widget->mouse_button_up_callback)
+    {
+      widget->mouse_button_up_callback(widget, internal_event->event);
+    }
+  }
 
-//   // BUBBLING UP
+  // bubbling up
+  internal_event->state = BUBBLING_UP;
 
-//   if(event.button_state == MOUSE_BUTTON_DOWN)
-//   {
-//     if(widget->mouse_button_down_callback)
-//     {
-//       return (result_bool){
-//         .ok = true, .value = widget->mouse_button_down_callback(widget, event)};
-//     }
-//   }
-//   else
-//   {
-//     if(widget->mouse_button_up_callback)
-//     {
-//       return (result_bool){
-//         .ok = true, .value = widget->mouse_button_up_callback(widget, event)};
-//     }
-//   }
-
-//   if(widget->parent)
-//   {
-//     return widget->parent->internal_mouse_button_callback(
-//       widget->parent, event, type);
-//   }
-
-//   return (result_bool){.ok = true, .value = false};
-// }
+  return widget->parent->internal_mouse_motion_callback(widget->parent,
+                                                        internal_event);
+}
 
 result_bool default_internal_mouse_scroll_callback(
   base_widget* widget, internal_mouse_scroll_event* internal_event)
