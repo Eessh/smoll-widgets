@@ -1,7 +1,6 @@
 #include "../../include/widgets/button.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../include/backend_api.h"
 #include "../../include/command_buffer.h"
 #include "../../include/macros.h"
 #include "../../include/smoll_context.h"
@@ -564,7 +563,8 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
   uint8 font_size = __.value;
 
   result_text_dimensions ___ =
-    backend_api_get_text_dimensions(btn->text, font, font_size);
+    smoll_context_get_backend(widget->context)
+      .value->get_text_dimensions(btn->text, font, font_size);
   if(!___.ok)
   {
     return error(result_bool, ___.error);

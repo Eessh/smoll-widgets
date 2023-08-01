@@ -605,8 +605,10 @@ result_bool default_internal_mouse_scroll_callback(
 
   if(type == PASSING_DOWN)
   {
-    result_base_widget_ptr _ =
-      get_deepest_child_with_point(widget, event.x, event.y);
+    result_base_widget_ptr _ = get_deepest_child_with_point(
+      widget,
+      smoll_context_get_mouse_x(widget->context).value,
+      smoll_context_get_mouse_y(widget->context).value);
     if(!_.ok)
     {
       return (result_bool){.ok = true, .value = false};

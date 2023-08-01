@@ -27,12 +27,11 @@ typedef struct mouse_button_event
   mouse_button_type button;
   mouse_button_state button_state;
   uint16 x, y;
-  uint16 global_x, global_y;
 } mouse_button_event;
 
 typedef struct mouse_scroll_event
 {
-  float32 x, y;
+  float32 delta_x, delta_y;
 } mouse_scroll_event;
 
 #endif

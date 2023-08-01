@@ -1,9 +1,9 @@
 #include "../include/smoll_context.h"
 #include <stdlib.h>
+#include "../include/backend.h"
 #include "../include/base_widget.h"
 #include "../include/command_buffer.h"
 #include "../include/macros.h"
-#include "SDL2/SDL.h"
 
 struct smoll_context
 {
@@ -14,6 +14,7 @@ struct smoll_context
   base_widget* keyboard_focused_widget;
   base_widget* mouse_focused_widget;
 
+  uint16 mouse_x, mouse_y;
   uint16 global_mouse_x, global_mouse_y;
 
   uint16 viewport_w, viewport_h;
@@ -22,6 +23,8 @@ struct smoll_context
   uint8 font_size;
 
   command_buffer* cmd_buffer;
+
+  backend* backend_;
 };
 
 result_smoll_context_ptr smoll_context_create()
@@ -39,6 +42,9 @@ result_smoll_context_ptr smoll_context_create()
   context->active_scrollbar = NULL;
   context->keyboard_focused_widget = NULL;
   context->mouse_focused_widget = NULL;
+
+  context->mouse_x = 0;
+  context->mouse_y = 0;
 
   context->global_mouse_x = 0;
   context->global_mouse_y = 0;
@@ -58,6 +64,26 @@ result_smoll_context_ptr smoll_context_create()
   context->cmd_buffer = _.value;
 
   return ok(result_smoll_context_ptr, context);
+}
+
+result_void smoll_context_register_backend(smoll_context* context,
+                                           backend* backend_)
+{
+  if(!context)
+  {
+    return error(result_void,
+                 "Cannot register backend to NULL pointing context!");
+  }
+
+  if(!backend_)
+  {
+    return error(result_void,
+                 "Cannot register NULL pointed backend to context!");
+  }
+
+  context->backend_ = backend_;
+
+  return ok_void();
 }
 
 result_void base_widget_recursive_free(base_widget* widget)
@@ -147,6 +173,28 @@ smoll_context_get_mouse_focused_widget(const smoll_context* context)
   return ok(result_base_widget_ptr, context->mouse_focused_widget);
 }
 
+result_uint16 smoll_context_get_mouse_x(const smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_uint16,
+                 "Cannot get mouse x-coordinate of NULL pointed context!");
+  }
+
+  return ok(result_uint16, context->mouse_x);
+}
+
+result_uint16 smoll_context_get_mouse_y(const smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_uint16,
+                 "Cannot get mouse y-coordinate of NULL pointed context!");
+  }
+
+  return ok(result_uint16, context->mouse_y);
+}
+
 result_const_char_ptr smoll_context_get_font(const smoll_context* context)
 {
   if(!context)
@@ -189,6 +237,17 @@ smoll_context_get_command_buffer(const smoll_context* context)
   }
 
   return ok(result_command_buffer_ptr, context->cmd_buffer);
+}
+
+result_backend_ptr smoll_context_get_backend(const smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_backend_ptr,
+                 "Cannot get backend for NULL pointed context!");
+  }
+
+  return ok(result_backend_ptr, context->backend_);
 }
 
 result_void smoll_context_set_mouse_focused_widget(smoll_context* context,
