@@ -1,0 +1,67 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "⚙️ Generate Makefiles using Premake5",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\gen_makefiles.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/gen_makefiles.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔥 Build & Run: 🪲 Debug",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\vscode_build_and_run_debug.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_debug.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔥 Build & Run: 🚀 Release",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\vscode_build_and_run_release.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_release.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "✨ Format code with Clang",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\format_code.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/format_code.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🧹 Clean",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\clean.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/clean.sh"
+      },
+      "group": "build"
+    },
+  ]
+}

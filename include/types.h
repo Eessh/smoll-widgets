@@ -48,145 +48,180 @@ typedef double float64;
 typedef long double float80;
 
 /// @brief Rectange with top-left as origin
-typedef struct rect {
+typedef struct rect
+{
   int16 x, y;
   uint16 w, h;
 } rect;
 
 /// @brief Color with RGBA,
 ///        each component ranges from [0, 255]
-typedef struct color {
+typedef struct color
+{
   uint8 r, g, b, a;
 } color;
 
-typedef struct result_void {
+typedef struct result_void
+{
   bool ok;
   const char* error;
 } result_void;
 
-typedef struct result_bool {
+typedef struct result_bool
+{
   bool ok;
-  union {
+  union
+  {
     bool value;
     const char* error;
   };
 } result_bool;
 
-typedef struct result_char {
+typedef struct result_char
+{
   bool ok;
-  union {
+  union
+  {
     char value;
     const char* error;
   };
 } result_char;
 
-typedef struct result_uchar {
+typedef struct result_uchar
+{
   bool ok;
-  union {
+  union
+  {
     unsigned char value;
     const char* error;
   };
 } result_uchar;
 
-typedef struct result_char_ptr {
+typedef struct result_char_ptr
+{
   bool ok;
-  union {
+  union
+  {
     char* value;
     const char* error;
   };
 } result_char_ptr;
 
-typedef struct result_const_char_ptr {
+typedef struct result_const_char_ptr
+{
   bool ok;
-  union {
+  union
+  {
     const char* value;
     const char* error;
   };
 } result_const_char_ptr;
 
-typedef struct result_int8 {
+typedef struct result_int8
+{
   bool ok;
-  union {
+  union
+  {
     int8 value;
     const char* error;
   };
 } result_int8;
 
-typedef struct result_uint8 {
+typedef struct result_uint8
+{
   bool ok;
-  union {
+  union
+  {
     uint8 value;
     const char* error;
   };
 } result_uint8;
 
-typedef struct result_int16 {
+typedef struct result_int16
+{
   bool ok;
-  union {
+  union
+  {
     int16 value;
     const char* error;
   };
 } result_int16;
 
-typedef struct result_uint16 {
+typedef struct result_uint16
+{
   bool ok;
-  union {
+  union
+  {
     uint16 value;
     const char* error;
   };
 } result_uint16;
 
-typedef struct result_int32 {
+typedef struct result_int32
+{
   bool ok;
-  union {
+  union
+  {
     int32 value;
     const char* error;
   };
 } result_int32;
 
-typedef struct result_uint32 {
+typedef struct result_uint32
+{
   bool ok;
-  union {
+  union
+  {
     uint32 value;
     const char* error;
   };
 } result_uint32;
 
-typedef struct result_float32 {
+typedef struct result_float32
+{
   bool ok;
-  union {
+  union
+  {
     float32 value;
     const char* error;
   };
 } result_float32;
 
-typedef struct result_float64 {
+typedef struct result_float64
+{
   bool ok;
-  union {
+  union
+  {
     float64 value;
     const char* error;
   };
 } result_float64;
 
-typedef struct result_float80 {
+typedef struct result_float80
+{
   bool ok;
-  union {
+  union
+  {
     float80 value;
     const char* error;
   };
 } result_float80;
 
-typedef struct result_rect {
+typedef struct result_rect
+{
   bool ok;
-  union {
+  union
+  {
     rect value;
     const char* error;
   };
 } result_rect;
 
-typedef struct result_color {
+typedef struct result_color
+{
   bool ok;
-  union {
+  union
+  {
     color value;
     const char* error;
   };

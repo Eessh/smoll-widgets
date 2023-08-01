@@ -1,0 +1,86 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"file_exclude_patterns": []
+		}
+	],
+	"settings": {
+		"tab_size": 2,
+		"font_face": "Consolas",
+		"font_size": 12,
+		"caret_extra_top": 3,
+		"caret_extra_bottom": 5,
+		"caret_extra_width": 1,
+	},
+	"build_systems": [
+		{
+			"name": "Project Build System",
+			"working_dir": "$folder",
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"variants": [
+				{
+					"name": "⚙️ Generate Makefiles using Premake5",
+					"windows": {
+						"shell_cmd": ".\\scripts\\windows\\gen_makefiles.bat"
+					},
+					"osx": {
+						"shell_cmd": "premake5 --cc=gcc gmake2"
+					},
+					"linux": {
+						"shell_cmd": "premake5 --cc=gcc gmake2"
+					}
+				},
+				{
+					"name": "🔥 Build & Run: 🪲 Debug",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_and_run_debug.bat"
+					},
+					"osx": {
+						"shell_cmd": "./bin/Release/MarkdownParser__Header"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/run_release.sh"
+					}
+				},
+				{
+					"name": "🔥 Build & Run: 🚀 Release",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_and_run_release.bat"
+					},
+					"osx": {
+						"shell_cmd": "./bin/Release/MarkdownParser__Header"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/run_release.sh"
+					}
+				},
+				{
+					"name": "✨ Format code with Clang",
+					"windows": {
+						"shell_cmd": ".\\scripts\\windows\\format_code.bat"
+					},
+					"osx": {
+						"shell_cmd": "./scripts/macos/format_code.sh"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/format_code.sh"
+					}
+				},
+				{
+					"name": "🧹Clean",
+					"windows": {
+						"shell_cmd": ".\\scripts\\windows\\clean.bat"
+					},
+					"osx": {
+						"shell_cmd": "./scripts/macos/clean.sh"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/clean.sh"
+					}
+				}
+			],
+		}
+	]
+}

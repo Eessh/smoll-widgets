@@ -1,10 +1,12 @@
 #include "../include/command_buffer.h"
-#include "../include/macros.h"
 #include <stdlib.h>
+#include "../include/macros.h"
 
-result_command_ptr command_new() {
+result_command_ptr command_new()
+{
   command* cmd = (command*)calloc(1, sizeof(command));
-  if (!cmd) {
+  if(!cmd)
+  {
     return error(result_command_ptr, "Unable to allocate memory for command!");
   }
 
@@ -17,9 +19,12 @@ result_command_ptr command_new() {
   return ok(result_command_ptr, cmd);
 }
 
-result_command_ptr command_new_render_rect(const rect bounding_rect, const color rect_color) {
+result_command_ptr command_new_render_rect(const rect bounding_rect,
+                                           const color rect_color)
+{
   result_command_ptr _ = command_new();
-  if (!_.ok) {
+  if(!_.ok)
+  {
     return _;
   }
 
@@ -31,13 +36,21 @@ result_command_ptr command_new_render_rect(const rect bounding_rect, const color
   return ok(result_command_ptr, cmd);
 }
 
-result_command_ptr command_new_render_text(const char* text, const color text_color, const rect bounding_rect, const color rect_color) {
-  if (!text) {
-    return error(result_command_ptr, "Cannot create command for rendering text, with text pointing to NULL!");
+result_command_ptr command_new_render_text(const char* text,
+                                           const color text_color,
+                                           const rect bounding_rect,
+                                           const color rect_color)
+{
+  if(!text)
+  {
+    return error(result_command_ptr,
+                 "Cannot create command for rendering "
+                 "text, with text pointing to NULL!");
   }
 
   result_command_ptr _ = command_new();
-  if (!_.ok) {
+  if(!_.ok)
+  {
     return _;
   }
 
@@ -50,8 +63,10 @@ result_command_ptr command_new_render_text(const char* text, const color text_co
   return ok(result_command_ptr, cmd);
 }
 
-result_void command_free(command* cmd) {
-  if (!cmd) {
+result_void command_free(command* cmd)
+{
+  if(!cmd)
+  {
     return error(result_void, "Attempt to free a NULL pointed command!");
   }
 
@@ -60,10 +75,13 @@ result_void command_free(command* cmd) {
   return ok_void();
 }
 
-result_command_buffer_ptr command_buffer_new() {
+result_command_buffer_ptr command_buffer_new()
+{
   command_buffer* buffer = (command_buffer*)calloc(1, sizeof(command_buffer));
-  if (!buffer) {
-    return error(result_command_buffer_ptr, "Unable to allocate memory for command buffer!");
+  if(!buffer)
+  {
+    return error(result_command_buffer_ptr,
+                 "Unable to allocate memory for command buffer!");
   }
 
   buffer->head = NULL;
@@ -73,18 +91,24 @@ result_command_buffer_ptr command_buffer_new() {
   return ok(result_command_buffer_ptr, buffer);
 }
 
-result_void command_buffer_add_command(command_buffer* buffer, command* cmd) {
-  if (!buffer) {
-    return error(result_void, "Cannot add command to NULL pointed command buffer!");
+result_void command_buffer_add_command(command_buffer* buffer, command* cmd)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot add command to NULL pointed command buffer!");
   }
 
-  if (!cmd) {
-    return error(result_void, "Cannot add NULL pointed command to command buffer!");
+  if(!cmd)
+  {
+    return error(result_void,
+                 "Cannot add NULL pointed command to command buffer!");
   }
 
   buffer->length += 1;
 
-  if (!buffer->head) {
+  if(!buffer->head)
+  {
     buffer->head = cmd;
     buffer->tail = cmd;
 
@@ -97,65 +121,92 @@ result_void command_buffer_add_command(command_buffer* buffer, command* cmd) {
   return ok_void();
 }
 
-result_void command_buffer_add_render_rect_command(command_buffer* buffer, const rect bounding_rect, const color rect_color) {
-  if (!buffer) {
-    return error(result_void, "Cannot add command to NULL pointed command buffer!");
+result_void command_buffer_add_render_rect_command(command_buffer* buffer,
+                                                   const rect bounding_rect,
+                                                   const color rect_color)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot add command to NULL pointed command buffer!");
   }
 
   result_command_ptr _ = command_new_render_rect(bounding_rect, rect_color);
-  if (!_.ok) {
+  if(!_.ok)
+  {
     return error(result_void, _.error);
   }
 
   command* cmd = _.value;
   result_void __ = command_buffer_add_command(buffer, cmd);
-  if (!__.ok) {
+  if(!__.ok)
+  {
     return __;
   }
 
   return ok_void();
 }
 
-result_void command_buffer_add_render_text_command(command_buffer* buffer, const char* text, const color text_color, const rect bounding_rect, const color rect_color) {
-  if (!buffer) {
-    return error(result_void, "Cannot add command to NULL pointed command buffer!");
+result_void command_buffer_add_render_text_command(command_buffer* buffer,
+                                                   const char* text,
+                                                   const color text_color,
+                                                   const rect bounding_rect,
+                                                   const color rect_color)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot add command to NULL pointed command buffer!");
   }
 
-  if (!text) {
-    return error(result_void, "Cannot add a render text command, with text pointing to NULL!");
+  if(!text)
+  {
+    return error(
+      result_void,
+      "Cannot add a render text command, with text pointing to NULL!");
   }
 
-  result_command_ptr _ = command_new_render_text(text, text_color, bounding_rect, rect_color);
-  if (!_.ok) {
+  result_command_ptr _ =
+    command_new_render_text(text, text_color, bounding_rect, rect_color);
+  if(!_.ok)
+  {
     return error(result_void, _.error);
   }
 
   command* cmd = _.value;
   result_void __ = command_buffer_add_command(buffer, cmd);
-  if (!__.ok) {
+  if(!__.ok)
+  {
     return __;
   }
 
   return ok_void();
 }
 
-result_uint16 command_buffer_get_length(const command_buffer* buffer) {
-  if (!buffer) {
-    return error(result_uint16, "Cannot get length of NULL pointing command buffer!");
+result_uint16 command_buffer_get_length(const command_buffer* buffer)
+{
+  if(!buffer)
+  {
+    return error(result_uint16,
+                 "Cannot get length of NULL pointing command buffer!");
   }
 
   return ok(result_uint16, buffer->length);
 }
 
-result_void command_buffer_process_commands(command_buffer* buffer) {
+result_void command_buffer_process_commands(command_buffer* buffer)
+{
   // TODO: Command buffer process commands
 
   return error(result_void, "Un-implemented!");
 }
 
-result_void command_buffer_clear_commands(command_buffer* buffer) {
-  if (!buffer) {
-    return error(result_void, "Cannot clear commands in NULL pointed command buffer!");
+result_void command_buffer_clear_commands(command_buffer* buffer)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot clear commands in NULL pointed command buffer!");
   }
 
   // TODO: Maybe we should use dynamic array
@@ -163,16 +214,19 @@ result_void command_buffer_clear_commands(command_buffer* buffer) {
   // as this linked list entirely depends on speed
   // of random access of memory
 
-  if (!buffer->head) {
+  if(!buffer->head)
+  {
     return ok_void();
   }
 
   command* prev_cmd = buffer->head;
   command* cmd = prev_cmd->next;
 
-  while (cmd) {
+  while(cmd)
+  {
     result_void _ = command_free(prev_cmd);
-    if (!_.ok) {
+    if(!_.ok)
+    {
       return _;
     }
 
@@ -180,7 +234,8 @@ result_void command_buffer_clear_commands(command_buffer* buffer) {
     cmd = cmd->next;
   }
   result_void _ = command_free(prev_cmd);
-  if (!_.ok) {
+  if(!_.ok)
+  {
     return _;
   }
 
@@ -190,17 +245,22 @@ result_void command_buffer_clear_commands(command_buffer* buffer) {
   return ok_void();
 }
 
-result_void command_buffer_free(command_buffer* buffer) {
-  if (!buffer) {
+result_void command_buffer_free(command_buffer* buffer)
+{
+  if(!buffer)
+  {
     return error(result_void, "Attempt to free a NULL pointed command buffer!");
   }
 
-  if (buffer->head) {
+  if(buffer->head)
+  {
     command* prev_cmd = buffer->head;
     command* cmd = prev_cmd->next;
-    while (cmd) {
+    while(cmd)
+    {
       result_void _ = command_free(prev_cmd);
-      if (!_.ok) {
+      if(!_.ok)
+      {
         return _;
       }
 
@@ -208,7 +268,8 @@ result_void command_buffer_free(command_buffer* buffer) {
       cmd = cmd->next;
     }
     result_void _ = command_free(prev_cmd);
-    if (!_.ok) {
+    if(!_.ok)
+    {
       return _;
     }
   }

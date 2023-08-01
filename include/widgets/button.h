@@ -5,9 +5,11 @@
 
 typedef struct button button;
 
-typedef struct result_button_ptr {
+typedef struct result_button_ptr
+{
   bool ok;
-  union {
+  union
+  {
     button* value;
     const char* error;
   };
@@ -40,16 +42,24 @@ result_void button_set_padding_x(button* btn, const uint16 padding_x);
 result_void button_set_padding_y(button* btn, const uint16 padding_y);
 result_void button_set_foreground(button* btn, const color foreground);
 result_void button_set_background(button* btn, const color background);
-result_void button_set_hover_foreground(button* btn, const color hover_foreground);
-result_void button_set_hover_background(button* btn, const color hover_background);
-result_void button_set_click_foreground(button* btn, const color click_foreground);
-result_void button_set_click_background(button* btn, const color click_background);
+result_void button_set_hover_foreground(button* btn,
+                                        const color hover_foreground);
+result_void button_set_hover_background(button* btn,
+                                        const color hover_background);
+result_void button_set_click_foreground(button* btn,
+                                        const color click_foreground);
+result_void button_set_click_background(button* btn,
+                                        const color click_background);
 result_void button_set_text(button* btn, const char* text);
 
 // Callback registerers
-result_void button_register_mouse_down_callback(button* btn, void (*callback)(button*, const mouse_button_event));
-result_void button_register_mouse_up_callback(button* btn, void (*callback)(button*, const mouse_button_event));
-result_void button_register_mouse_enter_callback(button* btn, void (*callback)(button*, const mouse_motion_event));
-result_void button_register_mouse_leave_callback(button* btn, void (*callback)(button*, const mouse_motion_event));
+result_void button_register_mouse_down_callback(
+  button* btn, void (*callback)(button*, const mouse_button_event));
+result_void button_register_mouse_up_callback(
+  button* btn, void (*callback)(button*, const mouse_button_event));
+result_void button_register_mouse_enter_callback(
+  button* btn, void (*callback)(button*, const mouse_motion_event));
+result_void button_register_mouse_leave_callback(
+  button* btn, void (*callback)(button*, const mouse_motion_event));
 
 #endif
