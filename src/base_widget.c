@@ -469,6 +469,23 @@ result_bool default_internal_mouse_motion_callback(
     }
   }
 
+  if(widget->context->active_scrollbar &&
+     widget->context->active_scrollbar == widget)
+  {
+    // this widget is the scrollbar widget
+    // consuming mouse motion events
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(widget->context->overlay_widget &&
+     widget->context->overlay_widget == widget)
+  {
+    // this widget is the overlay widget
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
   // bubbling up
   internal_event->state = BUBBLING_UP;
 
@@ -529,6 +546,23 @@ result_bool default_internal_mouse_button_callback(
     {
       widget->mouse_button_up_callback(widget, internal_event->event);
     }
+  }
+
+  if(widget->context->active_scrollbar &&
+     widget->context->active_scrollbar == widget)
+  {
+    // this widget is the scrollbar widget
+    // consuming mouse button events
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(widget->context->overlay_widget &&
+     widget->context->overlay_widget == widget)
+  {
+    // this widget is the overlay widget
+    // no use of bubbling up these events
+    return ok(result_bool, true);
   }
 
   // bubbling up
