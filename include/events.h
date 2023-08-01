@@ -5,9 +5,9 @@
 
 typedef enum event_type
 {
-  MOUSE_MOTION,
-  MOUSE_BUTTON,
-  MOUSE_SCROLL
+  MOUSE_MOTION_EVENT,
+  MOUSE_BUTTON_EVENT,
+  MOUSE_SCROLL_EVENT
 } event_type;
 
 typedef struct mouse_motion_event

@@ -85,7 +85,7 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
 
   result_base_widget_ptr _ =
     internal_context_get_deepest_widget_with_point_and_event_type(
-      &context->internal_ctx, event.x, event.y, MOUSE_MOTION);
+      &context->internal_ctx, event.x, event.y, MOUSE_MOTION_EVENT);
   if(!_.ok)
   {
     return error(result_void, _.error);
@@ -110,7 +110,7 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context,
 
   result_base_widget_ptr _ =
     internal_context_get_deepest_widget_with_point_and_event_type(
-      &context->internal_ctx, event.x, event.y, MOUSE_BUTTON);
+      &context->internal_ctx, event.x, event.y, MOUSE_BUTTON_EVENT);
   if(!_.ok)
   {
     return error(result_void, _.error);
@@ -138,7 +138,7 @@ result_void smoll_context_process_mouse_scroll_event(smoll_context* context,
       &context->internal_ctx,
       context->internal_ctx->mouse_x,
       context->internal_ctx->mouse_y,
-      MOUSE_MOTION);
+      MOUSE_MOTION_EVENT);
   if(!_.ok)
   {
     return error(result_void, _.error);
