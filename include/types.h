@@ -2,6 +2,7 @@
 #define SMOLL_WIDGETS__TYPES_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /// @brief 8-bit (1-byte) character,
 ///        Range: (-128, 127)
@@ -13,27 +14,35 @@ typedef unsigned char uchar8;
 
 /// @brief 8-bit (1-byte) integer,
 ///        Range: (-128, 127)
-typedef short int int8;
+typedef int8_t int8;
 
 /// @brief 8-bit (1-byte) unsigned integer,
 ///        Range: (0, 255)
-typedef unsigned short int uint8;
+typedef uint8_t uint8;
 
 /// @brief 16-bit (2-bytes) integer,
 ///        Range: (-32768, 32767)
-typedef int int16;
+typedef int16_t int16;
 
 /// @brief 16-bit (2-bytes) unsigned integer,
 ///        Range: (0, 65535)
-typedef unsigned int uint16;
+typedef uint16_t uint16;
 
 /// @brief 32-bit (4-bytes) integer,
 ///        Range: (-2147483648, 2147483647)
-typedef long int int32;
+typedef int32_t int32;
 
 /// @brief 32-bit (4-bytes) unsigned integer,
 ///        Range: (0, 4294967295)
-typedef unsigned long int uint32;
+typedef uint32_t uint32;
+
+/// @brief 64-bit (8-bytes) integer,
+///        Range: (-9223372036854775808, 9223372036854775807)
+typedef int64_t int64;
+
+/// @brief 64-bit (8-bytes) unsigned integer,
+///        Range: (0, 18446744073709551615)
+typedef uint64_t uint64;
 
 /// @brief 32-bit (4-bytes) float,
 ///        Range: (3.4e-38, 3.4e+38)
@@ -176,6 +185,26 @@ typedef struct result_uint32
     const char* error;
   };
 } result_uint32;
+
+typedef struct result_int64
+{
+  bool ok;
+  union
+  {
+    int64 value;
+    const char* error;
+  };
+} result_int64;
+
+typedef struct result_uint64
+{
+  bool ok;
+  union
+  {
+    uint64 value;
+    const char* error;
+  };
+} result_uint64;
 
 typedef struct result_float32
 {
