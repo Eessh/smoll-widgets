@@ -551,67 +551,25 @@ result_bool default_internal_mouse_motion_callback(
 
 //   return (result_bool){.ok = true, .value = false};
 // }
-// result_bool default_internal_mouse_scroll_callback(
-//   base_widget* widget, const mouse_scroll_event event, const callback_type type)
-// {
-//   if(!widget)
-//   {
-//     return (result_bool){.ok = true,
-//                          .error = "Cannot process internal mouse scroll "
-//                                   "callback, with widget pointing to NULL!"};
-//   }
 
-//   if(type < PASSING_DOWN || type > BUBBLING_UP)
-//   {
-//     return (result_bool){.ok = false,
-//                          .error = "Cannot process internal mouse scroll "
-//                                   "callback, with invalid callback type!"};
-//   }
+result_bool default_internal_mouse_scroll_callback(
+  base_widget* widget, internal_mouse_scroll_event* internal_event)
+{
+  if(!widget)
+  {
+    return (result_bool){.ok = true,
+                         .error = "Cannot process internal mouse scroll "
+                                  "callback, with widget pointing to NULL!"};
+  }
 
-//   if(type == PASSING_DOWN)
-//   {
-//     result_base_widget_ptr _ = get_deepest_child_with_point(
-//       widget,
-//       smoll_context_get_mouse_x(widget->context).value,
-//       smoll_context_get_mouse_y(widget->context).value);
-//     if(!_.ok)
-//     {
-//       return (result_bool){.ok = true, .value = false};
-//     }
+  // mouse scroll event has no bubbling phase
+  // so direclty call the callback if present on this widget
 
-//     base_widget* deepest_widget = _.value;
+  if(widget->mouse_scroll_callback)
+  {
+    return ok(result_bool,
+              widget->mouse_scroll_callback(widget, internal_event->event));
+  }
 
-//     if(deepest_widget->mouse_scroll_callback)
-//     {
-//       return (result_bool){
-//         .ok = true,
-//         .value = deepest_widget->mouse_scroll_callback(deepest_widget, event)};
-//     }
-
-//     // should bubble up events to parent
-//     if(!deepest_widget->parent)
-//     {
-//       return (result_bool){.ok = true, .value = false};
-//     }
-
-//     deepest_widget->parent->internal_mouse_scroll_callback(
-//       deepest_widget->parent, event, BUBBLING_UP);
-//   }
-
-//   // BUBBLING UP
-
-//   if(!widget->mouse_scroll_callback)
-//   {
-//     // as this widget doesn't have scroll callback
-//     // further bubble up this event to parents
-//     if(!widget->parent)
-//     {
-//       return (result_bool){.ok = true, .value = false};
-//     }
-
-//     widget->parent->internal_mouse_scroll_callback(widget->parent, event, type);
-//   }
-
-//   return (result_bool){.ok = true,
-//                        .value = widget->mouse_scroll_callback(widget, event)};
-// }
+  return ok(result_bool, false);
+}
