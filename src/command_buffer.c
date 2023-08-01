@@ -194,13 +194,6 @@ result_uint16 command_buffer_get_length(const command_buffer* buffer)
   return ok(result_uint16, buffer->length);
 }
 
-result_void command_buffer_process_commands(command_buffer* buffer)
-{
-  // TODO: Command buffer process commands
-
-  return error(result_void, "Un-implemented!");
-}
-
 result_void command_buffer_clear_commands(command_buffer* buffer)
 {
   if(!buffer)
