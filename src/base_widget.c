@@ -1,16 +1,14 @@
 #include "../include/base_widget.h"
 #include <stdlib.h>
+#include "../include/macros.h"
 
 static rect default_internal_get_bounding_rect_callback(base_widget* widget);
-static result_bool
-default_internal_mouse_motion_callback(base_widget* widget,
-                                       internal_mouse_motion_event* event);
-static result_bool
-default_internal_mouse_button_callback(base_widget* widget,
-                                       internal_mouse_button_event* event);
-static result_bool
-default_internal_mouse_scroll_callback(base_widget* widget,
-                                       internal_mouse_scroll_event* event);
+static result_bool default_internal_mouse_motion_callback(
+  base_widget* widget, internal_mouse_motion_event* internal_event);
+static result_bool default_internal_mouse_button_callback(
+  base_widget* widget, internal_mouse_button_event* internal_event);
+static result_bool default_internal_mouse_scroll_callback(
+  base_widget* widget, internal_mouse_scroll_event* internal_event);
 
 result_base_widget_child_node_ptr base_widget_child_node_new(base_widget* child)
 {
@@ -421,80 +419,61 @@ get_nearest_parent_with_valid_mouse_motion_callbacks(base_widget* widget)
 //   return (result_base_widget_ptr){.ok = true, .value = __.value};
 // }
 
-// result_bool default_internal_mouse_motion_callback(
-//   base_widget* widget, const mouse_motion_event event, const callback_type type)
-// {
-//   if(!widget)
-//   {
-//     return (result_bool){.ok = false,
-//                          .error = "Cannot process internal mouse motion "
-//                                   "callback on NULL pointed base widget!"};
-//   }
+result_bool default_internal_mouse_motion_callback(
+  base_widget* widget, internal_mouse_motion_event* internal_event)
+{
+  if(!widget)
+  {
+    return (result_bool){.ok = false,
+                         .error = "Cannot process internal mouse motion "
+                                  "callback on NULL pointed base widget!"};
+  }
 
-//   if(type < PASSING_DOWN || type > BUBBLING_UP)
-//   {
-//     return (result_bool){.ok = false,
-//                          .error = "Cannot process internal mouse motion "
-//                                   "callback, with invalid callback type!"};
-//   }
+  if(internal_event->state == BUBBLING_UP)
+  {
+    // call callbacks if present
+    // setting context's mouse focused widget has already been done by
+    // some child widget down somewhere and set state to BUBBLING_UP.
+    if(widget->mouse_enter_callback)
+    {
+      widget->mouse_enter_callback(widget, internal_event->event);
+    }
 
-//   if(type == PASSING_DOWN)
-//   {
-//     result_base_widget_ptr _ =
-//       get_deepest_child_with_point(widget, event.x, event.y);
-//     if(!_.ok)
-//     {
-//       return (result_bool){.ok = true, .value = false};
-//     }
+    // return if parent doesn't exist (root element)
+    if(!widget->parent)
+    {
+      return ok(result_bool, true);
+    }
 
-//     base_widget* deepest_widget = _.value;
+    // still bubble up if parent exists
+    return widget->parent->internal_mouse_motion_callback(widget->parent,
+                                                          internal_event);
+  }
 
-//     base_widget* mouse_focused_widget = widget->context->mouse_focused_widget;
+  // setting context's mouse focused widget and calling mouse enter callback
+  if(widget->context->mouse_focused_widget != widget)
+  {
+    // should call mouse leave on previously mouse focused widget
+    if(widget->context->mouse_focused_widget->mouse_leave_callback)
+    {
+      widget->context->mouse_focused_widget->mouse_leave_callback(
+        widget->context->mouse_focused_widget, internal_event->event);
+    }
 
-//     if(deepest_widget != mouse_focused_widget)
-//     {
-//       // mouse gone to new widget
-//       // should call mouse enter on this deepest widget
-//       // should call mouse leave on last mouse focused widget
-//       bool event_processed = false;
-//       if(mouse_focused_widget->mouse_leave_callback)
-//       {
-//         event_processed =
-//           event_processed || mouse_focused_widget->mouse_leave_callback(
-//                                mouse_focused_widget, event);
-//       }
-//       if(deepest_widget->mouse_enter_callback)
-//       {
-//         event_processed =
-//           event_processed ||
-//           deepest_widget->mouse_enter_callback(deepest_widget, event);
-//       }
+    widget->context->mouse_focused_widget = widget;
+    // should call mouse enter on this widget
+    if(widget->mouse_enter_callback)
+    {
+      widget->mouse_enter_callback(widget, internal_event->event);
+    }
+  }
 
-//       return (result_bool){.ok = true, .value = event_processed};
-//     }
+  // bubbling up
+  internal_event->state = BUBBLING_UP;
 
-//     // Currently BUBBLING_UP event for mouse_motion is disabled
-//     // due to greater complexities
-//     // _ = get_nearest_parent_with_valid_mouse_motion_callbacks(deepest_widget);
-//     // if (!_.ok) {
-//     //   return (result_bool) {
-//     //     .ok = false,
-//     //     .error = _.value
-//     //   };
-//     // }
-
-//     // base_widget* nearest_parent_with_valid_callbacks = _.value;
-
-//     return (result_bool){.ok = true, .value = false};
-//   }
-//   else
-//   {
-//     // Currently BUBBLING_UP event for mouse_motion is disabled
-//     // due to greater complexities
-//   }
-
-//   return (result_bool){.ok = true, .value = false};
-// }
+  return widget->parent->internal_mouse_motion_callback(widget->parent,
+                                                        internal_event);
+}
 
 // result_bool default_internal_mouse_button_callback(
 //   base_widget* widget, const mouse_button_event event, const callback_type type)

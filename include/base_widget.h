@@ -49,6 +49,9 @@ typedef struct base_widget
   ///        Will be handy when layouting.
   rect (*internal_get_bounding_rect_callback)(base_widget*);
 
+  /// TODO: Give a thought why return types of internal callbacks have to be
+  ///       result_bool ?
+
   /// @brief Internal callback for adjusting layout of this widget.
   result_bool (*internal_fit_layout_callback)(base_widget*);
 
