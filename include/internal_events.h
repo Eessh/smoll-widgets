@@ -2,7 +2,19 @@
 #define SMOLL_WIDGETS__INTERNAL_EVENTS_H
 
 #include "base_widget.h"
-#include "events.h"
+
+/// @brief Internal event types.
+typedef enum internal_event_type
+{
+  /// @brief Internal mouse motion event type.
+  MOUSE_MOTION_INTERNAL_EVENT,
+
+  /// @brief Internal mouse button event type.
+  MOUSE_BUTTON_INTERNAL_EVENT,
+
+  /// @brief Internal mouse scroll event type.
+  MOUSE_SCROLL_INTERNAL_EVENT
+} internal_event_type;
 
 /// @brief State (or) pahse of internal events.
 typedef enum internal_event_state

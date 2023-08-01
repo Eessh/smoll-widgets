@@ -100,7 +100,10 @@ result_base_widget_ptr internal_context_get_deepest_widget_with_point(
 /// @return Base widget pointer result.
 result_base_widget_ptr
 internal_context_get_deepest_widget_with_point_and_event_type(
-  const internal_context* context, uint16 x, uint16 y, event_type type);
+  const internal_context* context,
+  uint16 x,
+  uint16 y,
+  internal_event_type type);
 
 /// @brief Processes internal mouse motion event.
 /// @param context pointer to internal context.
