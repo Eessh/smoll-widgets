@@ -186,12 +186,16 @@ result_void button_free(button* btn)
     return error(result_void, "Attempt to free a NULL pointing button widget!");
   }
 
+  // freeing button text
   free(btn->text);
+
+  // freeing button base widget
   result_void _ = base_widget_free(btn->base);
   if(!_.ok)
   {
     return _;
   }
+
   free(btn);
 
   return ok_void();
@@ -629,36 +633,18 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
                  "a NULL pointed base widget!");
   }
 
-  /// FIXME: button default internal fit layout callback
+  button* btn = (button*)widget->derived;
 
-  // button* btn = (button*)widget->derived;
+  result_text_dimensions ___ = widget->context->backend->get_text_dimensions(
+    btn->text, widget->context->font, widget->context->font_size);
+  if(!___.ok)
+  {
+    return error(result_bool, ___.error);
+  }
+  text_dimensions dimens = ___.value;
 
-  // result_const_char_ptr _ = smoll_context_get_font(widget->context);
-  // if(!_.ok)
-  // {
-  //   return error(result_bool, _.error);
-  // }
-  // const char* font = _.value;
-
-  // result_uint8 __ = smoll_context_get_font_size(widget->context);
-  // if(!__.ok)
-  // {
-  //   return error(result_bool, __.error);
-  // }
-  // uint8 font_size = __.value;
-
-  // result_text_dimensions ___ =
-  //   smoll_context_get_backend(widget->context)
-  //     .value->get_text_dimensions(btn->text, font, font_size);
-  // ___ = widget->context->backend->get_text_dimensions()
-  // if(!___.ok)
-  // {
-  //   return error(result_bool, ___.error);
-  // }
-  // text_dimensions dimens = ___.value;
-
-  // widget->w = dimens.w + 2 * btn->padding_x;
-  // widget->h = dimens.h + 2 * btn->padding_y;
+  widget->w = dimens.w + 2 * btn->padding_x;
+  widget->h = dimens.h + 2 * btn->padding_y;
 
   return ok(result_bool, true);
 }

@@ -28,6 +28,9 @@ result_internal_context_ptr internal_context_create()
   context->keyboard_focused_widget = NULL;
   context->mouse_focused_widget = NULL;
 
+  context->font = NULL;
+  context->font_size = 0;
+
   // creating command buffer
   result_command_buffer_ptr _ = command_buffer_new();
   if(!_.ok)
@@ -96,6 +99,8 @@ result_void internal_context_destroy(internal_context* context)
 
   // ignoring errors while freeing UI tree
   result_void _ = recursively_free_ui_tree(context->root);
+
+  free(context->font);
 
   // ignoring errors while freeing comand buffer
   _ = command_buffer_free(context->cmd_buffer);

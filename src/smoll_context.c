@@ -1,5 +1,6 @@
 #include "../include/smoll_context.h"
 #include <stdlib.h>
+#include <string.h>
 #include "../include/backend.h"
 #include "../include/base_widget.h"
 #include "../include/internal_context.h"
@@ -46,6 +47,47 @@ result_void smoll_context_destroy(smoll_context* context)
   result_void _ = internal_context_destroy(context->internal_ctx);
 
   free(context);
+
+  return ok_void();
+}
+
+result_void smoll_context_set_default_font(smoll_context* context,
+                                           const char* font)
+{
+  if(!context)
+  {
+    return error(result_void,
+                 "Cannot set default font for a NULL pointing smoll context!");
+  }
+
+  if(!font)
+  {
+    return error(result_void,
+                 "Cannot set NULL pointing font to smoll context!");
+  }
+
+  char* font_copy = _strdup(font);
+  if(!font_copy)
+  {
+    return error(result_void, "Unable to make a copy of font!");
+  }
+
+  context->internal_ctx->font = font_copy;
+
+  return ok_void();
+}
+
+result_void smoll_context_set_default_font_size(smoll_context* context,
+                                                uint8 font_size)
+{
+  if(!context)
+  {
+    return error(
+      result_void,
+      "Cannot set default font size for a NULL pointing smoll context!");
+  }
+
+  context->internal_ctx->font_size = font_size;
 
   return ok_void();
 }

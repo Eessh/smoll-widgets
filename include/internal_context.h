@@ -56,6 +56,13 @@ typedef struct internal_context
   ///        a new widget.
   base_widget* mouse_focused_widget;
 
+  /// @brief Default font for context.
+  ///        This should be loaded by backend.
+  char* font;
+
+  /// @brief Default font size.
+  uint8 font_size;
+
   /// @brief Command buffer.
   command_buffer* cmd_buffer;
 
