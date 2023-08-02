@@ -2,26 +2,26 @@
 #include <stdlib.h>
 #include "../include/macros.h"
 
-/// @brief Default callback for internal bounding rect callback.
+/// @brief Default callback function for internal bounding rect callback.
 /// @param widget pointer to base widget.
-/// @return Returns rect.
+/// @return Returns rect struct.
 static rect default_internal_get_bounding_rect_callback(base_widget* widget);
 
-/// @brief Default callback for internal mouse motion callback.
+/// @brief Default callback function for internal mouse motion callback.
 /// @param widget pointer to base widget.
 /// @param internal_event pointer to internal mouse motion event.
 /// @return Bool result.
 static result_bool default_internal_mouse_motion_callback(
   base_widget* widget, internal_mouse_motion_event* internal_event);
 
-/// @brief Default callback for internal mouse button callback.
+/// @brief Default callback function for internal mouse button callback.
 /// @param widget pointer to base widget.
 /// @param internal_event pointer to internal mouse button event.
 /// @return Bool result.
 static result_bool default_internal_mouse_button_callback(
   base_widget* widget, internal_mouse_button_event* internal_event);
 
-/// @brief Default callback for internal mouse scroll callback.
+/// @brief Default callback function for internal mouse scroll callback.
 /// @param widget pointer to base widget.
 /// @param internal_event pointer to internal mouse scroll event.
 /// @return Bool result.

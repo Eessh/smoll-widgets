@@ -3,49 +3,122 @@
 #include <string.h>
 #include "../../include/command_buffer.h"
 #include "../../include/macros.h"
-#include "../../include/smoll_context.h"
 
+/// @brief Button states.
+typedef enum button_state
+{
+  /// @brief Button is in normal state.
+  ///        Button uses default foreground, background colors to render.
+  BUTTON_NORMAL,
+
+  /// @brief Button is hovered.
+  ///        Button uses hover foreground, background colors to render.
+  BUTTON_HOVERED,
+
+  /// @brief Button is clicked.
+  ///        Button uses click foreground, background colors to render.
+  BUTTON_CLICKED
+} button_state;
+
+/// @brief Button widget.
 struct button
 {
+  /// @brief Base widget for this button.
   base_widget* base;
 
-  // paddings
-  uint16 padding_x, padding_y;
+  /// @brief X-axis padding.
+  ///        padding-x = padding-left = padding-right
+  uint16 padding_x;
 
-  // hover & click colors
-  color hover_foreground, hover_background;
-  color click_foreground, click_background;
+  /// @brief Y-axis padding.
+  ///        padding-y = padding-top = padding-bottom
+  uint16 padding_y;
 
-  // render colors
-  color render_foreground, render_background;
+  /// @brief Foreground color of button when it is hovered.
+  color hover_foreground;
 
-  // button text
+  /// @brief Background color of button when it is hovered.
+  color hover_background;
+
+  /// @brief Foreground color of button when it is clicked
+  ///        (or) more precise, when mouse button is down.
+  color click_foreground;
+
+  /// @brief Background color of button when it is clicked
+  ///        (or) more precise, when mouse button is down.
+  color click_background;
+
+  /// @brief State of button.
+  button_state state;
+
+  /// @brief Button text.
   char* text;
 
-  // user callbacks
+  /// @brief User mouse button down callback.
+  ///        This callback should be explicitly set by user.
   void (*user_mouse_button_down_callback)(button* btn,
                                           const mouse_button_event event);
+
+  /// @brief User mouse button up callback.
+  ///        This callback should be explicitly set by user.
   void (*user_mouse_button_up_callback)(button* btn,
                                         const mouse_button_event event);
+
+  /// @brief User mouse enter callback.
+  ///        This callback should be explicitly set by user.
   void (*user_mouse_enter_callback)(button* btn,
                                     const mouse_motion_event event);
+
+  /// @brief User mouse leave callback.
+  ///        This callback should be explicitly set by user.
   void (*user_mouse_leave_callback)(button* btn,
                                     const mouse_motion_event event);
 };
 
+/// @brief Default callback function for internal bounding rect callback.
+/// @param widget pointer to base widget.
+/// @return Returns rect struct.
 static rect default_internal_get_bounding_rect_callback(base_widget* widget);
+
+/// @brief Default callback function for internal fit layout callback.
+/// @param widget pointer to base widget.
+/// @return Bool result.
 static result_bool default_internal_fit_layout_callback(base_widget* widget);
+
+/// @brief Default callback function for internal render callback.
+/// @param widget pointer to base widget.
+/// @return Bool result.
 static result_bool default_internal_render_callback(const base_widget* widget);
+
+/// @brief Default callback function for button's mouse button down callback.
+/// @param widget pointer to base widget.
+/// @param event mouse button event.
+/// @return Boolean.
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                const mouse_button_event event);
+
+/// @brief Default callback function for button's mouse button up callback.
+/// @param widget pointer to base widget.
+/// @param event mouse button event.
+/// @return Boolean.
 static bool default_mouse_button_up_callback(base_widget* widget,
                                              const mouse_button_event event);
+
+/// @brief Default callback function for button's mouse enter callback.
+/// @param widget pointer to base widget.
+/// @param event mouse motion event.
+/// @return Boolean.
 static bool default_mouse_enter_callback(base_widget* widget,
                                          const mouse_motion_event event);
+
+/// @brief Default callback function for button's mouse leave callback.
+/// @param widget pointer to base widget.
+/// @param event mouse motion event.
+/// @return Boolean.
 static bool default_mouse_leave_callback(base_widget* widget,
                                          const mouse_motion_event event);
 
-result_button_ptr button_new(smoll_context* context, const char* text)
+result_button_ptr button_new(const char* text)
 {
   if(!text)
   {
@@ -60,7 +133,7 @@ result_button_ptr button_new(smoll_context* context, const char* text)
                  "Unable to allocate memory for button widget!");
   }
 
-  result_base_widget_ptr _ = base_widget_new(context);
+  result_base_widget_ptr _ = base_widget_new();
   if(!_.ok)
   {
     return error(result_button_ptr, _.error);
@@ -89,8 +162,7 @@ result_button_ptr button_new(smoll_context* context, const char* text)
   btn->click_foreground = (color){255, 255, 255, 255};
   btn->click_background = (color){0, 0, 0, 255};
 
-  btn->render_foreground = btn->base->foreground;
-  btn->render_background = btn->base->background;
+  btn->state = BUTTON_NORMAL;
 
   btn->text = NULL;
   btn->text = strdup(text);
@@ -123,6 +195,17 @@ result_void button_free(button* btn)
   free(btn);
 
   return ok_void();
+}
+
+result_base_widget_ptr button_base(const button* btn)
+{
+  if(!btn)
+  {
+    return error(result_base_widget_ptr,
+                 "Cannot get base widget of button pointing to NULL!");
+  }
+
+  return ok(result_base_widget_ptr, btn->base);
 }
 
 result_int16 button_get_x(const button* btn)
@@ -546,33 +629,36 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
                  "a NULL pointed base widget!");
   }
 
-  button* btn = (button*)widget->derived;
+  /// FIXME: button default internal fit layout callback
 
-  result_const_char_ptr _ = smoll_context_get_font(widget->context);
-  if(!_.ok)
-  {
-    return error(result_bool, _.error);
-  }
-  const char* font = _.value;
+  // button* btn = (button*)widget->derived;
 
-  result_uint8 __ = smoll_context_get_font_size(widget->context);
-  if(!__.ok)
-  {
-    return error(result_bool, __.error);
-  }
-  uint8 font_size = __.value;
+  // result_const_char_ptr _ = smoll_context_get_font(widget->context);
+  // if(!_.ok)
+  // {
+  //   return error(result_bool, _.error);
+  // }
+  // const char* font = _.value;
 
-  result_text_dimensions ___ =
-    smoll_context_get_backend(widget->context)
-      .value->get_text_dimensions(btn->text, font, font_size);
-  if(!___.ok)
-  {
-    return error(result_bool, ___.error);
-  }
-  text_dimensions dimens = ___.value;
+  // result_uint8 __ = smoll_context_get_font_size(widget->context);
+  // if(!__.ok)
+  // {
+  //   return error(result_bool, __.error);
+  // }
+  // uint8 font_size = __.value;
 
-  widget->w = dimens.w + 2 * btn->padding_x;
-  widget->h = dimens.h + 2 * btn->padding_y;
+  // result_text_dimensions ___ =
+  //   smoll_context_get_backend(widget->context)
+  //     .value->get_text_dimensions(btn->text, font, font_size);
+  // ___ = widget->context->backend->get_text_dimensions()
+  // if(!___.ok)
+  // {
+  //   return error(result_bool, ___.error);
+  // }
+  // text_dimensions dimens = ___.value;
+
+  // widget->w = dimens.w + 2 * btn->padding_x;
+  // widget->h = dimens.h + 2 * btn->padding_y;
 
   return ok(result_bool, true);
 }
@@ -588,18 +674,19 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   button* btn = (button*)widget->derived;
 
-  result_command_buffer_ptr _ =
-    smoll_context_get_command_buffer(widget->context);
-  if(!_.ok)
-  {
-    return error(result_bool, _.error);
-  }
-  command_buffer* cmd_buffer = _.value;
+  color foreground = btn->state == BUTTON_NORMAL
+                       ? widget->foreground
+                       : (btn->state == BUTTON_HOVERED ? btn->hover_foreground
+                                                       : btn->click_foreground);
+  color background = btn->state == BUTTON_NORMAL
+                       ? widget->background
+                       : (btn->state == BUTTON_HOVERED ? btn->hover_background
+                                                       : btn->click_background);
 
   result_void __ = command_buffer_add_render_rect_command(
-    cmd_buffer,
+    widget->context->cmd_buffer,
     widget->internal_get_bounding_rect_callback(widget),
-    btn->render_background);
+    background);
   if(!__.ok)
   {
     return error(result_bool, __.error);
@@ -612,11 +699,11 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   text_bounding_rect.h -= 2 * btn->padding_y;
 
   result_void ___ =
-    command_buffer_add_render_text_command(cmd_buffer,
+    command_buffer_add_render_text_command(widget->context->cmd_buffer,
                                            btn->text,
-                                           btn->render_foreground,
+                                           foreground,
                                            text_bounding_rect,
-                                           btn->render_background);
+                                           background);
   if(!___.ok)
   {
     return error(result_bool, ___.error);
@@ -629,8 +716,7 @@ static bool default_mouse_button_down_callback(base_widget* widget,
                                                const mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->render_foreground = btn->click_foreground;
-  btn->render_background = btn->click_background;
+  btn->state = BUTTON_CLICKED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -653,8 +739,7 @@ static bool default_mouse_button_up_callback(base_widget* widget,
                                              const mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->render_foreground = widget->foreground;
-  btn->render_background = widget->background;
+  btn->state = BUTTON_HOVERED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -677,8 +762,7 @@ static bool default_mouse_enter_callback(base_widget* widget,
                                          const mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->render_foreground = btn->hover_foreground;
-  btn->render_background = btn->hover_background;
+  btn->state = BUTTON_HOVERED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -701,8 +785,7 @@ static bool default_mouse_leave_callback(base_widget* widget,
                                          const mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->render_foreground = widget->foreground;
-  btn->render_background = widget->background;
+  btn->state = BUTTON_NORMAL;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
