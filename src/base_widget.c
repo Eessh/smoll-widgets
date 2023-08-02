@@ -2,11 +2,29 @@
 #include <stdlib.h>
 #include "../include/macros.h"
 
+/// @brief Default callback for internal bounding rect callback.
+/// @param widget pointer to base widget.
+/// @return Returns rect.
 static rect default_internal_get_bounding_rect_callback(base_widget* widget);
+
+/// @brief Default callback for internal mouse motion callback.
+/// @param widget pointer to base widget.
+/// @param internal_event pointer to internal mouse motion event.
+/// @return Bool result.
 static result_bool default_internal_mouse_motion_callback(
   base_widget* widget, internal_mouse_motion_event* internal_event);
+
+/// @brief Default callback for internal mouse button callback.
+/// @param widget pointer to base widget.
+/// @param internal_event pointer to internal mouse button event.
+/// @return Bool result.
 static result_bool default_internal_mouse_button_callback(
   base_widget* widget, internal_mouse_button_event* internal_event);
+
+/// @brief Default callback for internal mouse scroll callback.
+/// @param widget pointer to base widget.
+/// @param internal_event pointer to internal mouse scroll event.
+/// @return Bool result.
 static result_bool default_internal_mouse_scroll_callback(
   base_widget* widget, internal_mouse_scroll_event* internal_event);
 
@@ -14,36 +32,34 @@ result_base_widget_child_node_ptr base_widget_child_node_new(base_widget* child)
 {
   if(!child)
   {
-    return (result_base_widget_child_node_ptr){
-      .ok = false,
-      .error = "Cannot create new child node for NULL pointed child!"};
+    return error(result_base_widget_child_node_ptr,
+                 "Cannot create new child node for NULL pointed child!");
   }
 
   base_widget_child_node* node =
     (base_widget_child_node*)calloc(1, sizeof(base_widget_child_node));
   if(!node)
   {
-    return (result_base_widget_child_node_ptr){
-      .ok = false, .error = "Unable to allocate memory for new child node!"};
+    return error(result_base_widget_child_node_ptr,
+                 "Unable to allocate memory for new child node!");
   }
 
   node->child = child;
   node->next = NULL;
 
-  return (result_base_widget_child_node_ptr){.ok = true, .value = node};
+  return ok(result_base_widget_child_node_ptr, node);
 }
 
 result_void base_widget_child_node_free(base_widget_child_node* node)
 {
   if(!node)
   {
-    return (result_void){.ok = false,
-                         .error = "Attempt to free a NULL pointed child node!"};
+    return error(result_void, "Attempt to free a NULL pointed child node!");
   }
 
   free(node);
 
-  return (result_void){.ok = true, .error = NULL};
+  return ok_void();
 }
 
 result_base_widget_ptr base_widget_new()
@@ -51,8 +67,8 @@ result_base_widget_ptr base_widget_new()
   base_widget* widget = (base_widget*)calloc(1, sizeof(base_widget));
   if(!widget)
   {
-    return (result_base_widget_ptr){
-      .ok = false, .error = "Unable to allocate memory for base_widget!"};
+    return error(result_base_widget_ptr,
+                 "Unable to allocate memory for base_widget!");
   }
 
   widget->x = 0;
@@ -90,23 +106,21 @@ result_base_widget_ptr base_widget_new()
   widget->mouse_leave_callback = NULL;
   widget->mouse_scroll_callback = NULL;
 
-  return (result_base_widget_ptr){.ok = true, .value = widget};
+  return ok(result_base_widget_ptr, widget);
 }
 
 result_void base_widget_add_child(base_widget* base, base_widget* child)
 {
   if(!base)
   {
-    return (result_void){
-      .ok = false,
-      .error = "Cannot attach child to NULL pointed parent widget!"};
+    return error(result_void,
+                 "Cannot attach child to NULL pointed parent widget!");
   }
 
   if(!child)
   {
-    return (result_void){
-      .ok = false,
-      .error = "Cannot attach NULL pointed child to parent widget!"};
+    return error(result_void,
+                 "Cannot attach NULL pointed child to parent widget!");
   }
 
   child->context = base->context;
@@ -116,13 +130,13 @@ result_void base_widget_add_child(base_widget* base, base_widget* child)
     result_base_widget_child_node_ptr _ = base_widget_child_node_new(child);
     if(!_.ok)
     {
-      return (result_void){.ok = false, .error = _.error};
+      return error(result_void, _.error);
     }
 
     child->parent = base;
     base->children_head = _.value;
 
-    return (result_void){.ok = true, .error = NULL};
+    return ok_void();
   }
 
   base_widget_child_node* temp = base->children_head;
@@ -133,36 +147,33 @@ result_void base_widget_add_child(base_widget* base, base_widget* child)
   result_base_widget_child_node_ptr _ = base_widget_child_node_new(child);
   if(!_.ok)
   {
-    return (result_void){.ok = false, .error = _.error};
+    return error(result_void, _.error);
   }
 
   child->parent = base;
   temp->next = _.value;
 
-  return (result_void){.ok = true, .error = NULL};
+  return ok_void();
 }
 
 result_void base_widget_remove_child(base_widget* base, base_widget* child)
 {
   if(!base)
   {
-    return (result_void){
-      .ok = false,
-      .error = "Cannot remove child from NULL pointed parent widget!"};
+    return error(result_void,
+                 "Cannot remove child from NULL pointed parent widget!");
   }
 
   if(!child)
   {
-    return (result_void){
-      .ok = false,
-      .error = "Cannot remove NULL pointed child from parent widget!"};
+    return error(result_void,
+                 "Cannot remove NULL pointed child from parent widget!");
   }
 
   if(!base->children_head)
   {
-    return (result_void){
-      .ok = false,
-      .error = "Cannot remove child from empty children list of parent!"};
+    return error(result_void,
+                 "Cannot remove child from empty children list of parent!");
   }
 
   base_widget_child_node* temp = base->children_head;
@@ -176,28 +187,27 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child)
   if(!temp)
   {
     // child node not found with given child
-    return (result_void){
-      .ok = false, .error = "Child node not found with given child to remove!"};
+    return error(result_void,
+                 "Child node not found with given child to remove!");
   }
 
   prev_temp->next = temp->next;
   temp->child->parent = NULL;
   base_widget_child_node_free(temp);
 
-  return (result_void){.ok = true, .error = NULL};
+  return ok_void();
 }
 
 result_void base_widget_free(base_widget* widget)
 {
   if(!widget)
   {
-    return (result_void){
-      .ok = false, .error = "Attempt to free a NULL pointed base widget!"};
+    return error(result_void, "Attempt to free a NULL pointed base widget!");
   }
 
   free(widget);
 
-  return (result_void){.ok = true, .error = NULL};
+  return ok_void();
 }
 
 rect default_internal_get_bounding_rect_callback(base_widget* widget)
@@ -210,9 +220,9 @@ result_bool default_internal_mouse_motion_callback(
 {
   if(!widget)
   {
-    return (result_bool){.ok = false,
-                         .error = "Cannot process internal mouse motion "
-                                  "callback on NULL pointed base widget!"};
+    return error(result_bool,
+                 "Cannot process internal mouse motion callback on NULL "
+                 "pointed base widget!");
   }
 
   if(internal_event->state == BUBBLING_UP)
@@ -284,9 +294,9 @@ result_bool default_internal_mouse_button_callback(
 {
   if(!widget)
   {
-    return (result_bool){.ok = true,
-                         .error = "Cannot process internal mouse button "
-                                  "callback, with widget pointing to NULL!"};
+    return error(result_bool,
+                 "Cannot process internal mouse button callback, with widget "
+                 "pointing to NULL!");
   }
 
   if(internal_event->state == BUBBLING_UP)
@@ -363,9 +373,9 @@ result_bool default_internal_mouse_scroll_callback(
 {
   if(!widget)
   {
-    return (result_bool){.ok = true,
-                         .error = "Cannot process internal mouse scroll "
-                                  "callback, with widget pointing to NULL!"};
+    return error(result_bool,
+                 "Cannot process internal mouse scroll callback, with widget "
+                 "pointing to NULL!");
   }
 
   // mouse scroll event has no bubbling phase
