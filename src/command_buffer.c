@@ -183,15 +183,27 @@ result_void command_buffer_add_render_text_command(command_buffer* buffer,
   return ok_void();
 }
 
-result_uint16 command_buffer_get_length(const command_buffer* buffer)
+result_command_ptr command_buffer_get_next_command(command_buffer* buffer)
 {
   if(!buffer)
   {
-    return error(result_uint16,
-                 "Cannot get length of NULL pointing command buffer!");
+    return error(
+      result_command_ptr,
+      "Cannot get next command from a NULL pointing command buffer!");
   }
 
-  return ok(result_uint16, buffer->length);
+  if(!buffer->length)
+  {
+    return error(result_command_ptr,
+                 "Command buffer is empty, cannot get next command!");
+  }
+
+  command* cmd = buffer->head;
+  buffer->head = cmd->next;
+  buffer->length -= 1;
+
+  // need to free cmd externally
+  return ok(result_command_ptr, cmd);
 }
 
 result_void command_buffer_clear_commands(command_buffer* buffer)

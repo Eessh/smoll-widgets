@@ -303,3 +303,38 @@ result_void smoll_context_register_backend(smoll_context* context,
 
   return ok_void();
 }
+
+result_void smoll_context_render(smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_void, "Cannot render UI of context pointing to NULL!");
+  }
+
+  if(!context->internal_ctx->backend)
+  {
+    return error(result_void,
+                 "No backend is registered to process the command!");
+  }
+
+  if(!context->internal_ctx->backend->process_command)
+  {
+    return error(
+      result_void,
+      "Registered backend doesn't contain process command callback function!");
+  }
+
+  while(context->internal_ctx->cmd_buffer->length)
+  {
+    command* cmd =
+      command_buffer_get_next_command(context->internal_ctx->cmd_buffer).value;
+
+    // forwarding command to backend for processing
+    context->internal_ctx->backend->process_command(cmd);
+
+    // freeing command after processing
+    command_free(cmd);
+  }
+
+  return ok_void();
+}

@@ -94,4 +94,9 @@ result_void smoll_context_process_mouse_wheel_event(smoll_context* context,
 result_void smoll_context_register_backend(smoll_context* context,
                                            render_backend* backend);
 
+/// @brief Renders UI using commands from command buffer.
+/// @param context pointer to context.
+/// @return Void result.
+result_void smoll_context_render(smoll_context* context);
+
 #endif
