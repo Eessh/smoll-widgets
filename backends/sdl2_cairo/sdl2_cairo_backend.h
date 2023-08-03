@@ -1,4 +1,5 @@
 #include "../../include/backend.h"
+#include "../../include/events.h"
 #include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL.h"
 #include "cairo-windows-1.17.2/include/cairo.h"
 
@@ -18,3 +19,21 @@ cairo_t* sdl2_cairo_get_cairo_instance();
 /// @param backend pointer to render backend.
 /// @return Void result.
 result_void sdl2_cairo_backend_destroy(render_backend* backend);
+
+/// @brief Translates SDL2 mouse motion event to smoll context event.
+/// @param event SDL2 Mouse Motion event.
+/// @return Smoll context's mouse motion event.
+mouse_motion_event
+translate_sdl2_mouse_motion_event(SDL_MouseMotionEvent event);
+
+/// @brief Translates SDL2 mouse button event to smoll context event.
+/// @param event SDL2 Mouse Button event.
+/// @param button_down If this is a button down or button up event.
+/// @return Smoll context's mouse button event.
+mouse_button_event translate_sdl2_mouse_button_event(SDL_MouseButtonEvent event,
+                                                     bool button_down);
+
+/// @brief Translates SDL2 mouse wheel event to smoll context event.
+/// @param event SDL2 Mouse Wheel event.
+/// @return Smoll context's mouse scroll event.
+mouse_scroll_event translate_sdl2_mouse_wheel_event(SDL_MouseWheelEvent event);

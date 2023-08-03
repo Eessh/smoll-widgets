@@ -179,3 +179,39 @@ result_void init_cairo()
 
   return ok_void();
 }
+
+mouse_motion_event translate_sdl2_mouse_motion_event(SDL_MouseMotionEvent event)
+{
+  uint16 global_x, global_y;
+  SDL_GetGlobalMouseState(&global_x, &global_y);
+
+  return (mouse_motion_event){
+    .x = event.x, .y = event.y, .global_x = global_x, .global_y = global_y};
+}
+
+mouse_button_event translate_sdl2_mouse_button_event(SDL_MouseButtonEvent event,
+                                                     bool button_down)
+{
+  mouse_button_type button_type = MOUSE_BUTTON_LEFT;
+
+  if(event.button == SDL_BUTTON_RIGHT)
+  {
+    button_type = MOUSE_BUTTON_RIGHT;
+  }
+  else if(event.button == SDL_BUTTON_MIDDLE)
+  {
+    button_type = MOUSE_BUTTON_MIDDLE;
+  }
+
+  return (mouse_button_event){.x = event.x,
+                              .y = event.y,
+                              .button_state = button_down ? MOUSE_BUTTON_DOWN
+                                                          : MOUSE_BUTTON_UP,
+                              .button = button_type};
+}
+
+mouse_scroll_event translate_sdl2_mouse_wheel_event(SDL_MouseWheelEvent event)
+{
+  return (mouse_scroll_event){.delta_x = event.preciseX,
+                              .delta_y = event.preciseY};
+}
