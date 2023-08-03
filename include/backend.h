@@ -19,13 +19,15 @@ typedef struct result_text_dimensions
   };
 } result_text_dimensions;
 
+typedef struct version
+{
+  uint8 major, minor, patch;
+} version;
+
 typedef struct render_backend
 {
   const char8* name;
-  struct
-  {
-    uint8 major, minor, patch;
-  } version;
+  version backend_version;
 
   result_void (*load_font)(const char* font_name, uint8 font_size);
 
@@ -36,7 +38,7 @@ typedef struct render_backend
   result_void (*process_command)(const command* cmd);
 } render_backend;
 
-typedef struct result_backend_ptr
+typedef struct result_render_backend_ptr
 {
   bool ok;
   union
@@ -44,6 +46,6 @@ typedef struct result_backend_ptr
     render_backend* value;
     const char* error;
   };
-} result_backend_ptr;
+} result_render_backend_ptr;
 
 #endif
