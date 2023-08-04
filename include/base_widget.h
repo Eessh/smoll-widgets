@@ -6,6 +6,8 @@
 #include "internal_events.h"
 #include "types.h"
 
+typedef struct base_widget_child_node base_widget_child_node;
+
 /// @brief Base widget.
 typedef struct base_widget
 {
@@ -103,14 +105,14 @@ typedef struct base_widget
 } base_widget;
 
 /// @brief Base widget child node.
-typedef struct base_widget_child_node
+struct base_widget_child_node
 {
   /// @brief Child
   base_widget* child;
 
   /// @brief Next child node.
   base_widget_child_node* next;
-} base_widget_child_node;
+};
 
 typedef struct result_base_widget_ptr
 {

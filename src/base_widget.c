@@ -364,7 +364,7 @@ result_bool default_internal_mouse_button_callback(
   // bubbling up
   internal_event->state = BUBBLING_UP;
 
-  return widget->parent->internal_mouse_motion_callback(widget->parent,
+  return widget->parent->internal_mouse_button_callback(widget->parent,
                                                         internal_event);
 }
 

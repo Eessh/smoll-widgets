@@ -1,7 +1,10 @@
 #ifndef SMOLL_WIDGETS__INTERNAL_EVENTS_H
 #define SMOLL_WIDGETS__INTERNAL_EVENTS_H
 
-#include "base_widget.h"
+#include "events.h"
+
+// Forward decalration
+typedef struct base_widget base_widget;
 
 /// @brief Internal event types.
 typedef enum internal_event_type

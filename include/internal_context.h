@@ -2,10 +2,14 @@
 #define SMOLL_WIDGETS__INTERNAL_CONTEXT_H
 
 #include "backend.h"
-#include "base_widget.h"
+// #include "base_widget.h"
 #include "command_buffer.h"
 #include "internal_events.h"
 #include "types.h"
+
+// Forward declaration
+typedef struct base_widget base_widget;
+typedef struct result_base_widget_ptr result_base_widget_ptr;
 
 /// @brief Internal context.
 ///        This is public to all widgets.

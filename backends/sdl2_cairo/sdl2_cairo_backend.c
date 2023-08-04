@@ -9,6 +9,9 @@ static cairo_t* cairo = NULL;
 result_void init_sdl2();
 result_void init_cairo();
 
+void deinit_sdl2();
+void deinit_cairo();
+
 result_void sdl2_cairo_backend_load_font(const char* font, uint8 font_size);
 result_text_dimensions sdl2_cairo_backend_get_text_dimensions(
   const char* text, const char* font_name, uint8 font_size);
@@ -49,6 +52,9 @@ result_void sdl2_cairo_backend_destroy(render_backend* backend)
   {
     error(result_void, "Attempt to free a NULL pointed render backend!");
   }
+
+  deinit_sdl2();
+  deinit_cairo();
 
   free(backend->name);
   free(backend);
@@ -178,6 +184,17 @@ result_void init_cairo()
   cairo_surface_destroy(cairo_surface);
 
   return ok_void();
+}
+
+void deinit_sdl2()
+{
+  SDL_DestroyWindow(window);
+  SDL_Quit();
+}
+
+void deinit_cairo()
+{
+  cairo_destroy(cairo);
 }
 
 mouse_motion_event translate_sdl2_mouse_motion_event(SDL_MouseMotionEvent event)
