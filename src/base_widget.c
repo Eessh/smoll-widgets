@@ -5,7 +5,8 @@
 /// @brief Default callback function for internal bounding rect callback.
 /// @param widget pointer to base widget.
 /// @return Returns rect struct.
-static rect default_internal_get_bounding_rect_callback(base_widget* widget);
+static rect
+default_internal_get_bounding_rect_callback(const base_widget* widget);
 
 /// @brief Default callback function for internal mouse motion callback.
 /// @param widget pointer to base widget.
@@ -210,7 +211,7 @@ result_void base_widget_free(base_widget* widget)
   return ok_void();
 }
 
-rect default_internal_get_bounding_rect_callback(base_widget* widget)
+rect default_internal_get_bounding_rect_callback(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
 }

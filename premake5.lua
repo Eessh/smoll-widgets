@@ -17,7 +17,7 @@ workspace("smoll-widgets")
 			"include",
 		})
 		files({
-			"src/*.c",
+			"src/**.c",
 		})
 	
 	-- SDL2 + Cairo example

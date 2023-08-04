@@ -59,7 +59,7 @@ struct base_widget
 
   /// @brief Internal callback for getting bounding rectangle of widget.
   ///        Will be handy when layouting.
-  rect (*internal_get_bounding_rect_callback)(base_widget*);
+  rect (*internal_get_bounding_rect_callback)(const base_widget*);
 
   /// TODO: Give a thought why return types of internal callbacks have to be
   ///       result_bool ?

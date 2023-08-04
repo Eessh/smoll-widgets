@@ -78,7 +78,8 @@ struct button
 /// @brief Default callback function for internal bounding rect callback.
 /// @param widget pointer to base widget.
 /// @return Returns rect struct.
-static rect default_internal_get_bounding_rect_callback(base_widget* widget);
+static rect
+default_internal_get_bounding_rect_callback(const base_widget* widget);
 
 /// @brief Default callback function for internal fit layout callback.
 /// @param widget pointer to base widget.
@@ -619,7 +620,8 @@ result_void button_register_mouse_leave_callback(
   return ok_void();
 }
 
-static rect default_internal_get_bounding_rect_callback(base_widget* widget)
+static rect
+default_internal_get_bounding_rect_callback(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
 }

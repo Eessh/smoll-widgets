@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "../../include/smoll_context.h"
+#include "../../include/widgets/button.h"
 #include "sdl2_cairo_backend.h"
 
 int main()
@@ -38,6 +39,18 @@ int main()
       exit(1);
     }
   }
+
+  button* btn = NULL;
+  {
+    result_button_ptr _ = button_new("Hola!");
+    if(!_.ok)
+    {
+      printf("Error while creating button: %s", _.error);
+    }
+    btn = _.value;
+  }
+
+  smoll_context_set_root_widget(sctx, button_base(btn).value);
 
   printf("Created context, render backend and attached backend.\n");
 
