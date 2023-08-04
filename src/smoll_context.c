@@ -27,6 +27,7 @@ result_smoll_context_ptr smoll_context_create()
   result_internal_context_ptr _ = internal_context_create();
   if(!_.ok)
   {
+    free(context);
     return error(result_smoll_context_ptr, _.error);
   }
 
@@ -110,7 +111,7 @@ result_void smoll_context_set_root_widget(smoll_context* context,
   context->internal_ctx->root = root_widget_base;
 
   // setting root widget's context.
-  root_widget_base->context = &context->internal_ctx;
+  root_widget_base->context = context->internal_ctx;
 
   return ok_void();
 }
@@ -135,7 +136,7 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
       .state = AT_TARGET,
       .target = context->internal_ctx->active_scrollbar};
 
-    return internal_context_process_mouse_motion_event(&context->internal_ctx,
+    return internal_context_process_mouse_motion_event(context->internal_ctx,
                                                        &internal_event);
   }
 
@@ -150,13 +151,13 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
       .state = AT_TARGET,
       .target = context->internal_ctx->overlay_widget};
 
-    return internal_context_process_mouse_motion_event(&context->internal_ctx,
+    return internal_context_process_mouse_motion_event(context->internal_ctx,
                                                        &internal_event);
   }
 
   result_base_widget_ptr _ =
     internal_context_get_deepest_widget_with_point_and_event_type(
-      &context->internal_ctx, event.x, event.y, MOUSE_MOTION_INTERNAL_EVENT);
+      context->internal_ctx, event.x, event.y, MOUSE_MOTION_INTERNAL_EVENT);
   if(!_.ok)
   {
     return error(result_void, _.error);
@@ -172,7 +173,7 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
   internal_mouse_motion_event internal_event = {
     .event = event, .propagation = true, .state = AT_TARGET, .target = _.value};
 
-  return internal_context_process_mouse_motion_event(&context->internal_ctx,
+  return internal_context_process_mouse_motion_event(context->internal_ctx,
                                                      &internal_event);
 }
 
@@ -196,7 +197,7 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context,
       .state = AT_TARGET,
       .target = context->internal_ctx->active_scrollbar};
 
-    return internal_context_process_mouse_button_event(&context->internal_ctx,
+    return internal_context_process_mouse_button_event(context->internal_ctx,
                                                        &internal_event);
   }
 
@@ -211,13 +212,13 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context,
       .state = AT_TARGET,
       .target = context->internal_ctx->overlay_widget};
 
-    return internal_context_process_mouse_button_event(&context->internal_ctx,
+    return internal_context_process_mouse_button_event(context->internal_ctx,
                                                        &internal_event);
   }
 
   result_base_widget_ptr _ =
     internal_context_get_deepest_widget_with_point_and_event_type(
-      &context->internal_ctx, event.x, event.y, MOUSE_BUTTON_INTERNAL_EVENT);
+      context->internal_ctx, event.x, event.y, MOUSE_BUTTON_INTERNAL_EVENT);
   if(!_.ok)
   {
     return error(result_void, _.error);
@@ -233,7 +234,7 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context,
   internal_mouse_button_event internal_event = {
     .event = event, .propagation = true, .state = AT_TARGET, .target = _.value};
 
-  return internal_context_process_mouse_button_event(&context->internal_ctx,
+  return internal_context_process_mouse_button_event(context->internal_ctx,
                                                      &internal_event);
 }
 
@@ -254,13 +255,13 @@ result_void smoll_context_process_mouse_scroll_event(smoll_context* context,
     internal_mouse_scroll_event internal_event = {
       .event = event, .target = context->internal_ctx->overlay_widget};
 
-    return internal_context_process_mouse_scroll_event(&context->internal_ctx,
+    return internal_context_process_mouse_scroll_event(context->internal_ctx,
                                                        &internal_event);
   }
 
   result_base_widget_ptr _ =
     internal_context_get_deepest_widget_with_point_and_event_type(
-      &context->internal_ctx,
+      context->internal_ctx,
       context->internal_ctx->mouse_x,
       context->internal_ctx->mouse_y,
       MOUSE_SCROLL_INTERNAL_EVENT);
@@ -279,7 +280,7 @@ result_void smoll_context_process_mouse_scroll_event(smoll_context* context,
   internal_mouse_scroll_event internal_event = {.event = event,
                                                 .target = _.value};
 
-  return internal_context_process_mouse_scroll_event(&context->internal_ctx,
+  return internal_context_process_mouse_scroll_event(context->internal_ctx,
                                                      &internal_event);
 }
 

@@ -1,6 +1,7 @@
 #ifndef SMOLL_WIDGETS__SMOLL_CONTEXT_H
 #define SMOLL_WIDGETS__SMOLL_CONTEXT_H
 
+#include "base_widget.h"
 #include "events.h"
 
 /// @brief Smoll Context.
@@ -84,8 +85,8 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context,
 /// @param context pointer to smoll context.
 /// @param event mouse motion event struct.
 /// @return Void result.
-result_void smoll_context_process_mouse_wheel_event(smoll_context* context,
-                                                    mouse_scroll_event event);
+result_void smoll_context_process_mouse_scroll_event(smoll_context* context,
+                                                     mouse_scroll_event event);
 
 /// @brief Registers render backend to this context.
 /// @param context pointer to smoll context.

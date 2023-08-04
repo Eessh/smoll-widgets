@@ -14,7 +14,6 @@ typedef struct internal_mouse_button_event internal_mouse_button_event;
 typedef struct internal_mouse_scroll_event internal_mouse_scroll_event;
 typedef struct internal_context internal_context;
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// * Base Widget
 ///////////////////////////////////////////////////////////////////////////////
@@ -178,7 +177,6 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child);
 /// @return Void result.
 result_void base_widget_free(base_widget* widget);
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// * Internal Events
 ///////////////////////////////////////////////////////////////////////////////
@@ -253,7 +251,6 @@ typedef struct internal_mouse_scroll_event
   /// @brief Target widget of this internal event.
   base_widget* target;
 } internal_mouse_scroll_event;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// * Internal Context

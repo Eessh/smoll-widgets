@@ -1,6 +1,5 @@
 #include "sdl2_cairo_backend.h"
 #include <stdlib.h>
-#include <string.h>
 #include "../../include/macros.h"
 
 static SDL_Window* window = NULL;
@@ -32,6 +31,9 @@ result_render_backend_ptr sdl2_cairo_backend_create()
   backend->load_font = sdl2_cairo_backend_load_font;
   backend->get_text_dimensions = sdl2_cairo_backend_get_text_dimensions;
   backend->process_command = sdl2_cairo_backend_process_command;
+
+  init_sdl2();
+  init_cairo();
 
   return ok(result_render_backend_ptr, backend);
 }
@@ -199,11 +201,13 @@ void deinit_cairo()
 
 mouse_motion_event translate_sdl2_mouse_motion_event(SDL_MouseMotionEvent event)
 {
-  uint16 global_x, global_y;
+  int32 global_x, global_y;
   SDL_GetGlobalMouseState(&global_x, &global_y);
 
-  return (mouse_motion_event){
-    .x = event.x, .y = event.y, .global_x = global_x, .global_y = global_y};
+  return (mouse_motion_event){.x = event.x,
+                              .y = event.y,
+                              .global_x = (uint16)global_x,
+                              .global_y = (uint16)global_y};
 }
 
 mouse_button_event translate_sdl2_mouse_button_event(SDL_MouseButtonEvent event,

@@ -40,6 +40,8 @@ result_internal_context_ptr internal_context_create()
   context->cmd_buffer = _.value;
 
   context->backend = NULL;
+
+  return ok(result_internal_context_ptr, context);
 }
 
 result_void recursively_free_ui_tree(base_widget* root)

@@ -26,7 +26,7 @@ typedef struct version
 
 typedef struct render_backend
 {
-  const char8* name;
+  char8* name;
   version backend_version;
 
   result_void (*load_font)(const char* font_name, uint8 font_size);
