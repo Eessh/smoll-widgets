@@ -43,7 +43,7 @@ SDL_Window* sdl2_cairo_backend_get_window()
   return window;
 }
 
-cairo_t* sdl2_cairo_get_cairo_instance()
+cairo_t* sdl2_cairo_backend_get_cairo_instance()
 {
   return cairo;
 }

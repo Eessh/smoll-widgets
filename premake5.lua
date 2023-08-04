@@ -22,7 +22,6 @@ workspace("smoll-widgets")
 	
 	-- SDL2 + Cairo example
 	project("sdl2-cairo-example")
-		kind("WindowedApp")
 		language("C")
 		includedirs({
 			"include",
@@ -38,7 +37,17 @@ workspace("smoll-widgets")
 			"smoll-widgets"
 		})
 		filter("configurations:Debug")
-			libdirs({ "backends/sdl2_cairo/SDL2-2.26.5/x86_64-w64-mingw32/lib", "backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64", "bin/Debug" })
+    		kind("ConsoleApp")
+			libdirs({
+			    "backends/sdl2_cairo/SDL2-2.26.5/x86_64-w64-mingw32/lib",
+			    "backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
+			    "bin/Debug" -- smoll-widgets built library path
+			})
 		filter("configurations:Release")
-			libdirs({ "backends/sdl2_cairo/SDL2-2.26.5/x86_64-w64-mingw32/lib", "backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64", "bin/Release" })
+    		kind("WindowedApp")
+			libdirs({
+			    "backends/sdl2_cairo/SDL2-2.26.5/x86_64-w64-mingw32/lib",
+			    "backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
+			    "bin/Release" -- smoll-widgets built library path
+			})
 		filter({})

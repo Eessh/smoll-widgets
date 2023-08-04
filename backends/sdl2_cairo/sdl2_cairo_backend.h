@@ -14,7 +14,7 @@ SDL_Window* sdl2_cairo_backend_get_window();
 
 /// @brief Gives pointer to cairo instance.
 /// @return Pointer to cairo_t.
-cairo_t* sdl2_cairo_get_cairo_instance();
+cairo_t* sdl2_cairo_backend_get_cairo_instance();
 
 /// @brief Frees resources used by SDL2+Cairo render backend.
 /// @param backend pointer to render backend.
