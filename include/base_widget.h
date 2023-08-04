@@ -1,15 +1,26 @@
 #ifndef SMOLL_WIDGETS__BASE_WIDGET_H
 #define SMOLL_WIDGETS__BASE_WIDGET_H
 
+#include "backend.h"
+#include "command_buffer.h"
 #include "events.h"
-#include "internal_context.h"
-#include "internal_events.h"
 #include "types.h"
 
+/// Forward declarations
+typedef struct base_widget base_widget;
 typedef struct base_widget_child_node base_widget_child_node;
+typedef struct internal_mouse_motion_event internal_mouse_motion_event;
+typedef struct internal_mouse_button_event internal_mouse_button_event;
+typedef struct internal_mouse_scroll_event internal_mouse_scroll_event;
+typedef struct internal_context internal_context;
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// * Base Widget
+///////////////////////////////////////////////////////////////////////////////
 
 /// @brief Base widget.
-typedef struct base_widget
+struct base_widget
 {
   /// @brief Widgets's x-coordinate.
   int16 x;
@@ -102,7 +113,7 @@ typedef struct base_widget
   ///        It's the derived widget's responsibility for using these
   ///        callbacks appropriately.
   bool (*mouse_scroll_callback)(base_widget*, const mouse_scroll_event);
-} base_widget;
+};
 
 /// @brief Base widget child node.
 struct base_widget_child_node
@@ -166,5 +177,212 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child);
 /// @param widget pointer to the base widget.
 /// @return Void result.
 result_void base_widget_free(base_widget* widget);
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// * Internal Events
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief Internal event types.
+typedef enum internal_event_type
+{
+  /// @brief Internal mouse motion event type.
+  MOUSE_MOTION_INTERNAL_EVENT,
+
+  /// @brief Internal mouse button event type.
+  MOUSE_BUTTON_INTERNAL_EVENT,
+
+  /// @brief Internal mouse scroll event type.
+  MOUSE_SCROLL_INTERNAL_EVENT
+} internal_event_type;
+
+/// @brief State (or) pahse of internal events.
+typedef enum internal_event_state
+{
+  /// @brief Internal event is at its target, and event is fired.
+  AT_TARGET,
+
+  /// @brief Internal event has passed it target, and now it is propagating
+  ///        through its parents.
+  BUBBLING_UP
+} internal_event_state;
+
+/// @brief Internal mouse motion event.
+///        This event has BUBBLING_UP phase.
+typedef struct internal_mouse_motion_event
+{
+  /// @brief The actual mouse motion event with data about event.
+  mouse_motion_event event;
+
+  /// @brief Target widget of this internal event.
+  base_widget* target;
+
+  /// @brief State of this internal event.
+  internal_event_state state;
+
+  /// @brief Tells if this internal event still propagates through
+  ///        the target's parents.
+  bool propagation;
+} internal_mouse_motion_event;
+
+/// @brief Internal mouse button event.
+///        This event has BUBBLING_UP phase.
+typedef struct internal_mouse_button_event
+{
+  /// @brief The actual mouse button event with data about event.
+  mouse_button_event event;
+
+  /// @brief Target widget of this internal event.
+  base_widget* target;
+
+  /// @brief State of this internal event.
+  internal_event_state state;
+
+  /// @brief Tells if this internal event still propagates through
+  ///        the target's parents.
+  bool propagation;
+} internal_mouse_button_event;
+
+/// @brief Internal mouse scroll event.
+///        This event does not have a BUBBLING_UP phase.
+typedef struct internal_mouse_scroll_event
+{
+  /// @brief The actual mouse scroll event with data about event.
+  mouse_scroll_event event;
+
+  /// @brief Target widget of this internal event.
+  base_widget* target;
+} internal_mouse_scroll_event;
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// * Internal Context
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief Internal context.
+///        This is public to all widgets.
+///        Use `internal_context_new()` to create this context.
+///        Do not allocate this on stack, as there will be high possibility
+///        of memory leak by not freeing UI tree when the context
+///        goes out of scope.
+typedef struct internal_context
+{
+  /// @brief Local mouse x-coordinate.
+  uint16 mouse_x;
+
+  /// @brief Local mouse y-coordinate.
+  uint16 mouse_y;
+
+  /// @brief Global mouse x-coordinate.
+  uint16 global_mouse_x;
+
+  /// @brief Global mouse y-coodinate.
+  uint16 global_mouse_y;
+
+  /// @brief Viewport width.
+  uint16 viewport_w;
+
+  /// @brief Viewport height.
+  uint16 viewport_h;
+
+  /// @brief Root widget.
+  base_widget* root;
+
+  /// @brief Overlay (or) popup widget.
+  ///        If this exists, all events will be forwarded to this widget.
+  ///        No events will be given to the root widget.
+  base_widget* overlay_widget;
+
+  /// @brief Active scrollbar widget.
+  ///        If this exists, all mouse motion events will be forwarded
+  ///        to this widget.
+  base_widget* active_scrollbar;
+
+  /// @brief Widget with keyboard focus.
+  ///        If this exists, all keyboard events will be forwarded
+  ///        to this widget.
+  base_widget* keyboard_focused_widget;
+
+  /// @brief Widget with mouse focus.
+  ///        This is used to send mouse leave events, when mouse enters
+  ///        a new widget.
+  base_widget* mouse_focused_widget;
+
+  /// @brief Default font for context.
+  ///        This should be loaded by backend.
+  char* font;
+
+  /// @brief Default font size.
+  uint8 font_size;
+
+  /// @brief Command buffer.
+  command_buffer* cmd_buffer;
+
+  /// @brief Backend.
+  render_backend* backend;
+} internal_context;
+
+/// @brief Internal context pointer result.
+typedef struct result_internal_context_ptr
+{
+  bool ok;
+  union
+  {
+    internal_context* value;
+    const char* error;
+  };
+} result_internal_context_ptr;
+
+/// @brief Creates a new internal context.
+/// @return Internal context pointer result.
+result_internal_context_ptr internal_context_create();
+
+/// @brief Frees resources used by internal context.
+/// @param context pointer to internal context.
+/// @return Void result.
+result_void internal_context_destroy(internal_context* context);
+
+/// @brief Gets the deepest widget which encloses the point.
+/// @param context const pointer to internal context.
+/// @param x point x-coordinate.
+/// @param y point y-coordinate.
+/// @return Base widget pointer result.
+result_base_widget_ptr internal_context_get_deepest_widget_with_point(
+  const internal_context* context, uint16 x, uint16 y);
+
+/// @brief Gets the deepest widget which encloses the point, and the widget
+///        has subscribed to the event type.
+/// @param context const pointer to internal context.
+/// @param x point x-coordinate.
+/// @param y point y-coordinate.
+/// @param type event type.
+/// @return Base widget pointer result.
+result_base_widget_ptr
+internal_context_get_deepest_widget_with_point_and_event_type(
+  const internal_context* context,
+  uint16 x,
+  uint16 y,
+  internal_event_type type);
+
+/// @brief Processes internal mouse motion event.
+/// @param context pointer to internal context.
+/// @param internal_event poiinter to internal mouse motion event.
+/// @return void result.
+result_void internal_context_process_mouse_motion_event(
+  internal_context* context, internal_mouse_motion_event* internal_event);
+
+/// @brief Processes internal mouse button event.
+/// @param context pointer to internal context.
+/// @param internal_event poiinter to internal mouse button event.
+/// @return Void result.
+result_void internal_context_process_mouse_button_event(
+  internal_context* context, internal_mouse_button_event* internal_event);
+
+/// @brief Processes internal mouse scroll event.
+/// @param context pointer to internal context.
+/// @param internal_event poiinter to internal mouse scroll event.
+/// @return Void result.
+result_void internal_context_process_mouse_scroll_event(
+  internal_context* context, internal_mouse_scroll_event* internal_event);
 
 #endif

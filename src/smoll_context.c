@@ -3,7 +3,6 @@
 #include <string.h>
 #include "../include/backend.h"
 #include "../include/base_widget.h"
-#include "../include/internal_context.h"
 #include "../include/macros.h"
 
 /// @brief Smoll Context.
