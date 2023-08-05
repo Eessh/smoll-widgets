@@ -285,7 +285,8 @@ result_bool default_internal_mouse_motion_callback(
   if(widget->context->mouse_focused_widget != widget)
   {
     // should call mouse leave on previously mouse focused widget
-    if(widget->context->mouse_focused_widget->mouse_leave_callback)
+    if(widget->context->mouse_focused_widget &&
+       widget->context->mouse_focused_widget->mouse_leave_callback)
     {
       widget->context->mouse_focused_widget->mouse_leave_callback(
         widget->context->mouse_focused_widget, internal_event->event);
@@ -313,6 +314,11 @@ result_bool default_internal_mouse_motion_callback(
   {
     // this widget is the overlay widget
     // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(!widget->parent)
+  {
     return ok(result_bool, true);
   }
 

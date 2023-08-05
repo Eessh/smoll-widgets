@@ -116,19 +116,19 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
                     cmd->bounding_rect.w,
                     cmd->bounding_rect.h);
     cairo_set_source_rgba(cairo,
-                          cmd->rect_color.r,
-                          cmd->rect_color.g,
-                          cmd->rect_color.b,
-                          cmd->rect_color.a);
+                          (float32)(cmd->rect_color.r) / 255.0f,
+                          (float32)(cmd->rect_color.g) / 255.0f,
+                          (float32)(cmd->rect_color.b) / 255.0f,
+                          (float32)(cmd->rect_color.a) / 255.0f);
     cairo_fill(cairo);
   }
   else
   {
     cairo_set_source_rgba(cairo,
-                          cmd->text_color.r,
-                          cmd->text_color.g,
-                          cmd->text_color.b,
-                          cmd->text_color.a);
+                          (float32)(cmd->text_color.r) / 255.0f,
+                          (float32)(cmd->text_color.g) / 255.0f,
+                          (float32)(cmd->text_color.b) / 255.0f,
+                          (float32)(cmd->text_color.a) / 255.0f);
     cairo_show_text(cairo, cmd->text);
   }
 }

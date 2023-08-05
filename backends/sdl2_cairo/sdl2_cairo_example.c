@@ -51,6 +51,14 @@ int main()
       printf("Error while creating button: %s", _.error);
     }
     btn = _.value;
+    btn->base->x = 100;
+    btn->base->y = 100;
+    btn->base->w = 400;
+    btn->base->h = 400;
+    btn->foreground = (color){255, 255, 255, 255};
+    btn->background = (color){16, 16, 16, 255};
+    btn->hover_foreground = (color){0, 255, 0, 255};
+    btn->hover_background = (color){64, 64, 64, 255};
   }
 
   smoll_context_set_root_widget(sctx, btn->base);
@@ -87,6 +95,9 @@ int main()
           sctx, translate_sdl2_mouse_wheel_event(event.wheel));
       }
     }
+
+    smoll_context_render(sctx);
+    SDL_UpdateWindowSurface(sdl2_cairo_backend_get_window());
   }
 
 cleanup:
