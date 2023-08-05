@@ -3,10 +3,15 @@
 #include "../include/macros.h"
 
 /// @brief Default callback function for internal bounding rect callback.
-/// @param widget pointer to base widget.
+/// @param widget constant pointer to base widget.
 /// @return Returns rect struct.
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
+
+/// @brief Default callback function for internal free callback.
+/// @param widget pointer to base widget.
+/// @return Void.
+static void default_internal_free_callback(base_widget* widget);
 
 /// @brief Default callback function for internal mouse motion callback.
 /// @param widget pointer to base widget.
@@ -90,6 +95,9 @@ result_base_widget_ptr base_widget_new()
   widget->internal_fit_layout_callback = NULL;
   widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
+
+  widget->internal_free_callback = default_internal_free_callback;
+  widget->internal_derived_free_callback = NULL;
 
   widget->internal_mouse_motion_callback =
     default_internal_mouse_motion_callback;
@@ -211,6 +219,34 @@ result_void base_widget_free(base_widget* widget)
 rect default_internal_get_bounding_rect_callback(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
+}
+
+static void default_internal_free_callback(base_widget* widget)
+{
+  if(!widget)
+  {
+    return;
+  }
+
+  // freeing children widgets (not children nodes, node will be free later
+  // in base_widget_free)
+  if(widget->children_head)
+  {
+    base_widget_child_node* node = widget->children_head;
+    while(node)
+    {
+      node->child->internal_free_callback(node->child);
+      node = node->next;
+    }
+  }
+
+  // freeing derived widget fields
+  if(widget->derived)
+  {
+    widget->internal_derived_free_callback(widget);
+  }
+
+  base_widget_free(widget);
 }
 
 result_bool default_internal_mouse_motion_callback(

@@ -21,10 +21,10 @@ typedef struct internal_context internal_context;
 /// @brief Base widget.
 struct base_widget
 {
-  /// @brief Widgets's x-coordinate.
+  /// @brief Widget's x-coordinate.
   int16 x;
 
-  /// @brief Widgets's y-coordinate.
+  /// @brief Widget's y-coordinate.
   int16 y;
 
   /// @brief Widget's width (including padding).
@@ -65,6 +65,13 @@ struct base_widget
 
   /// @brief Internal callback for rendering this widget.
   result_bool (*internal_render_callback)(const base_widget*);
+
+  /// @brief Internal callback for freeing UI tree recursively.
+  void (*internal_free_callback)(base_widget* widget);
+
+  /// @brief Internal callback for freeing derived widget (if exists) specific
+  ///        fields. This should be implemented by all derived widgets.
+  void (*internal_derived_free_callback)(base_widget* widget);
 
   /// @brief Internal callback for processing internal mouse motion event.
   ///        These internal callbacks are internally handled by base widget.

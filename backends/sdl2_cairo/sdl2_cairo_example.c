@@ -90,7 +90,8 @@ int main()
   }
 
 cleanup:
-  button_free(btn);
+  // this is taken care by smoll_context_destroy
+  //  button_free(btn);
   smoll_context_destroy(sctx);
   sdl2_cairo_backend_destroy(backend);
 

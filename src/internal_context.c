@@ -100,12 +100,13 @@ result_void internal_context_destroy(internal_context* context)
   }
 
   // ignoring errors while freeing UI tree
-  result_void _ = recursively_free_ui_tree(context->root);
+  // result_void _ = recursively_free_ui_tree(context->root);
+  context->root->internal_free_callback(context->root);
 
   free(context->font);
 
   // ignoring errors while freeing comand buffer
-  _ = command_buffer_free(context->cmd_buffer);
+  result_void _ = command_buffer_free(context->cmd_buffer);
 
   free(context);
 

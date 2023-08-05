@@ -47,10 +47,15 @@ struct button_private
 };
 
 /// @brief Default callback function for internal bounding rect callback.
-/// @param widget pointer to base widget.
+/// @param widget constant pointer to base widget.
 /// @return Returns rect struct.
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
+
+/// @brief Default callback function for internal derived free callback.
+/// @param widget pointer to base widget.
+/// @return Void.
+static void default_internal_derived_free_callback(base_widget* widget);
 
 /// @brief Default callback function for internal fit layout callback.
 /// @param widget pointer to base widget.
@@ -139,6 +144,9 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   btn->base->internal_fit_layout_callback =
     default_internal_fit_layout_callback;
   btn->base->internal_render_callback = default_internal_render_callback;
+
+  btn->base->internal_derived_free_callback =
+    default_internal_derived_free_callback;
 
   btn->base->mouse_button_down_callback = default_mouse_button_down_callback;
   btn->base->mouse_button_up_callback = default_mouse_button_up_callback;
@@ -327,6 +335,26 @@ static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
+}
+
+static void default_internal_derived_free_callback(base_widget* widget)
+{
+  if(!widget)
+  {
+    return;
+  }
+
+  button* btn = (button*)widget->derived;
+
+  // freeing button text
+  free(btn->private->text);
+
+  // freeing button private struct
+  free(btn->private);
+
+  // freeing button object
+  // freeing base_widget is taken care by internal_free_callback
+  free(btn);
 }
 
 static result_bool default_internal_fit_layout_callback(base_widget* widget)
