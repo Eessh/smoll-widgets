@@ -1,7 +1,6 @@
 #include "../../include/widgets/button.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../include/command_buffer.h"
 #include "../../include/macros.h"
 
 /// @brief Button states.
@@ -57,22 +56,19 @@ struct button
   /// @brief User mouse button down callback.
   ///        This callback should be explicitly set by user.
   void (*user_mouse_button_down_callback)(button* btn,
-                                          const mouse_button_event event);
+                                          mouse_button_event event);
 
   /// @brief User mouse button up callback.
   ///        This callback should be explicitly set by user.
-  void (*user_mouse_button_up_callback)(button* btn,
-                                        const mouse_button_event event);
+  void (*user_mouse_button_up_callback)(button* btn, mouse_button_event event);
 
   /// @brief User mouse enter callback.
   ///        This callback should be explicitly set by user.
-  void (*user_mouse_enter_callback)(button* btn,
-                                    const mouse_motion_event event);
+  void (*user_mouse_enter_callback)(button* btn, mouse_motion_event event);
 
   /// @brief User mouse leave callback.
   ///        This callback should be explicitly set by user.
-  void (*user_mouse_leave_callback)(button* btn,
-                                    const mouse_motion_event event);
+  void (*user_mouse_leave_callback)(button* btn, mouse_motion_event event);
 };
 
 /// @brief Default callback function for internal bounding rect callback.
@@ -96,28 +92,28 @@ static result_bool default_internal_render_callback(const base_widget* widget);
 /// @param event mouse button event.
 /// @return Boolean.
 static bool default_mouse_button_down_callback(base_widget* widget,
-                                               const mouse_button_event event);
+                                               mouse_button_event event);
 
 /// @brief Default callback function for button's mouse button up callback.
 /// @param widget pointer to base widget.
 /// @param event mouse button event.
 /// @return Boolean.
 static bool default_mouse_button_up_callback(base_widget* widget,
-                                             const mouse_button_event event);
+                                             mouse_button_event event);
 
 /// @brief Default callback function for button's mouse enter callback.
 /// @param widget pointer to base widget.
 /// @param event mouse motion event.
 /// @return Boolean.
 static bool default_mouse_enter_callback(base_widget* widget,
-                                         const mouse_motion_event event);
+                                         mouse_motion_event event);
 
 /// @brief Default callback function for button's mouse leave callback.
 /// @param widget pointer to base widget.
 /// @param event mouse motion event.
 /// @return Boolean.
 static bool default_mouse_leave_callback(base_widget* widget,
-                                         const mouse_motion_event event);
+                                         mouse_motion_event event);
 
 result_button_ptr button_new(const char* text)
 {
@@ -370,7 +366,7 @@ result_const_char_ptr button_get_text(const button* btn)
   return ok(result_const_char_ptr, (const char*)btn->text);
 }
 
-result_void button_set_x(button* btn, const int16 x)
+result_void button_set_x(button* btn, int16 x)
 {
   if(!btn)
   {
@@ -383,7 +379,7 @@ result_void button_set_x(button* btn, const int16 x)
   return ok_void();
 }
 
-result_void button_set_y(button* btn, const int16 y)
+result_void button_set_y(button* btn, int16 y)
 {
   if(!btn)
   {
@@ -396,7 +392,7 @@ result_void button_set_y(button* btn, const int16 y)
   return ok_void();
 }
 
-result_void button_set_padding_x(button* btn, const uint16 padding_x)
+result_void button_set_padding_x(button* btn, uint16 padding_x)
 {
   if(!btn)
   {
@@ -409,7 +405,7 @@ result_void button_set_padding_x(button* btn, const uint16 padding_x)
   return ok_void();
 }
 
-result_void button_set_padding_y(button* btn, const uint16 padding_y)
+result_void button_set_padding_y(button* btn, uint16 padding_y)
 {
   if(!btn)
   {
@@ -422,7 +418,7 @@ result_void button_set_padding_y(button* btn, const uint16 padding_y)
   return ok_void();
 }
 
-result_void button_set_foreground(button* btn, const color foreground)
+result_void button_set_foreground(button* btn, color foreground)
 {
   if(!btn)
   {
@@ -435,7 +431,7 @@ result_void button_set_foreground(button* btn, const color foreground)
   return ok_void();
 }
 
-result_void button_set_background(button* btn, const color background)
+result_void button_set_background(button* btn, color background)
 {
   if(!btn)
   {
@@ -448,8 +444,7 @@ result_void button_set_background(button* btn, const color background)
   return ok_void();
 }
 
-result_void button_set_hover_foreground(button* btn,
-                                        const color hover_foreground)
+result_void button_set_hover_foreground(button* btn, color hover_foreground)
 {
   if(!btn)
   {
@@ -463,8 +458,7 @@ result_void button_set_hover_foreground(button* btn,
   return ok_void();
 }
 
-result_void button_set_hover_background(button* btn,
-                                        const color hover_background)
+result_void button_set_hover_background(button* btn, color hover_background)
 {
   if(!btn)
   {
@@ -478,8 +472,7 @@ result_void button_set_hover_background(button* btn,
   return ok_void();
 }
 
-result_void button_set_click_foreground(button* btn,
-                                        const color click_foreground)
+result_void button_set_click_foreground(button* btn, color click_foreground)
 {
   if(!btn)
   {
@@ -493,8 +486,7 @@ result_void button_set_click_foreground(button* btn,
   return ok_void();
 }
 
-result_void button_set_click_background(button* btn,
-                                        const color click_background)
+result_void button_set_click_background(button* btn, color click_background)
 {
   if(!btn)
   {
@@ -533,7 +525,7 @@ result_void button_set_text(button* btn, const char* text)
 }
 
 result_void button_register_mouse_down_callback(
-  button* btn, void (*callback)(button*, const mouse_button_event))
+  button* btn, void (*callback)(button*, mouse_button_event))
 {
   if(!btn)
   {
@@ -554,8 +546,9 @@ result_void button_register_mouse_down_callback(
   return ok_void();
 }
 
-result_void button_register_mouse_up_callback(
-  button* btn, void (*callback)(button*, const mouse_button_event))
+result_void
+button_register_mouse_up_callback(button* btn,
+                                  void (*callback)(button*, mouse_button_event))
 {
   if(!btn)
   {
@@ -577,7 +570,7 @@ result_void button_register_mouse_up_callback(
 }
 
 result_void button_register_mouse_enter_callback(
-  button* btn, void (*callback)(button*, const mouse_motion_event))
+  button* btn, void (*callback)(button*, mouse_motion_event))
 {
   if(!btn)
   {
@@ -599,7 +592,7 @@ result_void button_register_mouse_enter_callback(
 }
 
 result_void button_register_mouse_leave_callback(
-  button* btn, void (*callback)(button*, const mouse_motion_event))
+  button* btn, void (*callback)(button*, mouse_motion_event))
 {
   if(!btn)
   {
@@ -701,7 +694,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 }
 
 static bool default_mouse_button_down_callback(base_widget* widget,
-                                               const mouse_button_event event)
+                                               mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
   btn->state = BUTTON_CLICKED;
@@ -724,7 +717,7 @@ static bool default_mouse_button_down_callback(base_widget* widget,
 }
 
 static bool default_mouse_button_up_callback(base_widget* widget,
-                                             const mouse_button_event event)
+                                             mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
   btn->state = BUTTON_HOVERED;
@@ -747,7 +740,7 @@ static bool default_mouse_button_up_callback(base_widget* widget,
 }
 
 static bool default_mouse_enter_callback(base_widget* widget,
-                                         const mouse_motion_event event)
+                                         mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
   btn->state = BUTTON_HOVERED;
@@ -770,7 +763,7 @@ static bool default_mouse_enter_callback(base_widget* widget,
 }
 
 static bool default_mouse_leave_callback(base_widget* widget,
-                                         const mouse_motion_event event)
+                                         mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
   btn->state = BUTTON_NORMAL;
