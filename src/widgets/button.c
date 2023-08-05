@@ -19,7 +19,7 @@ typedef enum button_state
   BUTTON_CLICKED
 } button_state;
 
-/// @brief Button widget.
+/// @brief Button widget private data.
 struct button_private
 {
   /// @brief State of button.
@@ -182,31 +182,6 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   return ok(result_button_ptr, btn);
 }
 
-result_void button_free(button* btn)
-{
-  if(!btn)
-  {
-    return error(result_void, "Attempt to free a NULL pointing button widget!");
-  }
-
-  // freeing button text
-  free(btn->private->text);
-
-  // freeing button private fields
-  free(btn->private);
-
-  // freeing button base widget
-  result_void _ = base_widget_free(btn->base);
-  if(!_.ok)
-  {
-    return _;
-  }
-
-  free(btn);
-
-  return ok_void();
-}
-
 result_const_char_ptr button_get_text(const button* btn)
 {
   if(!btn)
@@ -242,8 +217,9 @@ result_void button_set_text(button* btn, const char* text)
   return ok_void();
 }
 
-result_void button_register_mouse_down_callback(
-  button* btn, void (*callback)(button*, mouse_button_event))
+result_void button_set_mouse_down_callback(button* btn,
+                                           void (*callback)(button*,
+                                                            mouse_button_event))
 {
   if(!btn)
   {
@@ -264,9 +240,9 @@ result_void button_register_mouse_down_callback(
   return ok_void();
 }
 
-result_void
-button_register_mouse_up_callback(button* btn,
-                                  void (*callback)(button*, mouse_button_event))
+result_void button_set_mouse_up_callback(button* btn,
+                                         void (*callback)(button*,
+                                                          mouse_button_event))
 {
   if(!btn)
   {
@@ -287,8 +263,9 @@ button_register_mouse_up_callback(button* btn,
   return ok_void();
 }
 
-result_void button_register_mouse_enter_callback(
-  button* btn, void (*callback)(button*, mouse_motion_event))
+result_void
+button_set_mouse_enter_callback(button* btn,
+                                void (*callback)(button*, mouse_motion_event))
 {
   if(!btn)
   {
@@ -309,8 +286,9 @@ result_void button_register_mouse_enter_callback(
   return ok_void();
 }
 
-result_void button_register_mouse_leave_callback(
-  button* btn, void (*callback)(button*, mouse_motion_event))
+result_void
+button_set_mouse_leave_callback(button* btn,
+                                void (*callback)(button*, mouse_motion_event))
 {
   if(!btn)
   {
