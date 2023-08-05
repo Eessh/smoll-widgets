@@ -16,7 +16,7 @@ typedef struct result_button_ptr
 } result_button_ptr;
 
 // Constructor & Destructors
-result_button_ptr button_new(const char* text);
+result_button_ptr button_new(base_widget* parent_base, const char* text);
 result_void button_free(button* btn);
 
 // Base widget

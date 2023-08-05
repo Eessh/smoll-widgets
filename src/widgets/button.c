@@ -115,7 +115,7 @@ static bool default_mouse_enter_callback(base_widget* widget,
 static bool default_mouse_leave_callback(base_widget* widget,
                                          mouse_motion_event event);
 
-result_button_ptr button_new(const char* text)
+result_button_ptr button_new(base_widget* parent_base, const char* text)
 {
   if(!text)
   {
@@ -138,6 +138,13 @@ result_button_ptr button_new(const char* text)
 
   btn->base = _.value;
   btn->base->derived = btn;
+  btn->base->parent = parent_base;
+
+  // assigning context
+  if(parent_base)
+  {
+    btn->base->context = parent_base->context;
+  }
 
   btn->base->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
@@ -170,8 +177,11 @@ result_button_ptr button_new(const char* text)
     return error(result_button_ptr, "Cannot copy text for button widget!");
   }
 
-  // calling fit layout to initalize the bounding rect properly
-  btn->base->internal_fit_layout_callback(btn->base);
+  if(parent_base)
+  {
+    // calling fit layout to initalize the bounding rect properly
+    btn->base->internal_fit_layout_callback(btn->base);
+  }
 
   return ok(result_button_ptr, btn);
 }

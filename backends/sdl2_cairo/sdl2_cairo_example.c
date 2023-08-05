@@ -45,7 +45,7 @@ int main()
 
   button* btn = NULL;
   {
-    result_button_ptr _ = button_new("Hola!");
+    result_button_ptr _ = button_new(NULL, "Hola!");
     if(!_.ok)
     {
       printf("Error while creating button: %s", _.error);
