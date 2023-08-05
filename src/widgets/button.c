@@ -162,7 +162,7 @@ result_button_ptr button_new(const char* text)
   btn->state = BUTTON_NORMAL;
 
   btn->text = NULL;
-  btn->text = strdup(text);
+  btn->text = _strdup(text);
   if(!btn->text)
   {
     base_widget_free(btn->base);
@@ -636,10 +636,10 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
   {
     return error(result_bool, ___.error);
   }
-  text_dimensions dimens = ___.value;
+  text_dimensions dimensions = ___.value;
 
-  widget->w = dimens.w + 2 * btn->padding_x;
-  widget->h = dimens.h + 2 * btn->padding_y;
+  widget->w = dimensions.w + 2 * btn->padding_x;
+  widget->h = dimensions.h + 2 * btn->padding_y;
 
   return ok(result_bool, true);
 }
