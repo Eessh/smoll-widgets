@@ -20,33 +20,8 @@ typedef enum button_state
 } button_state;
 
 /// @brief Button widget.
-struct button
+struct button_private
 {
-  /// @brief Base widget for this button.
-  base_widget* base;
-
-  /// @brief X-axis padding.
-  ///        padding-x = padding-left = padding-right
-  uint16 padding_x;
-
-  /// @brief Y-axis padding.
-  ///        padding-y = padding-top = padding-bottom
-  uint16 padding_y;
-
-  /// @brief Foreground color of button when it is hovered.
-  color hover_foreground;
-
-  /// @brief Background color of button when it is hovered.
-  color hover_background;
-
-  /// @brief Foreground color of button when it is clicked
-  ///        (or) more precise, when mouse button is down.
-  color click_foreground;
-
-  /// @brief Background color of button when it is clicked
-  ///        (or) more precise, when mouse button is down.
-  color click_background;
-
   /// @brief State of button.
   button_state state;
 
@@ -133,12 +108,25 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   result_base_widget_ptr _ = base_widget_new();
   if(!_.ok)
   {
+    free(btn);
     return error(result_button_ptr, _.error);
+  }
+
+  button_private* btn_private =
+    (button_private*)calloc(1, sizeof(button_private));
+  if(!btn_private)
+  {
+    base_widget_free(_.value);
+    free(btn);
+    return error(result_button_ptr,
+                 "Unable to allocate memory for private fields of button!");
   }
 
   btn->base = _.value;
   btn->base->derived = btn;
   btn->base->parent = parent_base;
+
+  btn->private = btn_private;
 
   // assigning context
   if(parent_base)
@@ -166,11 +154,11 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   btn->click_foreground = (color){255, 255, 255, 255};
   btn->click_background = (color){0, 0, 0, 255};
 
-  btn->state = BUTTON_NORMAL;
+  btn->private->state = BUTTON_NORMAL;
 
-  btn->text = NULL;
-  btn->text = _strdup(text);
-  if(!btn->text)
+  btn->private->text = NULL;
+  btn->private->text = _strdup(text);
+  if(!btn->private->text)
   {
     base_widget_free(btn->base);
     free(btn);
@@ -179,7 +167,7 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
 
   if(parent_base)
   {
-    // calling fit layout to initalize the bounding rect properly
+    // calling fit layout to initialize the bounding rect properly
     btn->base->internal_fit_layout_callback(btn->base);
   }
 
@@ -194,7 +182,10 @@ result_void button_free(button* btn)
   }
 
   // freeing button text
-  free(btn->text);
+  free(btn->private->text);
+
+  // freeing button private fields
+  free(btn->private);
 
   // freeing button base widget
   result_void _ = base_widget_free(btn->base);
@@ -208,163 +199,6 @@ result_void button_free(button* btn)
   return ok_void();
 }
 
-result_base_widget_ptr button_base(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_base_widget_ptr,
-                 "Cannot get base widget of button pointing to NULL!");
-  }
-
-  return ok(result_base_widget_ptr, btn->base);
-}
-
-result_int16 button_get_x(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_int16,
-                 "Cannot get x-coordinate of NULL pointing button widget!");
-  }
-
-  return ok(result_int16, btn->base->x);
-}
-
-result_int16 button_get_y(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_int16,
-                 "Cannot get y-coordinate of NULL pointing button widget!");
-  }
-
-  return ok(result_int16, btn->base->y);
-}
-
-result_uint16 button_get_w(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_uint16,
-                 "Cannot get width of NULL pointing button widget!");
-  }
-
-  return ok(result_uint16, btn->base->w);
-}
-
-result_uint16 button_get_h(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_uint16,
-                 "Cannot get height of NULL pointing button widget!");
-  }
-
-  return ok(result_uint16, btn->base->h);
-}
-
-result_uint16 button_get_padding_x(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_uint16,
-                 "Cannot get padding-x of NULL pointing button widget!");
-  }
-
-  return ok(result_uint16, btn->padding_x);
-}
-
-result_uint16 button_get_padding_y(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_uint16,
-                 "Cannot get padding-y of NULL pointing button widget!");
-  }
-
-  return ok(result_uint16, btn->padding_y);
-}
-
-result_rect button_get_bounding_rect(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_rect,
-                 "Cannot get bounding rect of NULL pointing button widget!");
-  }
-
-  rect bounding_rect = (rect){
-    .x = btn->base->x, .y = btn->base->y, .w = btn->base->w, .h = btn->base->h};
-
-  return ok(result_rect, bounding_rect);
-}
-
-result_color button_get_foreground(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_color,
-                 "Cannot get foreground color of NULL pointing button widget!");
-  }
-
-  return ok(result_color, btn->base->foreground);
-}
-
-result_color button_get_background(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_color,
-                 "Cannot get background color of NULL pointing button widget!");
-  }
-
-  return ok(result_color, btn->base->background);
-}
-
-result_color button_get_hover_foreground(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_color,
-                 "Cannot get hover foreground of NULL pointing button widget!");
-  }
-
-  return ok(result_color, btn->hover_foreground);
-}
-
-result_color button_get_hover_background(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_color,
-                 "Cannot get hover background of NULL pointing button widget!");
-  }
-
-  return ok(result_color, btn->hover_background);
-}
-
-result_color button_get_click_foreground(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_color,
-                 "Cannot get click foreground of NULL pointing button widget!");
-  }
-
-  return ok(result_color, btn->click_foreground);
-}
-
-result_color button_get_click_background(const button* btn)
-{
-  if(!btn)
-  {
-    return error(result_color,
-                 "Cannot get click background of NULL pointing button widget!");
-  }
-
-  return ok(result_color, btn->click_background);
-}
-
 result_const_char_ptr button_get_text(const button* btn)
 {
   if(!btn)
@@ -373,141 +207,7 @@ result_const_char_ptr button_get_text(const button* btn)
                  "Cannot get text of NULL pointing button widget!");
   }
 
-  return ok(result_const_char_ptr, (const char*)btn->text);
-}
-
-result_void button_set_x(button* btn, int16 x)
-{
-  if(!btn)
-  {
-    return error(result_void,
-                 "Cannot set x-coordinate of NULL pointing button widget!");
-  }
-
-  btn->base->x = x;
-
-  return ok_void();
-}
-
-result_void button_set_y(button* btn, int16 y)
-{
-  if(!btn)
-  {
-    return error(result_void,
-                 "Cannot set y-coordinate of NULL pointing button widget!");
-  }
-
-  btn->base->y = y;
-
-  return ok_void();
-}
-
-result_void button_set_padding_x(button* btn, uint16 padding_x)
-{
-  if(!btn)
-  {
-    return error(result_void,
-                 "Cannot set padding-x of NULL pointing button widget!");
-  }
-
-  btn->padding_x = padding_x;
-
-  return ok_void();
-}
-
-result_void button_set_padding_y(button* btn, uint16 padding_y)
-{
-  if(!btn)
-  {
-    return error(result_void,
-                 "Cannot set padding-y of NULL pointing button widget!");
-  }
-
-  btn->padding_y = padding_y;
-
-  return ok_void();
-}
-
-result_void button_set_foreground(button* btn, color foreground)
-{
-  if(!btn)
-  {
-    return error(result_void,
-                 "Cannot set foreground color of NULL pointing button widget!");
-  }
-
-  btn->base->foreground = foreground;
-
-  return ok_void();
-}
-
-result_void button_set_background(button* btn, color background)
-{
-  if(!btn)
-  {
-    return error(result_void,
-                 "Cannot set background color of NULL pointing button widget!");
-  }
-
-  btn->base->background = background;
-
-  return ok_void();
-}
-
-result_void button_set_hover_foreground(button* btn, color hover_foreground)
-{
-  if(!btn)
-  {
-    return error(
-      result_void,
-      "Cannot set hover foreground color of NULL pointing button widget!");
-  }
-
-  btn->hover_foreground = hover_foreground;
-
-  return ok_void();
-}
-
-result_void button_set_hover_background(button* btn, color hover_background)
-{
-  if(!btn)
-  {
-    return error(
-      result_void,
-      "Cannot set hover background color of NULL pointing button widget!");
-  }
-
-  btn->hover_background = hover_background;
-
-  return ok_void();
-}
-
-result_void button_set_click_foreground(button* btn, color click_foreground)
-{
-  if(!btn)
-  {
-    return error(
-      result_void,
-      "Cannot set click foreground color of NULL pointing button widget!");
-  }
-
-  btn->click_foreground = click_foreground;
-
-  return ok_void();
-}
-
-result_void button_set_click_background(button* btn, color click_background)
-{
-  if(!btn)
-  {
-    return error(
-      result_void,
-      "Cannot set click background color of NULL pointing button widget!");
-  }
-
-  btn->click_background = click_background;
-
-  return ok_void();
+  return ok(result_const_char_ptr, (const char*)btn->private->text);
 }
 
 result_void button_set_text(button* btn, const char* text)
@@ -525,8 +225,8 @@ result_void button_set_text(button* btn, const char* text)
     return error(result_void, "Unable to copy text into button widget!");
   }
 
-  free(btn->text);
-  btn->text = temp;
+  free(btn->private->text);
+  btn->private->text = temp;
 
   btn->base->internal_fit_layout_callback(btn->base);
   btn->base->internal_render_callback(btn->base);
@@ -551,7 +251,7 @@ result_void button_register_mouse_down_callback(
       "Cannot register NULL pointing mouse down callback to button widget!");
   }
 
-  btn->user_mouse_button_down_callback = callback;
+  btn->private->user_mouse_button_down_callback = callback;
 
   return ok_void();
 }
@@ -574,7 +274,7 @@ button_register_mouse_up_callback(button* btn,
       "Cannot register NULL pointing mouse up callback to button widget!");
   }
 
-  btn->user_mouse_button_up_callback = callback;
+  btn->private->user_mouse_button_up_callback = callback;
 
   return ok_void();
 }
@@ -596,7 +296,7 @@ result_void button_register_mouse_enter_callback(
       "Cannot register NULL pointing mouse enter callback to button widget!");
   }
 
-  btn->user_mouse_enter_callback = callback;
+  btn->private->user_mouse_enter_callback = callback;
 
   return ok_void();
 }
@@ -618,7 +318,7 @@ result_void button_register_mouse_leave_callback(
       "Cannot register NULL pointing mouse leave callback to button widget!");
   }
 
-  btn->user_mouse_leave_callback = callback;
+  btn->private->user_mouse_leave_callback = callback;
 
   return ok_void();
 }
@@ -641,7 +341,7 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
   button* btn = (button*)widget->derived;
 
   result_text_dimensions ___ = widget->context->backend->get_text_dimensions(
-    btn->text, widget->context->font, widget->context->font_size);
+    btn->private->text, widget->context->font, widget->context->font_size);
   if(!___.ok)
   {
     return error(result_bool, ___.error);
@@ -665,14 +365,16 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   button* btn = (button*)widget->derived;
 
-  color foreground = btn->state == BUTTON_NORMAL
-                       ? widget->foreground
-                       : (btn->state == BUTTON_HOVERED ? btn->hover_foreground
-                                                       : btn->click_foreground);
-  color background = btn->state == BUTTON_NORMAL
-                       ? widget->background
-                       : (btn->state == BUTTON_HOVERED ? btn->hover_background
-                                                       : btn->click_background);
+  color foreground =
+    btn->private->state == BUTTON_NORMAL
+      ? btn->foreground
+      : (btn->private->state == BUTTON_HOVERED ? btn->hover_foreground
+                                               : btn->click_foreground);
+  color background =
+    btn->private->state == BUTTON_NORMAL
+      ? btn->background
+      : (btn->private->state == BUTTON_HOVERED ? btn->hover_background
+                                               : btn->click_background);
 
   result_void __ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,
@@ -691,7 +393,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   result_void ___ =
     command_buffer_add_render_text_command(widget->context->cmd_buffer,
-                                           btn->text,
+                                           btn->private->text,
                                            foreground,
                                            text_bounding_rect,
                                            background);
@@ -707,7 +409,7 @@ static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->state = BUTTON_CLICKED;
+  btn->private->state = BUTTON_CLICKED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -718,9 +420,9 @@ static bool default_mouse_button_down_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->user_mouse_button_down_callback)
+  if(btn->private->user_mouse_button_down_callback)
   {
-    btn->user_mouse_button_down_callback(btn, event);
+    btn->private->user_mouse_button_down_callback(btn, event);
   }
 
   return _.value;
@@ -730,7 +432,7 @@ static bool default_mouse_button_up_callback(base_widget* widget,
                                              mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->state = BUTTON_HOVERED;
+  btn->private->state = BUTTON_HOVERED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -741,9 +443,9 @@ static bool default_mouse_button_up_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->user_mouse_button_up_callback)
+  if(btn->private->user_mouse_button_up_callback)
   {
-    btn->user_mouse_button_up_callback(btn, event);
+    btn->private->user_mouse_button_up_callback(btn, event);
   }
 
   return _.value;
@@ -753,7 +455,7 @@ static bool default_mouse_enter_callback(base_widget* widget,
                                          mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->state = BUTTON_HOVERED;
+  btn->private->state = BUTTON_HOVERED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -764,9 +466,9 @@ static bool default_mouse_enter_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->user_mouse_enter_callback)
+  if(btn->private->user_mouse_enter_callback)
   {
-    btn->user_mouse_enter_callback(btn, event);
+    btn->private->user_mouse_enter_callback(btn, event);
   }
 
   return _.value;
@@ -776,7 +478,7 @@ static bool default_mouse_leave_callback(base_widget* widget,
                                          mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->state = BUTTON_NORMAL;
+  btn->private->state = BUTTON_NORMAL;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -787,9 +489,9 @@ static bool default_mouse_leave_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->user_mouse_leave_callback)
+  if(btn->private->user_mouse_leave_callback)
   {
-    btn->user_mouse_leave_callback(btn, event);
+    btn->private->user_mouse_leave_callback(btn, event);
   }
 
   return _.value;

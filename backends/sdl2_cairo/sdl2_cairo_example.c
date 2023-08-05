@@ -53,7 +53,7 @@ int main()
     btn = _.value;
   }
 
-  smoll_context_set_root_widget(sctx, button_base(btn).value);
+  smoll_context_set_root_widget(sctx, btn->base);
 
   printf("Created context, render backend and attached backend.\n");
 
@@ -90,6 +90,7 @@ int main()
   }
 
 cleanup:
+  button_free(btn);
   smoll_context_destroy(sctx);
   sdl2_cairo_backend_destroy(backend);
 

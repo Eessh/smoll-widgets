@@ -37,13 +37,6 @@ struct base_widget
   ///        layouting and rendering.
   bool visible;
 
-  /// @brief Foreground color of widget.
-  ///        Applies to text (if widget conatains any).
-  color foreground;
-
-  /// @brief Background color of widget.
-  color background;
-
   /// @brief Pointer to derived widget.
   ///        Casting to derived widget type is required to access it.
   void* derived;

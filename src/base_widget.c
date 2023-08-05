@@ -79,9 +79,6 @@ result_base_widget_ptr base_widget_new()
 
   widget->visible = true;
 
-  widget->foreground = (color){255, 255, 255, 255};
-  widget->background = (color){0, 0, 0, 255};
-
   widget->derived = NULL;
   widget->parent = NULL;
   widget->children_head = NULL;
