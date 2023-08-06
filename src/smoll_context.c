@@ -52,7 +52,8 @@ result_void smoll_context_destroy(smoll_context* context)
 }
 
 result_void smoll_context_set_default_font(smoll_context* context,
-                                           const char* font)
+                                           const char* font,
+                                           uint8 font_size)
 {
   if(!context)
   {
@@ -74,20 +75,10 @@ result_void smoll_context_set_default_font(smoll_context* context,
 
   context->internal_ctx->font = font_copy;
 
-  return ok_void();
-}
-
-result_void smoll_context_set_default_font_size(smoll_context* context,
-                                                uint8 font_size)
-{
-  if(!context)
+  if(context->internal_ctx->backend)
   {
-    return error(
-      result_void,
-      "Cannot set default font size for a NULL pointing smoll context!");
+    context->internal_ctx->backend->load_font(font, font_size);
   }
-
-  context->internal_ctx->font_size = font_size;
 
   return ok_void();
 }

@@ -40,8 +40,7 @@ int main()
     }
   }
 
-  smoll_context_set_default_font(sctx, "Consolas");
-  smoll_context_set_default_font_size(sctx, 18);
+  smoll_context_set_default_font(sctx, "Consolas", 18);
 
   button* btn = NULL;
   {

@@ -33,19 +33,14 @@ result_smoll_context_ptr smoll_context_create();
 result_void smoll_context_destroy(smoll_context* context);
 
 /// @brief Sets default (or) fallback font for smoll context.
-///        Make sure the backend has loaded this font.
+///        Make sure the backend is attached to smoll context before calling
+///        this function.
 /// @param context pointer to smoll context.
 /// @param font name of font.
 /// @return Void result.
 result_void smoll_context_set_default_font(smoll_context* context,
-                                           const char* font);
-
-/// @brief Sets default (or) fallback font size for smoll context.
-/// @param context pointer to smoll context.
-/// @param font_size size of default font.
-/// @return Void result.
-result_void smoll_context_set_default_font_size(smoll_context* context,
-                                                uint8 font_size);
+                                           const char* font,
+                                           uint8 font_size);
 
 /// @brief Sets root widget for smoll context.
 ///        Root widget must be set first. Assigning of widgets follows a order,
