@@ -392,8 +392,8 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   }
 
   rect text_bounding_rect = widget->internal_get_bounding_rect_callback(widget);
-  text_bounding_rect.x += btn->base->x + btn->padding_x;
-  text_bounding_rect.y += btn->base->y + btn->padding_y;
+  text_bounding_rect.x += (int16)(btn->padding_x);
+  text_bounding_rect.y += (int16)(btn->padding_y);
   text_bounding_rect.w -= 2 * btn->padding_x;
   text_bounding_rect.h -= 2 * btn->padding_y;
 
