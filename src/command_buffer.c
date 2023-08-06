@@ -55,6 +55,7 @@ result_command_ptr command_new_render_text(const char* text,
   }
 
   command* cmd = _.value;
+  cmd->type = RENDER_TEXT;
   cmd->bounding_rect = bounding_rect;
   cmd->rect_color = rect_color;
   cmd->text = text;

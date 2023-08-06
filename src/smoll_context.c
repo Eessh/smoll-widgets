@@ -165,7 +165,17 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
 
   if(!_.value)
   {
-    // no widget satisfies requirements
+    // root widget itself doesn't contain the point
+    // calling mouse leave callback if internal context has mouse focused widget
+    if(context->internal_ctx->mouse_focused_widget &&
+       context->internal_ctx->mouse_focused_widget->mouse_leave_callback)
+    {
+      context->internal_ctx->mouse_focused_widget->mouse_leave_callback(
+        context->internal_ctx->mouse_focused_widget, event);
+    }
+    // setting internal context's mouse focused widget to NULL
+    // as mouse is outside the viewport
+    context->internal_ctx->mouse_focused_widget = NULL;
     return ok_void();
   }
 

@@ -387,9 +387,7 @@ internal_context_get_deepest_widget_with_point_and_event_type(
   if(!_.value)
   {
     // root widget doesn't contain point
-    return error(result_base_widget_ptr,
-                 "Root widget doesn't contain the point, hence cannot get "
-                 "deepest widget which encloses the point!");
+    return ok(result_base_widget_ptr, NULL);
   }
 
   // root contains the point

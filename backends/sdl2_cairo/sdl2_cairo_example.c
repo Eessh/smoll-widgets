@@ -55,10 +55,14 @@ int main()
     btn->base->y = 100;
     btn->base->w = 400;
     btn->base->h = 400;
+    btn->padding_x = 20;
+    btn->padding_y = 10;
     btn->foreground = (color){255, 255, 255, 255};
     btn->background = (color){16, 16, 16, 255};
     btn->hover_foreground = (color){0, 255, 0, 255};
     btn->hover_background = (color){64, 64, 64, 255};
+    btn->click_foreground = (color){255, 255, 0, 255};
+    btn->click_background = (color){128, 128, 128, 255};
   }
 
   smoll_context_set_root_widget(sctx, btn->base);

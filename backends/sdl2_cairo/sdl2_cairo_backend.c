@@ -129,6 +129,12 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
                           (float32)(cmd->text_color.g) / 255.0f,
                           (float32)(cmd->text_color.b) / 255.0f,
                           (float32)(cmd->text_color.a) / 255.0f);
+    cairo_font_extents_t font_extents;
+    cairo_font_extents(cairo, &font_extents);
+    cairo_move_to(cairo,
+                  cmd->bounding_rect.x,
+                  cmd->bounding_rect.y + font_extents.height -
+                    font_extents.descent);
     cairo_show_text(cairo, cmd->text);
   }
 }
