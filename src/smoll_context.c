@@ -304,6 +304,24 @@ result_void smoll_context_register_backend(smoll_context* context,
   return ok_void();
 }
 
+result_void smoll_context_initial_render(smoll_context* context)
+{
+  if(!context)
+  {
+    return error(
+      result_void,
+      "Cannot perform initial UI render of context pointing to NULL!");
+  }
+
+  if(context->internal_ctx->root->internal_render_callback)
+  {
+    context->internal_ctx->root->internal_render_callback(
+      context->internal_ctx->root);
+  }
+
+  return smoll_context_render(context);
+}
+
 result_void smoll_context_render(smoll_context* context)
 {
   if(!context)

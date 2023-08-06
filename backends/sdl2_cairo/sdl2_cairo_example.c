@@ -62,6 +62,7 @@ int main()
   }
 
   smoll_context_set_root_widget(sctx, btn->base);
+  smoll_context_initial_render(sctx);
 
   printf("Created context, render backend and attached backend.\n");
 
