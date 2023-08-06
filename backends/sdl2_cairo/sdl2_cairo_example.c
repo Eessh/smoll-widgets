@@ -60,11 +60,13 @@ int main()
     btn->background = (color){16, 16, 16, 255};
     btn->hover_foreground = (color){0, 255, 0, 255};
     btn->hover_background = (color){64, 64, 64, 255};
-    btn->click_foreground = (color){255, 255, 0, 255};
+    btn->click_foreground = (color){255, 0, 0, 255};
     btn->click_background = (color){128, 128, 128, 255};
   }
 
   smoll_context_set_root_widget(sctx, btn->base);
+
+  smoll_context_initial_fit_layout(sctx);
   smoll_context_initial_render(sctx);
 
   printf("Created context, render backend and attached backend.\n");

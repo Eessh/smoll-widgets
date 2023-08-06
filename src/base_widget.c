@@ -401,6 +401,11 @@ result_bool default_internal_mouse_button_callback(
     return ok(result_bool, true);
   }
 
+  if(!widget->parent)
+  {
+    return ok(result_bool, true);
+  }
+
   // bubbling up
   internal_event->state = BUBBLING_UP;
 

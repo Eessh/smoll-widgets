@@ -91,9 +91,20 @@ result_void smoll_context_register_backend(smoll_context* context,
                                            render_backend* backend);
 
 /// @brief First render of UI Tree.
+///        Call this function only after setting root widget of smoll context.
+///        This should be called after:
+/// @code smoll_context_initial_fit_layout() @endcode
 /// @param context pointer to smoll context.
 /// @return Void result.
 result_void smoll_context_initial_render(smoll_context* context);
+
+/// @brief First layouting call of UI Tree.
+///        Call this function only after setting root widget of smoll context.
+///        This should be called before:
+/// @code smoll_context_initial_render() @endcode
+/// @param context pointer to smoll context.
+/// @return Void result.
+result_void smoll_context_initial_fit_layout(smoll_context* context);
 
 /// @brief Renders UI using commands from command buffer.
 /// @param context pointer to context.

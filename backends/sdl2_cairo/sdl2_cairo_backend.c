@@ -90,6 +90,8 @@ result_text_dimensions sdl2_cairo_backend_get_text_dimensions(
                  "Cannot get dimensions of text, with font pointing to NULL");
   }
 
+  sdl2_cairo_backend_load_font(font_name, font_size);
+
   cairo_font_extents_t font_extents;
   cairo_font_extents(cairo, &font_extents);
   cairo_text_extents_t text_extents;

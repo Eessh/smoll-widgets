@@ -1,4 +1,5 @@
 #include "../../include/widgets/button.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../../include/macros.h"
@@ -343,6 +344,8 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
                  "Cannot process internal fit layout callback on "
                  "a NULL pointed base widget!");
   }
+
+  printf("Called fit layout.\n");
 
   button* btn = (button*)widget->derived;
 

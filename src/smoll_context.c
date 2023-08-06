@@ -74,6 +74,7 @@ result_void smoll_context_set_default_font(smoll_context* context,
   }
 
   context->internal_ctx->font = font_copy;
+  context->internal_ctx->font_size = font_size;
 
   if(context->internal_ctx->backend)
   {
@@ -321,6 +322,24 @@ result_void smoll_context_initial_render(smoll_context* context)
   }
 
   return smoll_context_render(context);
+}
+
+result_void smoll_context_initial_fit_layout(smoll_context* context)
+{
+  if(!context)
+  {
+    return error(
+      result_void,
+      "Cannot perform initial UI layouting of context pointing to NULL!");
+  }
+
+  if(context->internal_ctx->root->internal_fit_layout_callback)
+  {
+    context->internal_ctx->root->internal_fit_layout_callback(
+      context->internal_ctx->root);
+  }
+
+  return ok_void();
 }
 
 result_void smoll_context_render(smoll_context* context)
