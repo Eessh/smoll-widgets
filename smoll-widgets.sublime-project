@@ -8,11 +8,12 @@
 	],
 	"settings": {
 		"tab_size": 2,
-		"font_face": "Consolas",
-		"font_size": 12,
+		"font_face": "Source Code Pro",
+		"font_size": 11,
 		"caret_extra_top": 3,
 		"caret_extra_bottom": 5,
 		"caret_extra_width": 1,
+		"line_padding_bottom": 1,
 	},
 	"build_systems": [
 		{
@@ -33,9 +34,9 @@
 					}
 				},
 				{
-					"name": "🔥 Build & Run: 🪲 Debug",
+					"name": "🔥 Build & Run: SDL2 + Cairo Example - 🪲 Debug",
 					"windows": {
-						"shell_cmd": "start .\\scripts\\windows\\build_and_run_debug.bat"
+						"shell_cmd": "start .\\scripts\\windows\\build_and_run_sdl2_cairo_example_debug.bat"
 					},
 					"osx": {
 						"shell_cmd": "./bin/Release/MarkdownParser__Header"
@@ -45,15 +46,51 @@
 					}
 				},
 				{
-					"name": "🔥 Build & Run: 🚀 Release",
+					"name": "🔥 Build & Run: SDL2 + Cairo Example - 🚀 Release",
 					"windows": {
-						"shell_cmd": "start .\\scripts\\windows\\build_and_run_release.bat"
+						"shell_cmd": "start .\\scripts\\windows\\build_and_run_sdl2_cairo_example_release.bat"
 					},
 					"osx": {
 						"shell_cmd": "./bin/Release/MarkdownParser__Header"
 					},
 					"linux": {
 						"shell_cmd": "./scripts/linux/run_release.sh"
+					}
+				},
+				{
+					"name": "🔨 Build: Smoll Widgets - 🪲 Debug",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_smoll_widgets_debug.bat"
+					}
+				},
+				{
+					"name": "🔨 Build: Smoll Widgets - 🚀 Release",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_smoll_widgets_release.bat"
+					}
+				},
+				{
+					"name": "🔨 Build: SDL2 + Cairo Example - 🪲 Debug",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_sdl2_cairo_example_debug.bat"
+					}
+				},
+				{
+					"name": "🔨 Build: SDL2 + Cairo Example - 🚀 Release",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_sdl2_cairo_example_release.bat"
+					}
+				},
+				{
+					"name": "🔨 Build: Win32 + Cairo Example - 🪲 Debug",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_win32_cairo_example_debug.bat"
+					}
+				},
+				{
+					"name": "🔨 Build: Win32 + Cairo Example - 🚀 Release",
+					"windows": {
+						"shell_cmd": "start .\\scripts\\windows\\build_win32_cairo_example_release.bat"
 					}
 				},
 				{
