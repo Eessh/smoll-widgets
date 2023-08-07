@@ -73,6 +73,8 @@ result_void sdl2_cairo_backend_load_font(const char* font, uint8 font_size)
 
   cairo_select_font_face(cairo, font, 0, 0);
   cairo_set_font_size(cairo, font_size);
+
+  return ok_void();
 }
 
 result_text_dimensions sdl2_cairo_backend_get_text_dimensions(
