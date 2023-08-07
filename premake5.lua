@@ -51,3 +51,32 @@ workspace("smoll-widgets")
 			    "bin/Release" -- smoll-widgets built library path
 			})
 		filter({})
+
+	-- Win32 + Cairo example
+    project("win32-cairo-example")
+        language("C")
+        includedirs({
+            "include",
+            "backends/win32_cairo",
+        })
+        files({
+            "backends/win32_cairo/*.c",
+        })
+        links({
+            "gdi32",
+            "cairo",
+            "smoll-widgets"
+        })
+        filter("configurations:Debug")
+            kind("ConsoleApp")
+            libdirs({
+                "backends/win32_cairo/cairo-windows-1.17.2/lib/x64",
+                "bin/Debug" -- smoll-widgets built library path
+            })
+        filter("configurations:Release")
+            kind("WindowedApp")
+            libdirs({
+                "backends/win32_cairo/cairo-windows-1.17.2/lib/x64",
+                "bin/Release" -- smoll-widgets built library path
+            })
+        filter({})
