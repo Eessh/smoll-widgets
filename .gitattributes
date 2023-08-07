@@ -1,0 +1,6 @@
+; SDL2 + Cairo backend
+backends/sdl2_cairo/SDL2-2.26.5/** linguist-vendored
+backends/sdl2_cairo/cairo-windows-1.17.2/** linguist-vendored
+
+; Win32 + Cairo backend
+backends/win32_cairo/cairo-windows-1.17.2/** linguist-vendored
