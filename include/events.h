@@ -19,7 +19,10 @@ typedef enum mouse_button_type
 typedef enum mouse_button_state
 {
   MOUSE_BUTTON_DOWN,
-  MOUSE_BUTTON_UP
+  MOUSE_BUTTON_UP,
+  MOUSE_CLICK,
+  MOUSE_DOUBLE_CLICK,
+  MOUSE_TRIPLE_CLICK
 } mouse_button_state;
 
 typedef struct mouse_button_event

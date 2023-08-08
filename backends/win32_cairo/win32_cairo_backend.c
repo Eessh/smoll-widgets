@@ -1,4 +1,5 @@
 #include "win32_cairo_backend.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 #include "windowsx.h"
@@ -74,8 +75,6 @@ mouse_button_event translate_win32_mouse_button_event(HWND hwnd,
                                                       WPARAM wParam,
                                                       LPARAM lParam)
 {
-  /// TODO: handle double click
-
   switch(msg)
   {
   case WM_LBUTTONUP:
@@ -101,7 +100,7 @@ mouse_button_event translate_win32_mouse_button_event(HWND hwnd,
   case WM_LBUTTONDBLCLK:
     return (mouse_button_event){.x = GET_X_LPARAM(lParam),
                                 .y = GET_Y_LPARAM(lParam),
-                                .button_state = MOUSE_BUTTON_DOWN,
+                                .button_state = MOUSE_DOUBLE_CLICK,
                                 .button = MOUSE_BUTTON_LEFT};
   case WM_RBUTTONDOWN:
     return (mouse_button_event){.x = GET_X_LPARAM(lParam),
@@ -111,7 +110,7 @@ mouse_button_event translate_win32_mouse_button_event(HWND hwnd,
   case WM_RBUTTONDBLCLK:
     return (mouse_button_event){.x = GET_X_LPARAM(lParam),
                                 .y = GET_Y_LPARAM(lParam),
-                                .button_state = MOUSE_BUTTON_DOWN,
+                                .button_state = MOUSE_DOUBLE_CLICK,
                                 .button = MOUSE_BUTTON_RIGHT};
   case WM_MBUTTONDOWN:
     return (mouse_button_event){.x = GET_X_LPARAM(lParam),
@@ -121,13 +120,18 @@ mouse_button_event translate_win32_mouse_button_event(HWND hwnd,
   case WM_MBUTTONDBLCLK:
     return (mouse_button_event){.x = GET_X_LPARAM(lParam),
                                 .y = GET_Y_LPARAM(lParam),
-                                .button_state = MOUSE_BUTTON_DOWN,
+                                .button_state = MOUSE_DOUBLE_CLICK,
                                 .button = MOUSE_BUTTON_MIDDLE};
   default:
     break;
   }
 
-  return (mouse_button_event){};
+#ifdef DEBUG
+  printf(
+    "Cannot translate event: %ld with translate_win32_mouse_button_event()\n",
+    msg);
+  exit(1);
+#endif
 }
 
 mouse_scroll_event translate_win32_mouse_wheel_event(HWND hwnd,

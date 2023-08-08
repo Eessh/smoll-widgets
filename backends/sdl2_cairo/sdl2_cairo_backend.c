@@ -234,11 +234,22 @@ mouse_button_event translate_sdl2_mouse_button_event(SDL_MouseButtonEvent event,
     button_type = MOUSE_BUTTON_MIDDLE;
   }
 
-  return (mouse_button_event){.x = event.x,
-                              .y = event.y,
-                              .button_state = button_down ? MOUSE_BUTTON_DOWN
-                                                          : MOUSE_BUTTON_UP,
-                              .button = button_type};
+  mouse_button_state state = button_down ? MOUSE_BUTTON_DOWN : MOUSE_BUTTON_UP;
+
+  // if SDL reported multiple clicks, clicks occurred at same place
+  // otherwise it would just report single click events and some other
+  // events such as mouse motion or mouse wheel
+  if(event.clicks == 2 && !button_down)
+  {
+    state = MOUSE_DOUBLE_CLICK;
+  }
+  else if(event.clicks == 3 && !button_down)
+  {
+    state = MOUSE_TRIPLE_CLICK;
+  }
+
+  return (mouse_button_event){
+    .x = event.x, .y = event.y, .button_state = state, .button = button_type};
 }
 
 mouse_scroll_event translate_sdl2_mouse_wheel_event(SDL_MouseWheelEvent event)
