@@ -16,11 +16,11 @@
       "group": "build"
     },
     {
-      "label": "🔥 Build & Run: 🪲 Debug",
+      "label": "🔥 Build & Run: SDL2 + Cairo Example - 🪲 Debug",
       "type": "shell",
       "command": "",
       "windows": {
-        "command": ".\\scripts\\windows\\vscode_build_and_run_debug.bat"
+        "command": ".\\scripts\\windows\\build_and_run_sdl2_cairo_example_debug.bat"
       },
       "linux": {
         "command": "./scripts/linux/build_and_run_debug.sh"
@@ -28,11 +28,107 @@
       "group": "build"
     },
     {
-      "label": "🔥 Build & Run: 🚀 Release",
+      "label": "🔥 Build & Run: SDL2 + Cairo Example - 🚀 Release",
       "type": "shell",
       "command": "",
       "windows": {
-        "command": ".\\scripts\\windows\\vscode_build_and_run_release.bat"
+        "command": ".\\scripts\\windows\\build_and_run_sdl2_cairo_example_release.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_debug.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔥 Build & Run: Win32 + Cairo Example - 🪲 Debug",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_and_run_win32_cairo_example_debug.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_debug.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔥 Build & Run: Win32 + Cairo Example - 🚀 Release",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_and_run_win32_cairo_example_release.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_debug.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔨 Build: Smoll Widgets - 🪲 Debug",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_smoll_widgets_debug.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_release.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔨 Build: Smoll Widgets - 🚀 Release",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_smoll_widgets_release.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_release.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔨 Build: SDL2 + Cairo Example - 🪲 Debug",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_sdl2_cairo_example_debug.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_release.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔨 Build: SDL2 + Cairo Example - 🚀 Release",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_sdl2_cairo_example_release.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_release.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔨 Build: Win32 + Cairo Example - 🪲 Debug",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_win32_cairo_example_debug.bat"
+      },
+      "linux": {
+        "command": "./scripts/linux/build_and_run_release.sh"
+      },
+      "group": "build"
+    },
+    {
+      "label": "🔨 Build: Win32 + Cairo Example - 🚀 Release",
+      "type": "shell",
+      "command": "",
+      "windows": {
+        "command": ".\\scripts\\windows\\build_win32_cairo_example_release.bat"
       },
       "linux": {
         "command": "./scripts/linux/build_and_run_release.sh"
