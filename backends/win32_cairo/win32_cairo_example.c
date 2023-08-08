@@ -6,6 +6,11 @@
 static smoll_context* sctx = NULL;
 static render_backend* backend = NULL;
 
+void mouse_button_down_callback(button* btn, mouse_button_event event);
+void mouse_button_up_callback(button* btn, mouse_button_event event);
+void mouse_enter_callback(button* btn, mouse_motion_event event);
+void mouse_leave_callback(button* btn, mouse_motion_event event);
+
 LRESULT CALLBACK WndProc(HWND window,
                          UINT message,
                          WPARAM wParam,
@@ -107,6 +112,10 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     btn->hover_background = (color){64, 64, 64, 255};
     btn->click_foreground = (color){255, 0, 0, 255};
     btn->click_background = (color){128, 128, 128, 255};
+    button_set_mouse_down_callback(btn, mouse_button_down_callback);
+    button_set_mouse_up_callback(btn, mouse_button_up_callback);
+    button_set_mouse_enter_callback(btn, mouse_enter_callback);
+    button_set_mouse_leave_callback(btn, mouse_leave_callback);
   }
 
   smoll_context_set_root_widget(sctx, btn->base);
@@ -126,6 +135,26 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   ReleaseDC(window, hdc);
 
   return message.wParam;
+}
+
+void mouse_button_down_callback(button* btn, mouse_button_event event)
+{
+  printf("Mouse button down!\n");
+}
+
+void mouse_button_up_callback(button* btn, mouse_button_event event)
+{
+  printf("Mouse button up!\n");
+}
+
+void mouse_enter_callback(button* btn, mouse_motion_event event)
+{
+  printf("Mouse entered into button!\n");
+}
+
+void mouse_leave_callback(button* btn, mouse_motion_event event)
+{
+  printf("Mouse left button!\n");
 }
 
 LRESULT CALLBACK WndProc(HWND window,
