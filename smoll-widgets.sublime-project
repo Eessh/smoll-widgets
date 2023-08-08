@@ -27,10 +27,10 @@
 						"shell_cmd": ".\\scripts\\windows\\gen_makefiles.bat"
 					},
 					"osx": {
-						"shell_cmd": "premake5 --cc=gcc gmake2"
+						"shell_cmd": "./scripts/macos/gen_makefiles.sh"
 					},
 					"linux": {
-						"shell_cmd": "premake5 --cc=gcc gmake2"
+						"shell_cmd": "./scripts/linux/gen_makefiles.sh"
 					}
 				},
 				{
@@ -39,10 +39,10 @@
 						"shell_cmd": "start .\\scripts\\windows\\build_and_run_sdl2_cairo_example_debug.bat"
 					},
 					"osx": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/macos/build_and_run_sdl2_cairo_example_debug.sh"
 					},
 					"linux": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/linux/build_and_run_sdl2_cairo_example_debug.sh"
 					}
 				},
 				{
@@ -51,10 +51,10 @@
 						"shell_cmd": "start .\\scripts\\windows\\build_and_run_sdl2_cairo_example_release.bat"
 					},
 					"osx": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/macos/build_and_run_sdl2_cairo_example_release.sh"
 					},
 					"linux": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/linux/build_and_run_sdl2_cairo_example_release.sh"
 					}
 				},
 				{
@@ -62,47 +62,59 @@
 					"windows": {
 						"shell_cmd": "start .\\scripts\\windows\\build_and_run_win32_cairo_example_debug.bat"
 					},
-					"osx": {
-						"shell_cmd": ""
-					},
-					"linux": {
-						"shell_cmd": ""
-					}
 				},
 				{
 					"name": "🔥 Build & Run: Win32 + Cairo Example - 🚀 Release",
 					"windows": {
 						"shell_cmd": "start .\\scripts\\windows\\build_and_run_win32_cairo_example_release.bat"
 					},
-					"osx": {
-						"shell_cmd": ""
-					},
-					"linux": {
-						"shell_cmd": ""
-					}
 				},
 				{
 					"name": "🔨 Build: Smoll Widgets - 🪲 Debug",
 					"windows": {
 						"shell_cmd": "start .\\scripts\\windows\\build_smoll_widgets_debug.bat"
+					},
+					"osx": {
+						"shell_cmd": "./scripts/macos/build_smoll_widgets_debug.sh"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/build_smoll_widgets_debug.sh"
 					}
 				},
 				{
 					"name": "🔨 Build: Smoll Widgets - 🚀 Release",
 					"windows": {
 						"shell_cmd": "start .\\scripts\\windows\\build_smoll_widgets_release.bat"
+					},
+					"osx": {
+						"shell_cmd": "./scripts/macos/build_smoll_widgets_release.sh"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/build_smoll_widgets_release.sh"
 					}
 				},
 				{
 					"name": "🔨 Build: SDL2 + Cairo Example - 🪲 Debug",
 					"windows": {
 						"shell_cmd": "start .\\scripts\\windows\\build_sdl2_cairo_example_debug.bat"
+					},
+					"osx": {
+						"shell_cmd": "./scripts/macos/build_sdl2_cairo_example_debug.sh"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/build_sdl2_cairo_example_debug.sh"
 					}
 				},
 				{
 					"name": "🔨 Build: SDL2 + Cairo Example - 🚀 Release",
 					"windows": {
 						"shell_cmd": "start .\\scripts\\windows\\build_sdl2_cairo_example_release.bat"
+					},
+					"osx": {
+						"shell_cmd": "./scripts/macos/build_sdl2_cairo_example_release.sh"
+					},
+					"linux": {
+						"shell_cmd": "./scripts/linux/build_sdl2_cairo_example_release.sh"
 					}
 				},
 				{
@@ -123,10 +135,10 @@
 						"shell_cmd": ".\\scripts\\windows\\format_code.bat"
 					},
 					"osx": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/macos/format_code.sh"
 					},
 					"linux": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/linux/format_code.sh"
 					}
 				},
 				{
@@ -135,10 +147,10 @@
 						"shell_cmd": ".\\scripts\\windows\\clean.bat"
 					},
 					"osx": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/macos/clean.sh"
 					},
 					"linux": {
-						"shell_cmd": ""
+						"shell_cmd": "./scripts/linux/clean.sh"
 					}
 				}
 			],
