@@ -55,10 +55,9 @@ result_void sdl2_cairo_backend_destroy(render_backend* backend)
     error(result_void, "Attempt to free a NULL pointed render backend!");
   }
 
-  deinit_sdl2();
   deinit_cairo();
+  deinit_sdl2();
 
-  free(backend->name);
   free(backend);
 
   return ok_void();
