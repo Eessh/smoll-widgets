@@ -241,7 +241,7 @@ static void default_internal_free_callback(base_widget* widget)
   }
 
   // freeing derived widget fields
-  if(widget->derived)
+  if(widget->derived && widget->internal_derived_free_callback)
   {
     widget->internal_derived_free_callback(widget);
   }
