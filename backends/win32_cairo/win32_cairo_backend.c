@@ -50,7 +50,6 @@ result_void win32_cairo_backend_destroy(render_backend* backend)
 
   deinit_cairo();
 
-  free(backend->name);
   free(backend);
 
   return ok_void();

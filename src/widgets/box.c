@@ -2,11 +2,20 @@
 #include <stdlib.h>
 #include "../../include/macros.h"
 
+/// @brief Default callback function for internal bounding rect callback.
+/// @param widget constant pointer to base widget.
+/// @return Returns rect struct.
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
 
+/// @brief Default callback function for internal fit layout callback.
+/// @param widget pointer to base widget.
+/// @return Bool result.
 static result_bool default_internal_fit_layout_callback(base_widget* widget);
 
+/// @brief Default callback function for internal render callback.
+/// @param widget pointer to base widget.
+/// @return Bool result.
 static result_bool default_internal_render_callback(const base_widget* widget);
 
 result_box_ptr box_new(base_widget* parent_base)

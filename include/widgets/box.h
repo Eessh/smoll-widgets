@@ -3,18 +3,25 @@
 
 #include "../base_widget.h"
 
-typedef struct box box;
-
-struct box
+/// @brief Box Widget.
+typedef struct box
 {
+  /// @brief X-axis padding. This will be the value for both padding-left
+  ///        and padding-right.
   uint16 padding_x;
+
+  /// @brief Y-axis padding. This will be the value for both padding-top
+  ///        and padding-bottom.
   uint16 padding_y;
 
+  /// @brief Background color of box.
   color background;
 
+  /// @brief Pointer to base widget of box.
   base_widget* base;
-};
+} box;
 
+/// @brief Box pointer result.
 typedef struct result_box_ptr
 {
   bool ok;
@@ -25,6 +32,9 @@ typedef struct result_box_ptr
   };
 } result_box_ptr;
 
+/// @brief Creates new box widget.
+/// @param parent_base pointer to base widget of parent.
+/// @return Box pointer result.
 result_box_ptr box_new(base_widget* parent_base);
 
 #endif
