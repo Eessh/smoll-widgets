@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "../../include/smoll_context.h"
+#include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
 #include "sdl2_cairo_backend.h"
 
@@ -52,10 +53,29 @@ int main()
   // Setting default font (or) fallback font for smoll context
   smoll_context_set_default_font(sctx, "Consolas", 18);
 
+  // Creating box widget
+  box* bx = NULL;
+  {
+    result_box_ptr _ = box_new(NULL);
+    if(!_.ok)
+    {
+      printf("Error while creating box: %s", _.error);
+    }
+    bx = _.value;
+    bx->base->x = 0;
+    bx->base->y = 0;
+    bx->base->w = 1080;
+    bx->base->h = 720;
+    bx->background = (color){255, 255, 255, 255};
+  }
+
+  // Setting button as root widget of smoll context
+  smoll_context_set_root_widget(sctx, bx->base);
+
   // Creating button widget
   button* btn = NULL;
   {
-    result_button_ptr _ = button_new(NULL, "Hola!");
+    result_button_ptr _ = button_new(bx->base, "Hola!");
     if(!_.ok)
     {
       printf("Error while creating button: %s", _.error);
@@ -81,8 +101,34 @@ int main()
     button_set_mouse_leave_callback(btn, mouse_leave_callback);
   }
 
-  // Setting button as root widget of smoll context
-  smoll_context_set_root_widget(sctx, btn->base);
+  // Creating another button widget
+  button* btn1 = NULL;
+  {
+    result_button_ptr _ = button_new(bx->base, "Hello there!");
+    if(!_.ok)
+    {
+      printf("Error while creating button: %s", _.error);
+    }
+    btn1 = _.value;
+    btn1->base->x = 300;
+    btn1->base->y = 300;
+    btn1->base->w = 400;
+    btn1->base->h = 400;
+    btn1->padding_x = 20;
+    btn1->padding_y = 10;
+    btn1->foreground = (color){255, 255, 255, 255};
+    btn1->background = (color){16, 16, 16, 255};
+    btn1->hover_foreground = (color){0, 255, 0, 255};
+    btn1->hover_background = (color){64, 64, 64, 255};
+    btn1->click_foreground = (color){255, 0, 0, 255};
+    btn1->click_background = (color){128, 128, 128, 255};
+
+    // Attaching event callbacks
+    button_set_mouse_down_callback(btn1, mouse_button_down_callback);
+    button_set_mouse_up_callback(btn1, mouse_button_up_callback);
+    button_set_mouse_enter_callback(btn1, mouse_enter_callback);
+    button_set_mouse_leave_callback(btn1, mouse_leave_callback);
+  }
 
   // Calling initial layouting, rendering functions
   smoll_context_initial_fit_layout(sctx);
