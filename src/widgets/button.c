@@ -209,7 +209,7 @@ result_void button_set_text(button* btn, const char* text)
   }
 
   char* temp = NULL;
-  temp = strdup(text);
+  temp = _strdup(text);
   if(!text)
   {
     return error(result_void, "Unable to copy text into button widget!");
