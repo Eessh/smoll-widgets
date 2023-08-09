@@ -134,6 +134,12 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
 
   btn->private = btn_private;
 
+  // attaching this button to parent's children list
+  if(parent_base)
+  {
+    base_widget_add_child(parent_base, btn->base);
+  }
+
   // assigning context
   if(parent_base)
   {
@@ -344,8 +350,6 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
                  "Cannot process internal fit layout callback on "
                  "a NULL pointed base widget!");
   }
-
-  printf("Called fit layout.\n");
 
   button* btn = (button*)widget->derived;
 
