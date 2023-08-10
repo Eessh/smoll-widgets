@@ -16,6 +16,8 @@ void mouse_button_down_callback(button* btn, mouse_button_event event);
 void mouse_button_up_callback(button* btn, mouse_button_event event);
 void mouse_enter_callback(button* btn, mouse_motion_event event);
 void mouse_leave_callback(button* btn, mouse_motion_event event);
+void on_callback(toggle* t);
+void off_callback(toggle* t);
 
 // Event handler
 LRESULT CALLBACK WndProc(HWND window,
@@ -185,6 +187,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     button_set_mouse_leave_callback(btn1, mouse_leave_callback);
   }
 
+  // Creating toggle widget
   toggle* t = NULL;
   {
     result_toggle_ptr _ = toggle_new(bx->base);
@@ -200,6 +203,10 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     t->handle_width_fraction = 0.4;
     t->padding_x = 2;
     t->padding_y = 2;
+
+    // Attaching event callbacks
+    toggle_set_on_callback(t, on_callback);
+    toggle_set_off_callback(t, off_callback);
   }
 
   // Calling initial layouting, rendering functions
@@ -246,6 +253,16 @@ void mouse_enter_callback(button* btn, mouse_motion_event event)
 void mouse_leave_callback(button* btn, mouse_motion_event event)
 {
   printf("Mouse left button!\n");
+}
+
+void on_callback(toggle* t)
+{
+  printf("Toggle ON!\n");
+}
+
+void off_callback(toggle* t)
+{
+  printf("Toggle OFF!\n");
 }
 
 // Event handler implementation

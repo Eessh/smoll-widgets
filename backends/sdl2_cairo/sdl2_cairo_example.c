@@ -2,6 +2,7 @@
 #include "../../include/smoll_context.h"
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
+#include "../../include/widgets/toggle.h"
 #include "sdl2_cairo_backend.h"
 
 // Callbacks function prototypes
@@ -9,6 +10,8 @@ void mouse_button_down_callback(button* btn, mouse_button_event event);
 void mouse_button_up_callback(button* btn, mouse_button_event event);
 void mouse_enter_callback(button* btn, mouse_motion_event event);
 void mouse_leave_callback(button* btn, mouse_motion_event event);
+void on_callback(toggle* t);
+void off_callback(toggle* t);
 
 int main()
 {
@@ -130,6 +133,28 @@ int main()
     button_set_mouse_leave_callback(btn1, mouse_leave_callback);
   }
 
+  // Creating toggle widget
+  toggle* t = NULL;
+  {
+    result_toggle_ptr _ = toggle_new(bx->base);
+    if(!_.ok)
+    {
+      printf("Error while creating toggle: %s", _.error);
+    }
+    t = _.value;
+    t->base->x = 100;
+    t->base->y = 200;
+    t->base->w = 50;
+    t->base->h = 20;
+    t->handle_width_fraction = 0.4;
+    t->padding_x = 2;
+    t->padding_y = 2;
+
+    // Attaching event callbacks
+    toggle_set_on_callback(t, on_callback);
+    toggle_set_off_callback(t, off_callback);
+  }
+
   // Calling initial layouting, rendering functions
   smoll_context_initial_fit_layout(sctx);
   smoll_context_initial_render(sctx);
@@ -205,4 +230,14 @@ void mouse_enter_callback(button* btn, mouse_motion_event event)
 void mouse_leave_callback(button* btn, mouse_motion_event event)
 {
   printf("Mouse left button!\n");
+}
+
+void on_callback(toggle* t)
+{
+  printf("Toggle ON!\n");
+}
+
+void off_callback(toggle* t)
+{
+  printf("Toggle OFF!\n");
 }
