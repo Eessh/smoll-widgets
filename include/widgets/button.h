@@ -10,7 +10,9 @@ typedef struct button button;
 typedef struct button_private button_private;
 
 /// @brief Button Widget.
-///        Use button_new() to create this widget.
+///        Use `button_new()` to create this widget.
+///        Children should not be attached to this widget.
+///        This should not be root widget.
 struct button
 {
   /// @brief X-axis padding. This will be the value for both padding-left
