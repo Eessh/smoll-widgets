@@ -2,6 +2,7 @@
 #include "../../include/smoll_context.h"
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
+#include "../../include/widgets/toggle.h"
 #include "win32_cairo_backend.h"
 
 // Static because these are needed by
@@ -105,7 +106,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   }
 
   // Setting default font (or) fallback font for smoll context
-  smoll_context_set_default_font(sctx, "Consolas", 18);
+  smoll_context_set_default_font(sctx, "Consolas", 14);
 
   // Creating box widget
   box* bx = NULL;
@@ -139,8 +140,8 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     btn->base->y = 100;
     btn->base->w = 400;
     btn->base->h = 400;
-    btn->padding_x = 20;
-    btn->padding_y = 10;
+    btn->padding_x = 6;
+    btn->padding_y = 4;
     btn->foreground = (color){255, 255, 255, 255};
     btn->background = (color){16, 16, 16, 255};
     btn->hover_foreground = (color){0, 255, 0, 255};
@@ -168,8 +169,8 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     btn1->base->y = 300;
     btn1->base->w = 400;
     btn1->base->h = 400;
-    btn1->padding_x = 20;
-    btn1->padding_y = 10;
+    btn1->padding_x = 6;
+    btn1->padding_y = 4;
     btn1->foreground = (color){255, 255, 255, 255};
     btn1->background = (color){16, 16, 16, 255};
     btn1->hover_foreground = (color){0, 255, 0, 255};
@@ -182,6 +183,23 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     button_set_mouse_up_callback(btn1, mouse_button_up_callback);
     button_set_mouse_enter_callback(btn1, mouse_enter_callback);
     button_set_mouse_leave_callback(btn1, mouse_leave_callback);
+  }
+
+  toggle* t = NULL;
+  {
+    result_toggle_ptr _ = toggle_new(bx->base);
+    if(!_.ok)
+    {
+      printf("Error while creating toggle: %s", _.error);
+    }
+    t = _.value;
+    t->base->x = 100;
+    t->base->y = 200;
+    t->base->w = 50;
+    t->base->h = 20;
+    t->handle_width_fraction = 0.4;
+    t->padding_x = 2;
+    t->padding_y = 2;
   }
 
   // Calling initial layouting, rendering functions
