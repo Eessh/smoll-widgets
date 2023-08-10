@@ -132,7 +132,7 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   btn->base->derived = btn;
   btn->base->parent = parent_base;
 
-  btn->private = btn_private;
+  btn->private_data = btn_private;
 
   // attaching this button to parent's children list
   if(parent_base)
@@ -169,11 +169,11 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   btn->click_foreground = (color){255, 255, 255, 255};
   btn->click_background = (color){0, 0, 0, 255};
 
-  btn->private->state = BUTTON_NORMAL;
+  btn->private_data->state = BUTTON_NORMAL;
 
-  btn->private->text = NULL;
-  btn->private->text = _strdup(text);
-  if(!btn->private->text)
+  btn->private_data->text = NULL;
+  btn->private_data->text = _strdup(text);
+  if(!btn->private_data->text)
   {
     base_widget_free(btn->base);
     free(btn);
@@ -197,7 +197,7 @@ result_const_char_ptr button_get_text(const button* btn)
                  "Cannot get text of NULL pointing button widget!");
   }
 
-  return ok(result_const_char_ptr, (const char*)btn->private->text);
+  return ok(result_const_char_ptr, (const char*)btn->private_data->text);
 }
 
 result_void button_set_text(button* btn, const char* text)
@@ -215,8 +215,8 @@ result_void button_set_text(button* btn, const char* text)
     return error(result_void, "Unable to copy text into button widget!");
   }
 
-  free(btn->private->text);
-  btn->private->text = temp;
+  free(btn->private_data->text);
+  btn->private_data->text = temp;
 
   btn->base->internal_fit_layout_callback(btn->base);
   btn->base->internal_render_callback(btn->base);
@@ -242,7 +242,7 @@ result_void button_set_mouse_down_callback(button* btn,
       "Cannot register NULL pointing mouse down callback to button widget!");
   }
 
-  btn->private->user_mouse_button_down_callback = callback;
+  btn->private_data->user_mouse_button_down_callback = callback;
 
   return ok_void();
 }
@@ -265,7 +265,7 @@ result_void button_set_mouse_up_callback(button* btn,
       "Cannot register NULL pointing mouse up callback to button widget!");
   }
 
-  btn->private->user_mouse_button_up_callback = callback;
+  btn->private_data->user_mouse_button_up_callback = callback;
 
   return ok_void();
 }
@@ -288,7 +288,7 @@ button_set_mouse_enter_callback(button* btn,
       "Cannot register NULL pointing mouse enter callback to button widget!");
   }
 
-  btn->private->user_mouse_enter_callback = callback;
+  btn->private_data->user_mouse_enter_callback = callback;
 
   return ok_void();
 }
@@ -311,7 +311,7 @@ button_set_mouse_leave_callback(button* btn,
       "Cannot register NULL pointing mouse leave callback to button widget!");
   }
 
-  btn->private->user_mouse_leave_callback = callback;
+  btn->private_data->user_mouse_leave_callback = callback;
 
   return ok_void();
 }
@@ -332,10 +332,10 @@ static void default_internal_derived_free_callback(base_widget* widget)
   button* btn = (button*)widget->derived;
 
   // freeing button text
-  free(btn->private->text);
+  free(btn->private_data->text);
 
   // freeing button private struct
-  free(btn->private);
+  free(btn->private_data);
 
   // freeing button object
   // freeing base_widget is taken care by internal_free_callback
@@ -354,7 +354,7 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
   button* btn = (button*)widget->derived;
 
   result_text_dimensions ___ = widget->context->backend->get_text_dimensions(
-    btn->private->text, widget->context->font, widget->context->font_size);
+    btn->private_data->text, widget->context->font, widget->context->font_size);
   if(!___.ok)
   {
     return error(result_bool, ___.error);
@@ -379,15 +379,15 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   button* btn = (button*)widget->derived;
 
   color foreground =
-    btn->private->state == BUTTON_NORMAL
+    btn->private_data->state == BUTTON_NORMAL
       ? btn->foreground
-      : (btn->private->state == BUTTON_HOVERED ? btn->hover_foreground
-                                               : btn->click_foreground);
+      : (btn->private_data->state == BUTTON_HOVERED ? btn->hover_foreground
+                                                    : btn->click_foreground);
   color background =
-    btn->private->state == BUTTON_NORMAL
+    btn->private_data->state == BUTTON_NORMAL
       ? btn->background
-      : (btn->private->state == BUTTON_HOVERED ? btn->hover_background
-                                               : btn->click_background);
+      : (btn->private_data->state == BUTTON_HOVERED ? btn->hover_background
+                                                    : btn->click_background);
 
   result_void __ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,
@@ -406,7 +406,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   result_void ___ =
     command_buffer_add_render_text_command(widget->context->cmd_buffer,
-                                           btn->private->text,
+                                           btn->private_data->text,
                                            foreground,
                                            text_bounding_rect,
                                            background);
@@ -422,7 +422,7 @@ static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->private->state = BUTTON_CLICKED;
+  btn->private_data->state = BUTTON_CLICKED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -433,9 +433,9 @@ static bool default_mouse_button_down_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->private->user_mouse_button_down_callback)
+  if(btn->private_data->user_mouse_button_down_callback)
   {
-    btn->private->user_mouse_button_down_callback(btn, event);
+    btn->private_data->user_mouse_button_down_callback(btn, event);
   }
 
   return _.value;
@@ -445,7 +445,7 @@ static bool default_mouse_button_up_callback(base_widget* widget,
                                              mouse_button_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->private->state = BUTTON_HOVERED;
+  btn->private_data->state = BUTTON_HOVERED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -456,9 +456,9 @@ static bool default_mouse_button_up_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->private->user_mouse_button_up_callback)
+  if(btn->private_data->user_mouse_button_up_callback)
   {
-    btn->private->user_mouse_button_up_callback(btn, event);
+    btn->private_data->user_mouse_button_up_callback(btn, event);
   }
 
   return _.value;
@@ -468,7 +468,7 @@ static bool default_mouse_enter_callback(base_widget* widget,
                                          mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->private->state = BUTTON_HOVERED;
+  btn->private_data->state = BUTTON_HOVERED;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -479,9 +479,9 @@ static bool default_mouse_enter_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->private->user_mouse_enter_callback)
+  if(btn->private_data->user_mouse_enter_callback)
   {
-    btn->private->user_mouse_enter_callback(btn, event);
+    btn->private_data->user_mouse_enter_callback(btn, event);
   }
 
   return _.value;
@@ -491,7 +491,7 @@ static bool default_mouse_leave_callback(base_widget* widget,
                                          mouse_motion_event event)
 {
   button* btn = (button*)widget->derived;
-  btn->private->state = BUTTON_NORMAL;
+  btn->private_data->state = BUTTON_NORMAL;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -502,9 +502,9 @@ static bool default_mouse_leave_callback(base_widget* widget,
   // calling user registered event callback
   // maybe we should call this on another thread
   // as this will block the ui thread
-  if(btn->private->user_mouse_leave_callback)
+  if(btn->private_data->user_mouse_leave_callback)
   {
-    btn->private->user_mouse_leave_callback(btn, event);
+    btn->private_data->user_mouse_leave_callback(btn, event);
   }
 
   return _.value;

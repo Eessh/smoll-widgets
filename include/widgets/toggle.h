@@ -44,7 +44,7 @@ typedef struct toggle
   base_widget* base;
 
   /// @brief Pointer to private data of toggle.
-  toggle_private* private;
+  toggle_private* private_data;
 } toggle;
 
 /// @brief Toggle pointer result.

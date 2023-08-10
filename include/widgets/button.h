@@ -46,7 +46,7 @@ typedef struct button
   base_widget* base;
 
   /// @brief Pointer to private data of button.
-  button_private* private;
+  button_private* private_data;
 } button;
 
 /// @brief Button pointer result.
