@@ -3,9 +3,6 @@
 
 #include "../base_widget.h"
 
-/// @brief Button Widget.
-typedef struct button button;
-
 /// @brief Button widget private data.
 typedef struct button_private button_private;
 
@@ -13,7 +10,7 @@ typedef struct button_private button_private;
 ///        Use `button_new()` to create this widget.
 ///        Children should not be attached to this widget.
 ///        This should not be root widget.
-struct button
+typedef struct button
 {
   /// @brief X-axis padding. This will be the value for both padding-left
   ///        and padding-right.
@@ -50,7 +47,7 @@ struct button
 
   /// @brief Pointer to private data of button.
   button_private* private;
-};
+} button;
 
 /// @brief Button pointer result.
 typedef struct result_button_ptr
