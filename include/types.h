@@ -56,6 +56,11 @@ typedef double float64;
 ///        Range: (3.4e-4932, 3.4e+4932)
 typedef long double float80;
 
+typedef struct coords
+{
+  int16 x, y;
+} coords;
+
 /// @brief Rectange with top-left as origin
 typedef struct rect
 {

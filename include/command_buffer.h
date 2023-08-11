@@ -11,6 +11,30 @@ typedef enum command_type
   POP_CLIP_RECT
 } command_type;
 
+typedef struct render_rect_data
+{
+  rect bounding_rect;
+  color rect_color;
+} render_rect_data;
+
+typedef struct render_text_data
+{
+  const char* text;
+  color text_color;
+  coords text_coordinates;
+} render_text_data;
+
+typedef struct command_new_struct
+{
+  command_type type;
+  union
+  {
+    render_rect_data render_rect;
+    render_text_data render_text;
+    rect clip_rect;
+  };
+} command_new_struct;
+
 typedef struct command
 {
   command_type type;
