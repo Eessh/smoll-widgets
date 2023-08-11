@@ -64,6 +64,35 @@ result_command_ptr command_new_render_text(const char* text,
   return ok(result_command_ptr, cmd);
 }
 
+result_command_ptr command_new_push_clip_rect(rect clip_rect)
+{
+  result_command_ptr _ = command_new();
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  command* cmd = _.value;
+  cmd->type = PUSH_CLIP_RECT;
+  cmd->bounding_rect = clip_rect;
+
+  return ok(result_command_ptr, cmd);
+}
+
+result_command_ptr command_new_pop_clip_rect()
+{
+  result_command_ptr _ = command_new();
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  command* cmd = _.value;
+  cmd->type = POP_CLIP_RECT;
+
+  return ok(result_command_ptr, cmd);
+}
+
 result_void command_free(command* cmd)
 {
   if(!cmd)

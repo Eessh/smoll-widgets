@@ -6,7 +6,9 @@
 typedef enum command_type
 {
   RENDER_TEXT,
-  RENDER_RECT
+  RENDER_RECT,
+  PUSH_CLIP_RECT,
+  POP_CLIP_RECT
 } command_type;
 
 typedef struct command
@@ -54,6 +56,8 @@ result_command_ptr command_new_render_text(const char* text,
                                            const color text_color,
                                            const rect bounding_rect,
                                            const color rect_color);
+result_command_ptr command_new_push_clip_rect(rect clip_rect);
+result_command_ptr command_new_pop_clip_rect();
 result_void command_free(command* cmd);
 
 result_command_buffer_ptr command_buffer_new();
