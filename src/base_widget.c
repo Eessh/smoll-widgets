@@ -8,6 +8,8 @@
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
 
+static result_bool default_internal_adjust_layout_callback(base_widget* widget);
+
 /// @brief Default callback function for internal free callback.
 /// @param widget pointer to base widget.
 /// @return Void.
@@ -93,6 +95,7 @@ result_base_widget_ptr base_widget_new()
   widget->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
   widget->internal_fit_layout_callback = NULL;
+  widget->internal_adjust_layout_callback = NULL;
   widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
 
@@ -219,6 +222,26 @@ result_void base_widget_free(base_widget* widget)
 rect default_internal_get_bounding_rect_callback(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
+}
+
+static result_bool default_internal_adjust_layout_callback(base_widget* widget)
+{
+  /// FIXME: Fix this shit!
+
+  result_bool _ = widget->internal_fit_layout_callback(widget, false);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  if(!_.value)
+  {
+    return ok(result_bool, true);
+  }
+
+  base_widget_child_node* node = widget->children_head;
+
+  return ok(result_bool, true);
 }
 
 static void default_internal_free_callback(base_widget* widget)

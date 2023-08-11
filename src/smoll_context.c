@@ -336,7 +336,7 @@ result_void smoll_context_initial_fit_layout(smoll_context* context)
   if(context->internal_ctx->root->internal_fit_layout_callback)
   {
     context->internal_ctx->root->internal_fit_layout_callback(
-      context->internal_ctx->root);
+      context->internal_ctx->root, true);
   }
 
   return ok_void();

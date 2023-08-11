@@ -61,7 +61,8 @@ static void default_internal_derived_free_callback(base_widget* widget);
 /// @brief Default callback function for internal fit layout callback.
 /// @param widget pointer to base widget.
 /// @return Bool result.
-static result_bool default_internal_fit_layout_callback(base_widget* widget);
+static result_bool default_internal_fit_layout_callback(base_widget* widget,
+                                                        bool call_on_children);
 
 /// @brief Default callback function for internal render callback.
 /// @param widget pointer to base widget.
@@ -180,12 +181,6 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
     return error(result_button_ptr, "Cannot copy text for button widget!");
   }
 
-  if(parent_base)
-  {
-    // calling fit layout to initialize the bounding rect properly
-    btn->base->internal_fit_layout_callback(btn->base);
-  }
-
   return ok(result_button_ptr, btn);
 }
 
@@ -218,7 +213,7 @@ result_void button_set_text(button* btn, const char* text)
   free(btn->private_data->text);
   btn->private_data->text = temp;
 
-  btn->base->internal_fit_layout_callback(btn->base);
+  btn->base->internal_fit_layout_callback(btn->base, false);
   btn->base->internal_render_callback(btn->base);
 
   return ok_void();
@@ -342,7 +337,8 @@ static void default_internal_derived_free_callback(base_widget* widget)
   free(btn);
 }
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget)
+static result_bool default_internal_fit_layout_callback(base_widget* widget,
+                                                        bool call_on_children)
 {
   if(!widget)
   {
@@ -361,8 +357,16 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget)
   }
   text_dimensions dimensions = ___.value;
 
-  widget->w = dimensions.w + 2 * btn->padding_x;
-  widget->h = dimensions.h + 2 * btn->padding_y;
+  uint16 new_w = dimensions.w + 2 * btn->padding_x;
+  uint16 new_h = dimensions.h + 2 * btn->padding_y;
+
+  if(widget->w == new_w && widget->h == new_h)
+  {
+    return ok(result_bool, false);
+  }
+
+  widget->w = new_w;
+  widget->h = new_h;
 
   return ok(result_bool, true);
 }

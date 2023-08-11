@@ -58,7 +58,12 @@ struct base_widget
   ///       result_bool ?
 
   /// @brief Internal callback for adjusting layout of this widget.
-  result_bool (*internal_fit_layout_callback)(base_widget*);
+  result_bool (*internal_fit_layout_callback)(base_widget*, bool);
+
+  /// @brief Internal callback for adjusting layout and sizing of this widget,
+  ///        and automatically calling this callback on parent widgets
+  ///        if needs resizing.
+  result_bool (*internal_adjust_layout_callback)(base_widget*);
 
   /// @brief Internal callback for re-assigning positions to all children.
   result_bool (*internal_assign_positions)(base_widget*);
