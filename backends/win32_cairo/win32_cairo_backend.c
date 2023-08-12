@@ -173,7 +173,7 @@ result_void win32_cairo_backend_process_command(const command* cmd)
                           (float32)(rect_color.a) / 255.0f);
     cairo_fill(cairo);
   }
-  else
+  else if(cmd->type == RENDER_TEXT)
   {
     const char* text = cmd->data.render_text.text;
     const color text_color = cmd->data.render_text.text_color;
@@ -190,6 +190,17 @@ result_void win32_cairo_backend_process_command(const command* cmd)
                   text_coordinates.y + font_extents.height -
                     font_extents.descent);
     cairo_show_text(cairo, text);
+  }
+  else if(cmd->type == PUSH_CLIP_RECT)
+  {
+    rect clip_rect = cmd->data.clip_rect;
+    cairo_rectangle(cairo, clip_rect.x, clip_rect.y, clip_rect.w, clip_rect.h);
+    cairo_clip(cairo);
+  }
+  else
+  {
+    // POP_CLIP_RECT
+    cairo_reset_clip(cairo);
   }
 
   return ok_void();
