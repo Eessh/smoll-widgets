@@ -4,83 +4,168 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/// @brief 8-bit (1-byte) character,
-///        Range: (-128, 127)
+/**
+ * 8-bit (1-byte) character, Range: (-128, 127)
+ */
 typedef char char8;
 
-/// @brief 8-bit (1-byte) unsigned character,
-///        Range: (0, 255)
+/**
+ * 8-bit (1-byte) unsigned character, Range: (0, 255)
+ */
 typedef unsigned char uchar8;
 
-/// @brief 8-bit (1-byte) integer,
-///        Range: (-128, 127)
+/**
+ * 8-bit (1-byte) integer, Range: (-128, 127)
+ */
 typedef int8_t int8;
 
-/// @brief 8-bit (1-byte) unsigned integer,
-///        Range: (0, 255)
+/**
+ * 8-bit (1-byte) unsigned integer, Range: (0, 255)
+ */
 typedef uint8_t uint8;
 
-/// @brief 16-bit (2-bytes) integer,
-///        Range: (-32768, 32767)
+/**
+ * 16-bit (2-bytes) integer, Range: (-32768, 32767)
+ */
 typedef int16_t int16;
 
-/// @brief 16-bit (2-bytes) unsigned integer,
-///        Range: (0, 65535)
+/**
+ * 16-bit (2-bytes) unsigned integer, Range: (0, 65535)
+ */
 typedef uint16_t uint16;
 
-/// @brief 32-bit (4-bytes) integer,
-///        Range: (-2147483648, 2147483647)
+/**
+ * 32-bit (4-bytes) integer, Range: (-2147483648, 2147483647)
+ */
 typedef int32_t int32;
 
-/// @brief 32-bit (4-bytes) unsigned integer,
-///        Range: (0, 4294967295)
+/**
+ * 32-bit (4-bytes) unsigned integer, Range: (0, 4294967295)
+ */
 typedef uint32_t uint32;
 
-/// @brief 64-bit (8-bytes) integer,
-///        Range: (-9223372036854775808, 9223372036854775807)
+/**
+ * 64-bit (8-bytes) integer,
+ * Range: (-9223372036854775808, 9223372036854775807)
+ */
 typedef int64_t int64;
 
-/// @brief 64-bit (8-bytes) unsigned integer,
-///        Range: (0, 18446744073709551615)
+/**
+ * 64-bit (8-bytes) unsigned integer,
+ * Range: (0, 18446744073709551615)
+ */
 typedef uint64_t uint64;
 
-/// @brief 32-bit (4-bytes) float,
-///        Range: (3.4e-38, 3.4e+38)
+/**
+ * 32-bit (4-bytes) float, Range: (3.4e-38, 3.4e+38)
+ */
 typedef float float32;
 
-/// @brief 64-bit (8-bytes) float (double),
-///        Range: (1.7e-308, 1.7e+308)
+/**
+ * 64-bit (8-bytes) float(double), Range: (1.7e-308, 1.7e+308)
+ */
 typedef double float64;
 
-/// @brief 80-bit (10-bytes) float (long double),
-///        Range: (3.4e-4932, 3.4e+4932)
+/**
+ * 80-bit (10-bytes) float(long double), Range: (3.4e-4932, 3.4e+4932)
+ */
 typedef long double float80;
 
-typedef struct coords
+/**
+ * Point struct, contains coordinates of point with origin at top-left.
+ */
+typedef struct point
 {
-  int16 x, y;
-} coords;
+  /**
+   * X-coordinate of point.
+   */
+  int16 x;
 
-/// @brief Rectange with top-left as origin
+  /**
+   * Y-coordinate of point.
+   */
+  int16 y;
+} point;
+
+/**
+ * Rect struct, contains coordinates and size of rectangle with
+ * origin at top-left.
+ */
 typedef struct rect
 {
-  int16 x, y;
-  uint16 w, h;
+  /**
+   * X-coordinate of top-left corner of rectangle.
+   */
+  int16 x;
+
+  /**
+   * Y-coordinate of top-left corner of rectangle.
+   */
+  int16 y;
+
+  /**
+   * Width of rectangle.
+   */
+  uint16 w;
+
+  /**
+   * Height of rectangle.
+   */
+  uint16 h;
 } rect;
 
-/// @brief Color with RGBA,
-///        each component ranges from [0, 255]
+/**
+ * Color with RGBA components, each component ranges from [0, 255].
+ */
 typedef struct color
 {
-  uint8 r, g, b, a;
+  /**
+   * Red color component.
+   */
+  uint8 r;
+
+  /**
+   * Green color component.
+   */
+  uint8 g;
+
+  /**
+   * Blue color component.
+   */
+  uint8 b;
+
+  /**
+   * Alpha color component.
+   */
+  uint8 a;
 } color;
 
+///////////////////////////////////////////////////////////////////////////////
+/// * Result Types
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Void result, contains no data. Just reports if there is an error.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_void
 {
   bool ok;
   const char* error;
 } result_void;
 
+/**
+ * Bool result, contains `bool` value optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `bool` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_bool
 {
   bool ok;
@@ -91,6 +176,15 @@ typedef struct result_bool
   };
 } result_bool;
 
+/**
+ * Char result, contains `char` value optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `char` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_char
 {
   bool ok;
@@ -101,6 +195,15 @@ typedef struct result_char
   };
 } result_char;
 
+/**
+ * UChar result, contains `uchar` value optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `uchar` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_uchar
 {
   bool ok;
@@ -111,6 +214,15 @@ typedef struct result_uchar
   };
 } result_uchar;
 
+/**
+ * CharPtr result, contains `char*` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `char*` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_char_ptr
 {
   bool ok;
@@ -121,6 +233,15 @@ typedef struct result_char_ptr
   };
 } result_char_ptr;
 
+/**
+ * ConstCharPtr result, contains `const char*` value optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `const char*` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_const_char_ptr
 {
   bool ok;
@@ -131,6 +252,15 @@ typedef struct result_const_char_ptr
   };
 } result_const_char_ptr;
 
+/**
+ * Int8 result, contains `int8` value optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `int8` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_int8
 {
   bool ok;
@@ -141,6 +271,15 @@ typedef struct result_int8
   };
 } result_int8;
 
+/**
+ * UInt8 result, contains `uint8` value optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `uint8` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_uint8
 {
   bool ok;
@@ -151,6 +290,15 @@ typedef struct result_uint8
   };
 } result_uint8;
 
+/**
+ * Int16 result, contains `int16` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `int16` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_int16
 {
   bool ok;
@@ -161,6 +309,15 @@ typedef struct result_int16
   };
 } result_int16;
 
+/**
+ * UInt16 result, contains `uint16` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `uint16` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_uint16
 {
   bool ok;
@@ -171,6 +328,15 @@ typedef struct result_uint16
   };
 } result_uint16;
 
+/**
+ * Int32 result, contains `int32` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `int32` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_int32
 {
   bool ok;
@@ -181,6 +347,15 @@ typedef struct result_int32
   };
 } result_int32;
 
+/**
+ * UInt32 result, contains `uint32` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `uint32` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_uint32
 {
   bool ok;
@@ -191,6 +366,15 @@ typedef struct result_uint32
   };
 } result_uint32;
 
+/**
+ * Int64 result, contains `int64` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `int64` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_int64
 {
   bool ok;
@@ -201,6 +385,15 @@ typedef struct result_int64
   };
 } result_int64;
 
+/**
+ * UInt64 result, contains `uint64` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `uint64` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_uint64
 {
   bool ok;
@@ -211,6 +404,15 @@ typedef struct result_uint64
   };
 } result_uint64;
 
+/**
+ * Float32 result, contains `float32` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `float32` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_float32
 {
   bool ok;
@@ -221,6 +423,15 @@ typedef struct result_float32
   };
 } result_float32;
 
+/**
+ * Float64 result, contains `float64` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `float64` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_float64
 {
   bool ok;
@@ -231,6 +442,15 @@ typedef struct result_float64
   };
 } result_float64;
 
+/**
+ * Float80 result, contains `float80` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `float80` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_float80
 {
   bool ok;
@@ -241,6 +461,15 @@ typedef struct result_float80
   };
 } result_float80;
 
+/**
+ * Rect result, contains `rect` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `rect` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_rect
 {
   bool ok;
@@ -251,6 +480,15 @@ typedef struct result_rect
   };
 } result_rect;
 
+/**
+ * Color result, contains `color` optionally.
+ * 
+ * @member ok - `true` if no errors. Use this to check if this is valid result.
+ * 
+ * @member value - the `color` value.
+ * 
+ * @member error - pointer to error string. `NULL` if no errors.
+ */
 typedef struct result_color
 {
   bool ok;
