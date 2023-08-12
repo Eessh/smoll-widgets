@@ -393,27 +393,23 @@ static result_bool default_internal_render_callback(const base_widget* widget)
       : (btn->private_data->state == BUTTON_HOVERED ? btn->hover_background
                                                     : btn->click_background);
 
+  rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
+
   result_void __ = command_buffer_add_render_rect_command(
-    widget->context->cmd_buffer,
-    widget->internal_get_bounding_rect_callback(widget),
-    background);
+    widget->context->cmd_buffer, bounding_rect, background);
   if(!__.ok)
   {
     return error(result_bool, __.error);
   }
 
-  rect text_bounding_rect = widget->internal_get_bounding_rect_callback(widget);
-  text_bounding_rect.x += (int16)(btn->padding_x);
-  text_bounding_rect.y += (int16)(btn->padding_y);
-  text_bounding_rect.w -= 2 * btn->padding_x;
-  text_bounding_rect.h -= 2 * btn->padding_y;
+  bounding_rect.x += (int16)(btn->padding_x);
+  bounding_rect.y += (int16)(btn->padding_y);
 
-  result_void ___ =
-    command_buffer_add_render_text_command(widget->context->cmd_buffer,
-                                           btn->private_data->text,
-                                           foreground,
-                                           text_bounding_rect,
-                                           background);
+  result_void ___ = command_buffer_add_render_text_command(
+    widget->context->cmd_buffer,
+    btn->private_data->text,
+    foreground,
+    (point){.x = bounding_rect.x, .y = bounding_rect.y});
   if(!___.ok)
   {
     return error(result_bool, ___.error);

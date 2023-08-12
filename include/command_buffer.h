@@ -21,10 +21,10 @@ typedef struct render_text_data
 {
   const char* text;
   color text_color;
-  coords text_coordinates;
+  point text_coordinates;
 } render_text_data;
 
-typedef struct command_new_struct
+typedef struct command
 {
   command_type type;
   union
@@ -32,24 +32,20 @@ typedef struct command_new_struct
     render_rect_data render_rect;
     render_text_data render_text;
     rect clip_rect;
-  };
-} command_new_struct;
-
-typedef struct command
-{
-  command_type type;
-  rect bounding_rect;
-  color rect_color;
-  const char* text;
-  color text_color;
-
-  struct command* next;
+  } data;
 } command;
+
+typedef struct command_node
+{
+  command* cmd;
+
+  struct command_node* next;
+} command_node;
 
 typedef struct command_buffer
 {
-  command* head;
-  command* tail;
+  command_node* head;
+  command_node* tail;
 
   uint16 length;
 } command_buffer;
@@ -78,8 +74,7 @@ result_command_ptr command_new_render_rect(const rect bounding_rect,
                                            const color rect_color);
 result_command_ptr command_new_render_text(const char* text,
                                            const color text_color,
-                                           const rect bounding_rect,
-                                           const color rect_color);
+                                           point text_coordinates);
 result_command_ptr command_new_push_clip_rect(rect clip_rect);
 result_command_ptr command_new_pop_clip_rect();
 result_void command_free(command* cmd);
@@ -92,8 +87,10 @@ result_void command_buffer_add_render_rect_command(command_buffer* buffer,
 result_void command_buffer_add_render_text_command(command_buffer* buffer,
                                                    const char* text,
                                                    const color text_color,
-                                                   const rect bounding_rect,
-                                                   const color rect_color);
+                                                   point text_coordinates);
+result_void command_buffer_add_push_clip_rect_command(command_buffer* buffer,
+                                                      rect clip_rect);
+result_void command_buffer_add_pop_clip_rect_command(command_buffer* buffer);
 result_command_ptr command_buffer_get_next_command(command_buffer* buffer);
 result_void command_buffer_clear_commands(command_buffer* buffer);
 result_void command_buffer_free(command_buffer* buffer);
