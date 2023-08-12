@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
+#include "cairo-windows-1.17.2/include/cairo.h"
 #include "windowsx.h"
 
 static cairo_t* cairo = NULL;
@@ -158,33 +159,40 @@ result_void win32_cairo_backend_process_command(const command* cmd)
 
   if(cmd->type == RENDER_RECT)
   {
+    const rect bounding_rect = cmd->data.render_rect.bounding_rect;
+    const color rect_color = cmd->data.render_rect.rect_color;
     cairo_rectangle(cairo,
-                    cmd->bounding_rect.x,
-                    cmd->bounding_rect.y,
-                    cmd->bounding_rect.w,
-                    cmd->bounding_rect.h);
+                    bounding_rect.x,
+                    bounding_rect.y,
+                    bounding_rect.w,
+                    bounding_rect.h);
     cairo_set_source_rgba(cairo,
-                          (float32)(cmd->rect_color.r) / 255.0f,
-                          (float32)(cmd->rect_color.g) / 255.0f,
-                          (float32)(cmd->rect_color.b) / 255.0f,
-                          (float32)(cmd->rect_color.a) / 255.0f);
+                          (float32)(rect_color.r) / 255.0f,
+                          (float32)(rect_color.g) / 255.0f,
+                          (float32)(rect_color.b) / 255.0f,
+                          (float32)(rect_color.a) / 255.0f);
     cairo_fill(cairo);
   }
   else
   {
+    const char* text = cmd->data.render_text.text;
+    const color text_color = cmd->data.render_text.text_color;
+    const point text_coordinates = cmd->data.render_text.text_coordinates;
     cairo_set_source_rgba(cairo,
-                          (float32)(cmd->text_color.r) / 255.0f,
-                          (float32)(cmd->text_color.g) / 255.0f,
-                          (float32)(cmd->text_color.b) / 255.0f,
-                          (float32)(cmd->text_color.a) / 255.0f);
+                          (float32)(text_color.r) / 255.0f,
+                          (float32)(text_color.g) / 255.0f,
+                          (float32)(text_color.b) / 255.0f,
+                          (float32)(text_color.a) / 255.0f);
     cairo_font_extents_t font_extents;
     cairo_font_extents(cairo, &font_extents);
     cairo_move_to(cairo,
-                  cmd->bounding_rect.x,
-                  cmd->bounding_rect.y + font_extents.height -
+                  text_coordinates.x,
+                  text_coordinates.y + font_extents.height -
                     font_extents.descent);
-    cairo_show_text(cairo, cmd->text);
+    cairo_show_text(cairo, text);
   }
+
+  return ok_void();
 }
 
 result_void init_cairo(HDC hdc)
