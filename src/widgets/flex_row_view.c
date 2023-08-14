@@ -61,7 +61,10 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
     base_widget_child_node* node = widget->children_head;
     while(node)
     {
-      node->child->internal_fit_layout_callback(node->child, true);
+      if(node->child->internal_fit_layout_callback)
+      {
+        node->child->internal_fit_layout_callback(node->child, true);
+      }
       node = node->next;
     }
   }
