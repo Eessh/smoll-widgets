@@ -40,6 +40,8 @@ result_flex_row_view flex_row_view_new(base_widget* parent_base)
   }
 
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
+  v->base->internal_adjust_layout_callback =
+    default_internal_adjust_layout_callback;
   v->base->internal_assign_positions =
     default_internal_assign_positions_callback;
   v->base->internal_render_callback = default_internal_render_callback;
@@ -70,8 +72,7 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
   }
 
   flex_row_view* v = (flex_row_view*)widget->derived;
-  uint16 total_width = 2 * v->padding_x;
-  uint16 max_height = 0;
+  uint16 total_width = 2 * v->padding_x, max_height = 0;
 
   base_widget_child_node* node = widget->children_head;
   while(node)
