@@ -61,6 +61,39 @@ result_progress_bar_ptr progress_bar_new(base_widget* parent_base,
   return ok(result_progress_bar_ptr, bar);
 }
 
+result_uint8 progress_bar_get_percent(const progress_bar* bar)
+{
+  if(!bar)
+  {
+    return error(result_uint8,
+                 "Cannot get percent of a NULL pointed progress_bar!");
+  }
+
+  return ok(result_uint8, bar->private_data->percent);
+}
+
+result_color progress_bar_get_foreground(const progress_bar* bar)
+{
+  if(!bar)
+  {
+    return error(result_color,
+                 "Cannot get foreground of a NULL pointed progress_bar!");
+  }
+
+  return ok(result_color, bar->private_data->foreground);
+}
+
+result_color progress_bar_get_background(const progress_bar* bar)
+{
+  if(!bar)
+  {
+    return error(result_color,
+                 "Cannot get background of a NULL pointed progress_bar!");
+  }
+
+  return ok(result_color, bar->private_data->background);
+}
+
 result_void progress_bar_set_percent(progress_bar* bar, uint8 percent)
 {
   if(!bar)

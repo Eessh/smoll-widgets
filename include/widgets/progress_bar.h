@@ -27,6 +27,12 @@ result_progress_bar_ptr progress_bar_new(base_widget* parent_base,
                                          color foreground,
                                          color background);
 
+result_uint8 progress_bar_get_percent(const progress_bar* bar);
+
+result_color progress_bar_get_foreground(const progress_bar* bar);
+
+result_color progress_bar_get_background(const progress_bar* bar);
+
 result_void progress_bar_set_percent(progress_bar* bar, uint8 percent);
 
 result_void progress_bar_set_foreground(progress_bar* bar, color foreground);
