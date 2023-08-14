@@ -1,4 +1,5 @@
 #include "../../include/widgets/flex_row_view.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -72,10 +73,11 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
   base_widget_child_node* node = widget->children_head;
   while(node)
   {
-    total_width += node->child->w;
+    total_width += node->child->w + v->gap;
     max_height = max(max_height, node->child->h);
     node = node->next;
   }
+  total_width -= v->gap;
 
   if(widget->w == total_width && widget->h == max_height + 2 * v->padding_y)
   {
@@ -117,6 +119,7 @@ default_internal_assign_positions_callback(base_widget* widget)
   while(node)
   {
     node->child->x = x;
+    node->child->y = v->padding_y;
     if(node->child->internal_assign_positions)
     {
       node->child->internal_assign_positions(node->child);
