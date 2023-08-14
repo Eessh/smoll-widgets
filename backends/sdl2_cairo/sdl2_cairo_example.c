@@ -3,8 +3,11 @@
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
 #include "../../include/widgets/flex_row_view.h"
+#include "../../include/widgets/progress_bar.h"
 #include "../../include/widgets/toggle.h"
 #include "sdl2_cairo_backend.h"
+
+static progress_bar* bar = NULL;
 
 // Callbacks function prototypes
 void mouse_button_down_callback(button* btn, mouse_button_event event);
@@ -173,6 +176,19 @@ int main()
     toggle_set_off_callback(t, off_callback);
   }
 
+  // Creating progress bar
+  {
+    result_progress_bar_ptr _ = progress_bar_new(
+      row_view->base, 20, (color){0, 255, 0, 255}, (color){64, 64, 64, 255});
+    if(!_.ok)
+    {
+      printf("Error while creating progress bar: %s\n", _.error);
+    }
+    bar = _.value;
+    bar->base->w = 200;
+    bar->base->h = 20;
+  }
+
   // Calling initial layouting, rendering functions
   smoll_context_initial_fit_layout(sctx);
   smoll_context_initial_render(sctx);
@@ -252,10 +268,12 @@ void mouse_leave_callback(button* btn, mouse_motion_event event)
 
 void on_callback(toggle* t)
 {
-  printf("Toggle ON!\n");
+  printf("Setting progress bar percent to: 80\n");
+  progress_bar_set_percent(bar, 80);
 }
 
 void off_callback(toggle* t)
 {
-  printf("Toggle OFF!\n");
+  printf("Setting progress bar percent to: 60\n");
+  progress_bar_set_percent(bar, 60);
 }
