@@ -1,4 +1,5 @@
 #include "../include/smoll_context.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/backend.h"
@@ -333,10 +334,16 @@ result_void smoll_context_initial_fit_layout(smoll_context* context)
       "Cannot perform initial UI layouting of context pointing to NULL!");
   }
 
-  if(context->internal_ctx->root->internal_fit_layout_callback)
+  base_widget* root = context->internal_ctx->root;
+
+  if(root->internal_fit_layout_callback)
   {
-    context->internal_ctx->root->internal_fit_layout_callback(
-      context->internal_ctx->root, true);
+    root->internal_fit_layout_callback(root, true);
+  }
+
+  if(root->internal_assign_positions)
+  {
+    root->internal_assign_positions(root);
   }
 
   return ok_void();

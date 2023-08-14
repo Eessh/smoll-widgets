@@ -15,6 +15,9 @@ default_internal_get_bounding_rect_callback(const base_widget* widget);
 static result_bool default_internal_fit_layout_callback(base_widget* widget,
                                                         bool call_on_children);
 
+static result_bool
+default_internal_assign_positions_callback(base_widget* widget);
+
 /// @brief Default callback function for internal render callback.
 /// @param widget pointer to base widget.
 /// @return Bool result.
@@ -54,6 +57,8 @@ result_box_ptr box_new(base_widget* parent_base)
   b->base->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
   b->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
+  b->base->internal_assign_positions =
+    default_internal_assign_positions_callback;
   b->base->internal_render_callback = default_internal_render_callback;
 
   b->padding_x = 0;
@@ -91,6 +96,22 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
     while(node)
     {
       node->child->internal_fit_layout_callback(node->child, true);
+      node = node->next;
+    }
+  }
+
+  return ok(result_bool, false);
+}
+
+static result_bool
+default_internal_assign_positions_callback(base_widget* widget)
+{
+  base_widget_child_node* node = widget->children_head;
+  while(node)
+  {
+    if(node->child->internal_assign_positions)
+    {
+      node->child->internal_assign_positions(node->child);
       node = node->next;
     }
   }
