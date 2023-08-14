@@ -2,6 +2,7 @@
 #include "../../include/smoll_context.h"
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
+#include "../../include/widgets/flex_row_view.h"
 #include "../../include/widgets/toggle.h"
 #include "win32_cairo_backend.h"
 
@@ -129,10 +130,27 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   // Setting button as root widget of smoll context
   smoll_context_set_root_widget(sctx, bx->base);
 
+  // Creating flex-row view
+  flex_row_view* row_view = NULL;
+  {
+    result_flex_row_view _ = flex_row_view_new(bx->base);
+    if(!_.ok)
+    {
+      printf("Error while creating flex-row view: %s", _.error);
+    }
+    row_view = _.value;
+    row_view->base->x = 0;
+    row_view->base->y = 0;
+    row_view->padding_x = 10;
+    row_view->padding_y = 10;
+    row_view->gap = 10;
+    row_view->background = (color){128, 128, 128, 255};
+  }
+
   // Creating button widget
   button* btn = NULL;
   {
-    result_button_ptr _ = button_new(bx->base, "Hola!");
+    result_button_ptr _ = button_new(row_view->base, "Hola!");
     if(!_.ok)
     {
       printf("Error while creating button: %s", _.error);
@@ -161,7 +179,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   // Creating another button widget
   button* btn1 = NULL;
   {
-    result_button_ptr _ = button_new(bx->base, "Hello there!");
+    result_button_ptr _ = button_new(row_view->base, "Hello there!");
     if(!_.ok)
     {
       printf("Error while creating button: %s", _.error);
@@ -190,7 +208,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   // Creating toggle widget
   toggle* t = NULL;
   {
-    result_toggle_ptr _ = toggle_new(bx->base);
+    result_toggle_ptr _ = toggle_new(row_view->base);
     if(!_.ok)
     {
       printf("Error while creating toggle: %s", _.error);
