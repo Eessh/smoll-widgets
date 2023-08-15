@@ -25,6 +25,8 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
 
 static result_bool default_internal_render_callback(const base_widget* widget);
 
+static void default_internal_derived_free_callback(base_widget* widget);
+
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event);
 
@@ -72,6 +74,8 @@ result_toggle_ptr toggle_new(base_widget* parent_base)
     default_internal_get_bounding_rect_callback;
   t->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   t->base->internal_render_callback = default_internal_render_callback;
+  t->base->internal_derived_free_callback =
+    default_internal_derived_free_callback;
 
   t->base->mouse_button_down_callback = default_mouse_button_down_callback;
 
@@ -191,6 +195,23 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   }
 
   return ok(result_bool, true);
+}
+
+static void default_internal_derived_free_callback(base_widget* widget)
+{
+  if(!widget)
+  {
+    return;
+  }
+
+  toggle* t = (toggle*)widget->derived;
+
+  // freeing toggle private struct
+  free(t->private_data);
+
+  // freeing toggle object
+  // freeing base_widget is taken care by internal_free_callback
+  free(t);
 }
 
 static bool default_mouse_button_down_callback(base_widget* widget,
