@@ -126,7 +126,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   checkbox* box = (checkbox*)widget->derived;
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
 
-  result_void _ = command_buffer_add_render_rect_command(
+  result_void _ = command_buffer_add_render_rect_outline_command(
     widget->context->cmd_buffer, bounding_rect, box->private_data->foreground);
   if(!_.ok)
   {

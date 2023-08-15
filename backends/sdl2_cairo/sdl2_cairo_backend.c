@@ -127,6 +127,22 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
                           (float32)(rect_color.a) / 255.0f);
     cairo_fill(cairo);
   }
+  else if(cmd->type == RENDER_RECT_OUTLINED)
+  {
+    const rect bounding_rect = cmd->data.render_rect.bounding_rect;
+    const color rect_color = cmd->data.render_rect.rect_color;
+    cairo_rectangle(cairo,
+                    bounding_rect.x,
+                    bounding_rect.y,
+                    bounding_rect.w,
+                    bounding_rect.h);
+    cairo_set_source_rgba(cairo,
+                          (float32)(rect_color.r) / 255.0f,
+                          (float32)(rect_color.g) / 255.0f,
+                          (float32)(rect_color.b) / 255.0f,
+                          (float32)(rect_color.a) / 255.0f);
+    cairo_stroke(cairo);
+  }
   else if(cmd->type == RENDER_TEXT)
   {
     const char* text = cmd->data.render_text.text;
