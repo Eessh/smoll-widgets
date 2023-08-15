@@ -94,6 +94,7 @@ result_base_widget_ptr base_widget_new()
 
   widget->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
+  widget->internal_get_background_callback = NULL;
   widget->internal_fit_layout_callback = NULL;
   widget->internal_adjust_layout_callback = NULL;
   widget->internal_assign_positions = NULL;

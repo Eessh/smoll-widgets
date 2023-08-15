@@ -9,6 +9,9 @@
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
 
+static color
+default_internal_get_background_callback(const base_widget* widget);
+
 /// @brief Default callback function for internal fit layout callback.
 /// @param widget pointer to base widget.
 /// @return Bool result.
@@ -56,6 +59,8 @@ result_box_ptr box_new(base_widget* parent_base)
 
   b->base->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
+  b->base->internal_get_background_callback =
+    default_internal_get_background_callback;
   b->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   b->base->internal_assign_positions =
     default_internal_assign_positions_callback;
@@ -72,6 +77,12 @@ static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
+}
+
+static color default_internal_get_background_callback(const base_widget* widget)
+{
+  box* b = (box*)widget->derived;
+  return b->background;
 }
 
 static result_bool default_internal_fit_layout_callback(base_widget* widget,

@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include "../../include/macros.h"
 
+static color
+default_internal_get_background_callback(const base_widget* widget);
+
 static result_bool default_internal_fit_layout_callback(base_widget* widget,
                                                         bool call_on_children);
 
@@ -38,6 +41,8 @@ result_flex_column_view flex_column_view_new(base_widget* parent_base)
     v->base->context = parent_base->context;
   }
 
+  v->base->internal_get_background_callback =
+    default_internal_get_background_callback;
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   v->base->internal_adjust_layout_callback =
     default_internal_adjust_layout_callback;
@@ -52,6 +57,12 @@ result_flex_column_view flex_column_view_new(base_widget* parent_base)
   v->background = (color){0, 0, 0, 255};
 
   return ok(result_flex_column_view, v);
+}
+
+static color default_internal_get_background_callback(const base_widget* widget)
+{
+  flex_column_view* v = (flex_column_view*)widget->derived;
+  return v->background;
 }
 
 static result_bool default_internal_fit_layout_callback(base_widget* widget,
