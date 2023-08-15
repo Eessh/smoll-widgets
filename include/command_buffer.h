@@ -7,6 +7,7 @@ typedef enum command_type
 {
   RENDER_TEXT,
   RENDER_RECT,
+  RENDER_RECT_OUTLINED,
   PUSH_CLIP_RECT,
   POP_CLIP_RECT
 } command_type;
@@ -72,6 +73,9 @@ typedef struct result_command_buffer_ptr
 
 result_command_ptr command_new_render_rect(const rect bounding_rect,
                                            const color rect_color);
+result_command_ptr
+command_new_render_rect_outlined(const rect bounding_rect,
+                                 const color rect_outline_color);
 result_command_ptr command_new_render_text(const char* text,
                                            const color text_color,
                                            point text_coordinates);
@@ -84,6 +88,10 @@ result_void command_buffer_add_command(command_buffer* buffer, command* cmd);
 result_void command_buffer_add_render_rect_command(command_buffer* buffer,
                                                    const rect bounding_rect,
                                                    const color rect_color);
+result_void
+command_buffer_add_render_rect_outline_command(command_buffer* buffer,
+                                               const rect bounding_rect,
+                                               const color rect_outline_color);
 result_void command_buffer_add_render_text_command(command_buffer* buffer,
                                                    const char* text,
                                                    const color text_color,
