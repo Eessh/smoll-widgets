@@ -235,7 +235,7 @@ command_buffer_add_render_rect_outline_command(command_buffer* buffer,
   }
 
   result_command_ptr _ =
-    command_new_render_rect(bounding_rect, rect_outline_color);
+    command_new_render_rect_outlined(bounding_rect, rect_outline_color);
   if(!_.ok)
   {
     return error(result_void, _.error);

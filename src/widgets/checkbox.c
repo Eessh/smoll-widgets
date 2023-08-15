@@ -12,7 +12,7 @@ struct checkbox_private
 {
   checkbox_state state;
 
-  color foreground;
+  color foreground, parent_background;
 
   void (*user_ticked_callback)(checkbox*);
 
@@ -24,7 +24,9 @@ static result_bool default_internal_render_callback(const base_widget* widget);
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event);
 
-result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground)
+result_checkbox_ptr checkbox_new(base_widget* parent_base,
+                                 color foreground,
+                                 color parent_background)
 {
   checkbox* box = (checkbox*)calloc(1, sizeof(checkbox));
   if(!box)
@@ -65,6 +67,7 @@ result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground)
   box->base->mouse_button_down_callback = default_mouse_button_down_callback;
 
   box_private->foreground = foreground;
+  box_private->parent_background = parent_background;
   box_private->state = UNTICKED;
   box_private->user_ticked_callback = NULL;
   box_private->user_unticked_callback = NULL;
@@ -126,7 +129,16 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   checkbox* box = (checkbox*)widget->derived;
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
 
-  result_void _ = command_buffer_add_render_rect_outline_command(
+  result_void _ = command_buffer_add_render_rect_command(
+    widget->context->cmd_buffer,
+    bounding_rect,
+    box->private_data->parent_background);
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
+  _ = command_buffer_add_render_rect_outline_command(
     widget->context->cmd_buffer, bounding_rect, box->private_data->foreground);
   if(!_.ok)
   {
@@ -135,7 +147,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   if(box->private_data->state == TICKED)
   {
-    uint8 delta = bounding_rect.w - bounding_rect.w * 0.7f;
+    uint8 delta = bounding_rect.w - bounding_rect.w * 0.8f;
     bounding_rect.x += delta;
     bounding_rect.y += delta;
     bounding_rect.w -= 2 * delta;
