@@ -21,6 +21,8 @@ struct checkbox_private
 
 static result_bool default_internal_render_callback(const base_widget* widget);
 
+static void default_internal_derived_free_callback(base_widget* widget);
+
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event);
 
@@ -64,6 +66,8 @@ result_checkbox_ptr checkbox_new(base_widget* parent_base,
   }
 
   box->base->internal_render_callback = default_internal_render_callback;
+  box->base->internal_derived_free_callback =
+    default_internal_derived_free_callback;
   box->base->mouse_button_down_callback = default_mouse_button_down_callback;
 
   box_private->foreground = foreground;
@@ -163,6 +167,23 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   }
 
   return ok(result_bool, true);
+}
+
+static void default_internal_derived_free_callback(base_widget* widget)
+{
+  if(!widget)
+  {
+    return;
+  }
+
+  checkbox* box = (checkbox*)widget->derived;
+
+  // freeing checkbox private struct
+  free(box->private_data);
+
+  // freeing checkbox object
+  // freeing base_widget is taken care by internal_free_callback
+  free(box);
 }
 
 static bool default_mouse_button_down_callback(base_widget* widget,
