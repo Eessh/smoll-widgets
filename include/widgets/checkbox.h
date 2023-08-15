@@ -22,9 +22,7 @@ typedef struct result_checkbox_ptr
   };
 } result_checkbox_ptr;
 
-result_checkbox_ptr checkbox_new(base_widget* parent_base,
-                                 color foreground,
-                                 color parent_background);
+result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground);
 
 result_void checkbox_set_ticked_callback(checkbox* box,
                                          void (*callback)(checkbox*));

@@ -12,7 +12,7 @@ struct checkbox_private
 {
   checkbox_state state;
 
-  color foreground, parent_background;
+  color foreground;
 
   void (*user_ticked_callback)(checkbox*);
 
@@ -26,9 +26,7 @@ static void default_internal_derived_free_callback(base_widget* widget);
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event);
 
-result_checkbox_ptr checkbox_new(base_widget* parent_base,
-                                 color foreground,
-                                 color parent_background)
+result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground)
 {
   checkbox* box = (checkbox*)calloc(1, sizeof(checkbox));
   if(!box)
@@ -71,7 +69,6 @@ result_checkbox_ptr checkbox_new(base_widget* parent_base,
   box->base->mouse_button_down_callback = default_mouse_button_down_callback;
 
   box_private->foreground = foreground;
-  box_private->parent_background = parent_background;
   box_private->state = UNTICKED;
   box_private->user_ticked_callback = NULL;
   box_private->user_unticked_callback = NULL;
@@ -130,13 +127,26 @@ result_void checkbox_set_unticked_callback(checkbox* box,
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  if(!widget->parent)
+  {
+    return error(result_bool,
+                 "Checkbox widget must be placed inside a parent widget!");
+  }
+
+  if(!widget->parent->internal_get_background_callback)
+  {
+    return error(result_bool,
+                 "Checkbox widget's parent didn't implement internal get "
+                 "background callback!");
+  }
+
   checkbox* box = (checkbox*)widget->derived;
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
 
   result_void _ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,
     bounding_rect,
-    box->private_data->parent_background);
+    widget->parent->internal_get_background_callback(widget->parent));
   if(!_.ok)
   {
     return error(result_bool, _.error);
@@ -199,7 +209,11 @@ static bool default_mouse_button_down_callback(base_widget* widget,
     box->private_data->state = UNTICKED;
   }
 
-  widget->internal_render_callback(widget);
+  result_bool _ = widget->internal_render_callback(widget);
+  if(!_.ok)
+  {
+    return false;
+  }
 
   return true;
 }

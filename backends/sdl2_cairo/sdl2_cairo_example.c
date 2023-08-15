@@ -193,8 +193,8 @@ int main()
   // Creating checkbox
   checkbox* cbox = NULL;
   {
-    result_checkbox_ptr _ = checkbox_new(
-      row_view->base, (color){255, 255, 255, 255}, row_view->background);
+    result_checkbox_ptr _ =
+      checkbox_new(row_view->base, (color){255, 255, 255, 255});
     if(!_.ok)
     {
       printf("Error while creating checkbox: %s\n", _.error);
