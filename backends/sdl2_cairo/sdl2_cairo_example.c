@@ -2,6 +2,7 @@
 #include "../../include/smoll_context.h"
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
+#include "../../include/widgets/checkbox.h"
 #include "../../include/widgets/flex_row_view.h"
 #include "../../include/widgets/progress_bar.h"
 #include "../../include/widgets/toggle.h"
@@ -187,6 +188,18 @@ int main()
     bar = _.value;
     bar->base->w = 200;
     bar->base->h = 20;
+  }
+
+  // Creating checkbox
+  checkbox* cbox = NULL;
+  {
+    result_checkbox_ptr _ = checkbox_new(
+      row_view->base, (color){255, 255, 255, 255}, row_view->background);
+    if(!_.ok)
+    {
+      printf("Error while creating checkbox: %s\n", _.error);
+    }
+    cbox = _.value;
   }
 
   // Calling initial layouting, rendering functions
