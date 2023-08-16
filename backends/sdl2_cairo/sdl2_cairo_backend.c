@@ -1,9 +1,17 @@
 #include "sdl2_cairo_backend.h"
 #include <stdlib.h>
 #include "../../include/macros.h"
+#include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL_mouse.h"
 
 static SDL_Window* window = NULL;
 static cairo_t* cairo = NULL;
+
+// cursors
+typedef SDL_Cursor* SDL_CursorPtr;
+SDL_CursorPtr arrow = NULL, crosshair = NULL, resize_left_right = NULL,
+              resize_top_left__bottom_right = NULL,
+              resize_top_right__bottom_left = NULL, resize_top_bottom = NULL,
+              hand = NULL, processing = NULL, loading = NULL, prohibited = NULL;
 
 result_void init_sdl2();
 result_void init_cairo();
@@ -35,6 +43,20 @@ result_render_backend_ptr sdl2_cairo_backend_create()
   init_sdl2();
   init_cairo();
 
+  // loading cursors
+  arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  crosshair = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+  resize_left_right = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+  resize_top_bottom = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+  resize_top_left__bottom_right =
+    SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+  resize_top_right__bottom_left =
+    SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
+  hand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  processing = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAITARROW);
+  loading = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
+  prohibited = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
+
   return ok(result_render_backend_ptr, backend);
 }
 
@@ -54,6 +76,18 @@ result_void sdl2_cairo_backend_destroy(render_backend* backend)
   {
     error(result_void, "Attempt to free a NULL pointed render backend!");
   }
+
+  // freeing cursors
+  SDL_FreeCursor(arrow);
+  SDL_FreeCursor(crosshair);
+  SDL_FreeCursor(resize_left_right);
+  SDL_FreeCursor(resize_top_bottom);
+  SDL_FreeCursor(resize_top_left__bottom_right);
+  SDL_FreeCursor(resize_top_right__bottom_left);
+  SDL_FreeCursor(hand);
+  SDL_FreeCursor(processing);
+  SDL_FreeCursor(loading);
+  SDL_FreeCursor(prohibited);
 
   deinit_cairo();
   deinit_sdl2();
@@ -167,10 +201,49 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
     cairo_rectangle(cairo, clip_rect.x, clip_rect.y, clip_rect.w, clip_rect.h);
     cairo_clip(cairo);
   }
-  else
+  else if(cmd->type == POP_CLIP_RECT)
   {
-    // POP_CLIP_RECT
     cairo_reset_clip(cairo);
+  }
+  else if(cmd->type == SET_CURSOR_ARROW)
+  {
+    SDL_SetCursor(arrow);
+  }
+  else if(cmd->type == SET_CURSOR_CROSSHAIR)
+  {
+    SDL_SetCursor(crosshair);
+  }
+  else if(cmd->type == SET_CURSOR_HAND)
+  {
+    SDL_SetCursor(hand);
+  }
+  else if(cmd->type == SET_CURSOR_LOADING)
+  {
+    SDL_SetCursor(loading);
+  }
+  else if(cmd->type == SET_CURSOR_PROCESSING)
+  {
+    SDL_SetCursor(processing);
+  }
+  else if(cmd->type == SET_CURSOR_PROHIBITED)
+  {
+    SDL_SetCursor(prohibited);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_LEFT_RIGHT)
+  {
+    SDL_SetCursor(resize_left_right);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_TOP_BOTTOM)
+  {
+    SDL_SetCursor(resize_top_bottom);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_TOP_LEFT__BOTTOM_RIGHT)
+  {
+    SDL_SetCursor(resize_top_left__bottom_right);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_TOP_RIGHT__BOTTOM_LEFT)
+  {
+    SDL_SetCursor(resize_top_right__bottom_left);
   }
 
   return ok_void();

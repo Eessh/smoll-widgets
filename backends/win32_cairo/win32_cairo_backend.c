@@ -249,7 +249,6 @@ result_void win32_cairo_backend_process_command(const command* cmd)
   }
   else if(cmd->type == POP_CLIP_RECT)
   {
-    // POP_CLIP_RECT
     cairo_reset_clip(cairo);
   }
   else if(cmd->type == SET_CURSOR_ARROW)
