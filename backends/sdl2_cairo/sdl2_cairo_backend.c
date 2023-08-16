@@ -8,8 +8,8 @@ static cairo_t* cairo = NULL;
 
 // cursors
 typedef SDL_Cursor* SDL_CursorPtr;
-SDL_CursorPtr arrow = NULL, crosshair = NULL, resize_left_right = NULL,
-              resize_top_left__bottom_right = NULL,
+SDL_CursorPtr arrow = NULL, ibeam = NULL, move = NULL, crosshair = NULL,
+              resize_left_right = NULL, resize_top_left__bottom_right = NULL,
               resize_top_right__bottom_left = NULL, resize_top_bottom = NULL,
               hand = NULL, processing = NULL, loading = NULL, prohibited = NULL;
 
@@ -45,6 +45,8 @@ result_render_backend_ptr sdl2_cairo_backend_create()
 
   // loading cursors
   arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  ibeam = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
+  move = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
   crosshair = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
   resize_left_right = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
   resize_top_bottom = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
@@ -79,6 +81,8 @@ result_void sdl2_cairo_backend_destroy(render_backend* backend)
 
   // freeing cursors
   SDL_FreeCursor(arrow);
+  SDL_FreeCursor(ibeam);
+  SDL_FreeCursor(move);
   SDL_FreeCursor(crosshair);
   SDL_FreeCursor(resize_left_right);
   SDL_FreeCursor(resize_top_bottom);
@@ -208,6 +212,14 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
   else if(cmd->type == SET_CURSOR_ARROW)
   {
     SDL_SetCursor(arrow);
+  }
+  else if(cmd->type == SET_CURSOR_IBEAM)
+  {
+    SDL_SetCursor(ibeam);
+  }
+  else if(cmd->type == SET_CURSOR_MOVE)
+  {
+    SDL_SetCursor(move);
   }
   else if(cmd->type == SET_CURSOR_CROSSHAIR)
   {

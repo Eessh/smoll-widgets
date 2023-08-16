@@ -9,8 +9,8 @@
 static cairo_t* cairo = NULL;
 
 // cursors
-HCURSOR arrow = NULL, crosshair = NULL, resize_left_right = NULL,
-        resize_top_left__bottom_right = NULL,
+HCURSOR arrow = NULL, ibeam = NULL, move = NULL, crosshair = NULL,
+        resize_left_right = NULL, resize_top_left__bottom_right = NULL,
         resize_top_right__bottom_left = NULL, resize_top_bottom = NULL,
         hand = NULL, processing = NULL, loading = NULL, prohibited = NULL;
 
@@ -43,6 +43,8 @@ result_render_backend_ptr win32_cairo_backend_create(HDC hdc)
 
   // loading cursors
   arrow = LoadCursor(NULL, IDC_ARROW);
+  ibeam = LoadCursor(NULL, IDC_IBEAM);
+  move = LoadCursor(NULL, IDC_SIZEALL);
   crosshair = LoadCursor(NULL, IDC_CROSS);
   resize_left_right = LoadCursor(NULL, IDC_SIZEWE);
   resize_top_left__bottom_right = LoadCursor(NULL, IDC_SIZENWSE);
@@ -75,6 +77,8 @@ result_void win32_cairo_backend_destroy(render_backend* backend)
 
   // freeing cursors
   DestroyCursor(arrow);
+  DestroyCursor(ibeam);
+  DestroyCursor(move);
   DestroyCursor(crosshair);
   DestroyCursor(resize_left_right);
   DestroyCursor(resize_top_left__bottom_right);
@@ -254,6 +258,14 @@ result_void win32_cairo_backend_process_command(const command* cmd)
   else if(cmd->type == SET_CURSOR_ARROW)
   {
     SetCursor(arrow);
+  }
+  else if(cmd->type == SET_CURSOR_IBEAM)
+  {
+    SetCursor(ibeam);
+  }
+  else if(cmd->type == SET_CURSOR_MOVE)
+  {
+    SetCursor(move);
   }
   else if(cmd->type == SET_CURSOR_CROSSHAIR)
   {
