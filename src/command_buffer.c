@@ -88,6 +88,19 @@ result_command_ptr command_new_pop_clip_rect()
   return ok(result_command_ptr, cmd);
 }
 
+result_command_ptr command_new_set_cursor(command_type cursor_type)
+{
+  command* cmd = (command*)calloc(1, sizeof(command));
+  if(!cmd)
+  {
+    return error(result_command_ptr, "Unable to allocate memory for command!");
+  }
+
+  cmd->type = cursor_type;
+
+  return ok(result_command_ptr, cmd);
+}
+
 result_void command_free(command* cmd)
 {
   if(!cmd)
@@ -320,6 +333,31 @@ result_void command_buffer_add_pop_clip_rect_command(command_buffer* buffer)
   }
 
   result_command_ptr _ = command_new_pop_clip_rect();
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  command* cmd = _.value;
+  result_void __ = command_buffer_add_command(buffer, cmd);
+  if(!__.ok)
+  {
+    return __;
+  }
+
+  return ok_void();
+}
+
+result_void command_buffer_add_set_cursor_command(command_buffer* buffer,
+                                                  command_type cursor_type)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot add command to NULL pointed command buffer!");
+  }
+
+  result_command_ptr _ = command_new_set_cursor(cursor_type);
   if(!_.ok)
   {
     return error(result_void, _.error);
