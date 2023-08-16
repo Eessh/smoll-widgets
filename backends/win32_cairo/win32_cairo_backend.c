@@ -1,11 +1,18 @@
 #include "win32_cairo_backend.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <winuser.h>
 #include "../../include/macros.h"
 #include "cairo-windows-1.17.2/include/cairo.h"
 #include "windowsx.h"
 
 static cairo_t* cairo = NULL;
+
+// cursors
+HCURSOR arrow = NULL, crosshair = NULL, resize_left_right = NULL,
+        resize_top_left__bottom_right = NULL,
+        resize_top_right__bottom_left = NULL, resize_top_bottom = NULL,
+        hand = NULL, processing = NULL, loading = NULL, prohibited = NULL;
 
 result_void init_cairo(HDC hdc);
 void deinit_cairo();
@@ -34,6 +41,21 @@ result_render_backend_ptr win32_cairo_backend_create(HDC hdc)
 
   init_cairo(hdc);
 
+  // loading cursors
+  arrow = LoadCursor(NULL, IDC_ARROW);
+  crosshair = LoadCursor(NULL, IDC_CROSS);
+  resize_left_right = LoadCursor(NULL, IDC_SIZEWE);
+  resize_top_left__bottom_right = LoadCursor(NULL, IDC_SIZENWSE);
+  resize_top_right__bottom_left = LoadCursor(NULL, IDC_SIZENESW);
+  resize_top_bottom = LoadCursor(NULL, IDC_SIZENS);
+  hand = LoadCursor(NULL, IDC_HAND);
+  processing = LoadCursor(NULL, IDC_APPSTARTING);
+  loading = LoadCursor(NULL, IDC_WAIT);
+  prohibited = LoadCursor(NULL, IDC_NO);
+
+  // setting cursor
+  SetCursor(arrow);
+
   return ok(result_render_backend_ptr, backend);
 }
 
@@ -50,6 +72,18 @@ result_void win32_cairo_backend_destroy(render_backend* backend)
   }
 
   deinit_cairo();
+
+  // freeing cursors
+  DestroyCursor(arrow);
+  DestroyCursor(crosshair);
+  DestroyCursor(resize_left_right);
+  DestroyCursor(resize_top_left__bottom_right);
+  DestroyCursor(resize_top_right__bottom_left);
+  DestroyCursor(resize_top_bottom);
+  DestroyCursor(hand);
+  DestroyCursor(processing);
+  DestroyCursor(loading);
+  DestroyCursor(prohibited);
 
   free(backend);
 
@@ -213,10 +247,50 @@ result_void win32_cairo_backend_process_command(const command* cmd)
     cairo_rectangle(cairo, clip_rect.x, clip_rect.y, clip_rect.w, clip_rect.h);
     cairo_clip(cairo);
   }
-  else
+  else if(cmd->type == POP_CLIP_RECT)
   {
     // POP_CLIP_RECT
     cairo_reset_clip(cairo);
+  }
+  else if(cmd->type == SET_CURSOR_ARROW)
+  {
+    SetCursor(arrow);
+  }
+  else if(cmd->type == SET_CURSOR_CROSSHAIR)
+  {
+    SetCursor(crosshair);
+  }
+  else if(cmd->type == SET_CURSOR_HAND)
+  {
+    SetCursor(hand);
+  }
+  else if(cmd->type == SET_CURSOR_LOADING)
+  {
+    SetCursor(loading);
+  }
+  else if(cmd->type == SET_CURSOR_PROCESSING)
+  {
+    SetCursor(processing);
+  }
+  else if(cmd->type == SET_CURSOR_PROHIBITED)
+  {
+    SetCursor(prohibited);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_LEFT_RIGHT)
+  {
+    SetCursor(resize_left_right);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_TOP_BOTTOM)
+  {
+    SetCursor(resize_top_bottom);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_TOP_LEFT__BOTTOM_RIGHT)
+  {
+    SetCursor(resize_top_left__bottom_right);
+  }
+  else if(cmd->type == SET_CURSOR_RESIZE_TOP_RIGHT__BOTTOM_LEFT)
+  {
+    SetCursor(resize_top_right__bottom_left);
   }
 
   return ok_void();

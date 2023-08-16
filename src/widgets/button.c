@@ -470,6 +470,15 @@ static bool default_mouse_enter_callback(base_widget* widget,
   button* btn = (button*)widget->derived;
   btn->private_data->state = BUTTON_HOVERED;
 
+  {
+    result_void _ = command_buffer_add_set_cursor_command(
+      widget->context->cmd_buffer, SET_CURSOR_HAND);
+    if(!_.ok)
+    {
+      return false;
+    }
+  }
+
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
   {
@@ -492,6 +501,15 @@ static bool default_mouse_leave_callback(base_widget* widget,
 {
   button* btn = (button*)widget->derived;
   btn->private_data->state = BUTTON_NORMAL;
+
+  {
+    result_void _ = command_buffer_add_set_cursor_command(
+      widget->context->cmd_buffer, SET_CURSOR_ARROW);
+    if(!_.ok)
+    {
+      return false;
+    }
+  }
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)

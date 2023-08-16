@@ -44,7 +44,9 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   window_class.cbWndExtra = 0;
   window_class.hInstance = hInstance;
   window_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-  window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
+  // cursor is handled by backend
+  // default cursor is IDC_ARROW
+  window_class.hCursor = NULL;
   window_class.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
   window_class.lpszMenuName = NULL;
   window_class.lpszClassName = TEXT("Smoll Widgets - Win32 + Cairo Backend");
