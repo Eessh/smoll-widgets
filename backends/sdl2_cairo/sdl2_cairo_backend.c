@@ -35,6 +35,7 @@ result_render_backend_ptr sdl2_cairo_backend_create()
 
   backend->name = "SDL2 + Cairo";
   backend->backend_version = (version){1, 0, 0};
+  backend->supports_curve_rendering = true;
 
   backend->load_font = sdl2_cairo_backend_load_font;
   backend->get_text_dimensions = sdl2_cairo_backend_get_text_dimensions;

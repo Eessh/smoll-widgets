@@ -27,7 +27,10 @@ typedef struct version
 typedef struct render_backend
 {
   char8* name;
+
   version backend_version;
+
+  bool supports_curve_rendering;
 
   result_void (*load_font)(const char* font_name, uint8 font_size);
 

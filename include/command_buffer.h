@@ -5,6 +5,7 @@
 
 typedef enum command_type
 {
+  RENDER_LINE,
   RENDER_TEXT,
 
   RENDER_RECT,
@@ -33,6 +34,11 @@ typedef struct render_rect_data
   color rect_color;
 } render_rect_data;
 
+typedef struct render_line_data
+{
+  point begin, end;
+} render_line_data;
+
 typedef struct render_text_data
 {
   const char* text;
@@ -46,6 +52,7 @@ typedef struct command
   union
   {
     render_rect_data render_rect;
+    render_line_data render_line;
     render_text_data render_text;
     rect clip_rect;
   } data;
@@ -91,6 +98,7 @@ result_command_ptr command_new_render_rect(const rect bounding_rect,
 result_command_ptr
 command_new_render_rect_outlined(const rect bounding_rect,
                                  const color rect_outline_color);
+result_command_ptr command_new_render_line(point begin, point end);
 result_command_ptr command_new_render_text(const char* text,
                                            const color text_color,
                                            point text_coordinates);
@@ -108,6 +116,9 @@ result_void
 command_buffer_add_render_rect_outline_command(command_buffer* buffer,
                                                const rect bounding_rect,
                                                const color rect_outline_color);
+result_void command_buffer_add_render_line_command(command_buffer* buffer,
+                                                   point begin,
+                                                   point end);
 result_void command_buffer_add_render_text_command(command_buffer* buffer,
                                                    const char* text,
                                                    const color text_color,

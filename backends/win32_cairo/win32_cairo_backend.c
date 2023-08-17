@@ -34,6 +34,7 @@ result_render_backend_ptr win32_cairo_backend_create(HDC hdc)
 
   backend->name = "Win32 + Cairo";
   backend->backend_version = (version){1, 0, 0};
+  backend->supports_curve_rendering = true;
 
   backend->load_font = win32_cairo_backend_load_font;
   backend->get_text_dimensions = win32_cairo_backend_get_text_dimensions;

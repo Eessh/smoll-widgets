@@ -35,6 +35,20 @@ command_new_render_rect_outlined(const rect bounding_rect,
   return ok(result_command_ptr, cmd);
 }
 
+result_command_ptr command_new_render_line(point begin, point end)
+{
+  command* cmd = (command*)calloc(1, sizeof(command));
+  if(!cmd)
+  {
+    return error(result_command_ptr, "Unable to allocate memory for command!");
+  }
+
+  cmd->type = RENDER_LINE;
+  cmd->data.render_line = (render_line_data){.begin = begin, .end = end};
+
+  return ok(result_command_ptr, cmd);
+}
+
 result_command_ptr command_new_render_text(const char* text,
                                            const color text_color,
                                            point text_coordinates)
@@ -249,6 +263,32 @@ command_buffer_add_render_rect_outline_command(command_buffer* buffer,
 
   result_command_ptr _ =
     command_new_render_rect_outlined(bounding_rect, rect_outline_color);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  command* cmd = _.value;
+  result_void __ = command_buffer_add_command(buffer, cmd);
+  if(!__.ok)
+  {
+    return __;
+  }
+
+  return ok_void();
+}
+
+result_void command_buffer_add_render_line_command(command_buffer* buffer,
+                                                   point begin,
+                                                   point end)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot add command to NULL pointed command buffer!");
+  }
+
+  result_command_ptr _ = command_new_render_line(begin, end);
   if(!_.ok)
   {
     return error(result_void, _.error);
