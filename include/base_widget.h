@@ -14,6 +14,41 @@ typedef struct internal_mouse_button_event internal_mouse_button_event;
 typedef struct internal_mouse_scroll_event internal_mouse_scroll_event;
 typedef struct internal_context internal_context;
 
+typedef enum flexbox_type
+{
+  FLEX_CONTAINER,
+  FLEX_ITEM
+} flexbox_type;
+
+typedef enum flex_direction
+{
+  FLEX_DIRECTION_ROW,
+  FLEX_DIRECTION_COLUMN
+} flex_direction;
+
+typedef enum flex_align
+{
+  FLEX_ALIGN_START,
+  FLEX_ALIGN_CENTER,
+  FLEX_ALIGN_END,
+  FLEX_ALIGN_SPACE_BETWEEN,
+  FLEX_ALIGN_SPACE_AROUND,
+  FLEX_ALIGN_SPACE_EVENLY
+} flex_align;
+
+typedef struct flex_container_data
+{
+  flex_direction direction;
+  flex_align justify_content;
+  flex_align align_items;
+} flex_container_data;
+
+typedef struct flex_item_data
+{
+  uint8 flex_grow;
+  uint8 flex_shrink;
+} flex_item_data;
+
 ///////////////////////////////////////////////////////////////////////////////
 /// * Base Widget
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,6 +67,14 @@ struct base_widget
 
   /// @brief Widget's height (including padding).
   uint16 h;
+
+  flexbox_type type;
+
+  union
+  {
+    flex_container_data container;
+    flex_item_data item;
+  } flexbox_data;
 
   /// @brief Tells if widget should be taken into account while
   ///        layouting and rendering.
