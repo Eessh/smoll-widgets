@@ -208,7 +208,7 @@ result_void base_widget_child_node_free(base_widget_child_node* node);
 
 /// @brief Creates a new base widget.
 /// @return Base widget pointer result.
-result_base_widget_ptr base_widget_new();
+result_base_widget_ptr base_widget_new(flexbox_type type);
 
 /// @brief Adds the given child widget to this widget.
 /// @param base pointer to base widget, for which the child is to be added.

@@ -70,7 +70,7 @@ result_void base_widget_child_node_free(base_widget_child_node* node)
   return ok_void();
 }
 
-result_base_widget_ptr base_widget_new()
+result_base_widget_ptr base_widget_new(flexbox_type type)
 {
   base_widget* widget = (base_widget*)calloc(1, sizeof(base_widget));
   if(!widget)
@@ -83,6 +83,20 @@ result_base_widget_ptr base_widget_new()
   widget->y = 0;
   widget->w = 0;
   widget->h = 0;
+
+  widget->type = type;
+  if(type == FLEX_CONTAINER)
+  {
+    widget->flexbox_data.container =
+      (flex_container_data){.direction = FLEX_DIRECTION_ROW,
+                            .justify_content = FLEX_ALIGN_START,
+                            .align_items = FLEX_ALIGN_START};
+  }
+  else
+  {
+    widget->flexbox_data.item =
+      (flex_item_data){.flex_grow = 0, .flex_shrink = 0};
+  }
 
   widget->visible = true;
 

@@ -35,7 +35,7 @@ result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground)
                  "Unable to allocate memory for checkbox widget!");
   }
 
-  result_base_widget_ptr _ = base_widget_new();
+  result_base_widget_ptr _ = base_widget_new(FLEX_ITEM);
   if(!_.ok)
   {
     free(box);

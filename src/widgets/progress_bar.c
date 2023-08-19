@@ -24,7 +24,7 @@ result_progress_bar_ptr progress_bar_new(base_widget* parent_base,
                  "Unable to allocate memory for progress_bar widget!");
   }
 
-  result_base_widget_ptr _ = base_widget_new();
+  result_base_widget_ptr _ = base_widget_new(FLEX_ITEM);
   if(!_.ok)
   {
     free(bar);

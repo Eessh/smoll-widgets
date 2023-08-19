@@ -39,7 +39,7 @@ result_toggle_ptr toggle_new(base_widget* parent_base)
                  "Unable to allocat memory for toggle widget!");
   }
 
-  result_base_widget_ptr _ = base_widget_new();
+  result_base_widget_ptr _ = base_widget_new(FLEX_ITEM);
   if(!_.ok)
   {
     free(t);

@@ -34,7 +34,7 @@ result_box_ptr box_new(base_widget* parent_base)
     return error(result_box_ptr, "Unable to allocate memory for box widget!");
   }
 
-  result_base_widget_ptr _ = base_widget_new();
+  result_base_widget_ptr _ = base_widget_new(FLEX_CONTAINER);
   if(!_.ok)
   {
     free(b);

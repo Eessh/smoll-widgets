@@ -24,7 +24,7 @@ result_flex_column_view flex_column_view_new(base_widget* parent_base)
                  "Unable to allocate memory for flex-column view widget!");
   }
 
-  result_base_widget_ptr _ = base_widget_new();
+  result_base_widget_ptr _ = base_widget_new(FLEX_CONTAINER);
   if(!_.ok)
   {
     free(v);
