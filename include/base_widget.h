@@ -14,38 +14,74 @@ typedef struct internal_mouse_button_event internal_mouse_button_event;
 typedef struct internal_mouse_scroll_event internal_mouse_scroll_event;
 typedef struct internal_context internal_context;
 
+/// @brief Type of widget, either it is a flex-box container or just a
+///        flex-box item.
 typedef enum flexbox_type
 {
+  /// @brief This type of widget acts as a fluid container for its children
+  ///        with flex-box layouting.
   FLEX_CONTAINER,
+
+  /// @brief This type of widget goes into a parent widget which is of type
+  ///        `FLEX_CONTAINER`.
+  ///        The `FLEX_ITEM` widgets should not be having any children.
   FLEX_ITEM
 } flexbox_type;
 
+/// @brief Flex-box loyouting direction.
 typedef enum flex_direction
 {
+  /// @brief Flex-items will be arranged horizonatlly.
+  ///        To be more precise the main-axis will be horizontal,
+  ///        cross-axis will be vertical.
   FLEX_DIRECTION_ROW,
+
+  /// @brief Flex-items will be arranged vertically.
+  ///        To be more precise the main-axis will be vertical,
+  ///        cross-axis will be horizontally.
   FLEX_DIRECTION_COLUMN
 } flex_direction;
 
+/// @brief Alignment of children in flex-box container.
 typedef enum flex_align
 {
+  /// @brief Children will be aligned from left-end
+  ///        (or top if `FLEX_DIRECTION_COLUMN`) of parent.
   FLEX_ALIGN_START,
+
+  /// @brief Children will be placed in center of parent.
   FLEX_ALIGN_CENTER,
+
+  /// @brief Children will be aligned from right-end
+  ///        (or bottom if `FLEX_DIRECTION_COLUMN`) of parent.
   FLEX_ALIGN_END,
+
+  /// @brief Not supported yet.
   FLEX_ALIGN_SPACE_BETWEEN,
   FLEX_ALIGN_SPACE_AROUND,
   FLEX_ALIGN_SPACE_EVENLY
 } flex_align;
 
+/// @brief Flex-box related data for `FLEX_CONTAINER`.
 typedef struct flex_container_data
 {
+  /// @brief Flex-box layouting direction.
   flex_direction direction;
+
+  /// @brief Main-axis flex-items alignment.
   flex_align justify_content;
+
+  /// @brief Cross-axis flex-items alignment.
   flex_align align_items;
 } flex_container_data;
 
+/// @brief Flex-box related data for `FLEX_ITEM`.
 typedef struct flex_item_data
 {
+  /// @brief Determines the flex-item's share of remaining space in parent.
   uint8 flex_grow;
+
+  /// @brief Determines the flex-item's potential to shrink.
   uint8 flex_shrink;
 } flex_item_data;
 
@@ -68,11 +104,17 @@ struct base_widget
   /// @brief Widget's height (including padding).
   uint16 h;
 
+  /// @brief Widget's flex-box type.
+  ///        If `FLEX_CONTAINER` this widget can have children otherwise not.
   flexbox_type type;
 
+  /// @brief Flex-box related data of widget.
   union
   {
+    /// @brief Flex-container related data of this widget.
     flex_container_data container;
+
+    /// @brief Flex-item related data of this widget.
     flex_item_data item;
   } flexbox_data;
 
@@ -97,7 +139,12 @@ struct base_widget
   ///        Will be handy when layouting.
   rect (*internal_get_bounding_rect_callback)(const base_widget*);
 
-  color (*internal_get_background_callback)(const base_widget*);
+  /**
+   * @brief Internal callback for getting active background of this widget.
+   * @param widget pointer to widget's base.
+   * @return Color struct.
+   */
+  color (*internal_get_background_callback)(const base_widget* widget);
 
   /// TODO: Give a thought why return types of internal callbacks have to be
   ///       result_bool ?
