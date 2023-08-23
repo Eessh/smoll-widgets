@@ -70,7 +70,7 @@ result_void base_widget_child_node_free(base_widget_child_node* node)
   return ok_void();
 }
 
-result_base_widget_ptr base_widget_new(flexbox_type type)
+result_base_widget_ptr base_widget_new(widget_type type)
 {
   base_widget* widget = (base_widget*)calloc(1, sizeof(base_widget));
   if(!widget)
@@ -88,7 +88,8 @@ result_base_widget_ptr base_widget_new(flexbox_type type)
   if(type == FLEX_CONTAINER)
   {
     widget->flexbox_data.container =
-      (flex_container_data){.direction = FLEX_DIRECTION_ROW,
+      (flex_container_data){.is_fluid = true,
+                            .direction = FLEX_DIRECTION_ROW,
                             .justify_content = FLEX_ALIGN_START,
                             .align_items = FLEX_ALIGN_START};
   }
@@ -139,6 +140,12 @@ result_void base_widget_add_child(base_widget* base, base_widget* child)
   {
     return error(result_void,
                  "Cannot attach child to NULL pointed parent widget!");
+  }
+
+  if(base->type == FLEX_ITEM)
+  {
+    return error(result_void,
+                 "Cannot attach child to widget of type FLEX_ITEM!");
   }
 
   if(!child)

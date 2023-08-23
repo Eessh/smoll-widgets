@@ -16,7 +16,7 @@ typedef struct internal_context internal_context;
 
 /// @brief Type of widget, either it is a flex-box container or just a
 ///        flex-box item.
-typedef enum flexbox_type
+typedef enum widget_type
 {
   /// @brief This type of widget acts as a fluid container for its children
   ///        with flex-box layouting.
@@ -26,7 +26,7 @@ typedef enum flexbox_type
   ///        `FLEX_CONTAINER`.
   ///        The `FLEX_ITEM` widgets should not be having any children.
   FLEX_ITEM
-} flexbox_type;
+} widget_type;
 
 /// @brief Flex-box loyouting direction.
 typedef enum flex_direction
@@ -65,6 +65,13 @@ typedef enum flex_align
 /// @brief Flex-box related data for `FLEX_CONTAINER`.
 typedef struct flex_container_data
 {
+  /// @brief Tells whether container sizing is controlled by layouting engine
+  ///        or by the user.
+  ///        If `true` (default value) sizing is set according to children,
+  ///        else this widget is going to have fixed width and height,
+  ///        unless changed by user.
+  bool is_fluid;
+
   /// @brief Flex-box layouting direction.
   flex_direction direction;
 
@@ -106,7 +113,7 @@ struct base_widget
 
   /// @brief Widget's flex-box type.
   ///        If `FLEX_CONTAINER` this widget can have children otherwise not.
-  flexbox_type type;
+  widget_type type;
 
   /// @brief Flex-box related data of widget.
   union
@@ -255,7 +262,7 @@ result_void base_widget_child_node_free(base_widget_child_node* node);
 
 /// @brief Creates a new base widget.
 /// @return Base widget pointer result.
-result_base_widget_ptr base_widget_new(flexbox_type type);
+result_base_widget_ptr base_widget_new(widget_type type);
 
 /// @brief Adds the given child widget to this widget.
 /// @param base pointer to base widget, for which the child is to be added.
