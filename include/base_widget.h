@@ -8,6 +8,7 @@
 
 /// Forward declarations
 typedef struct base_widget base_widget;
+typedef struct result_base_widget_ptr result_base_widget_ptr;
 typedef struct base_widget_child_node base_widget_child_node;
 typedef struct internal_mouse_motion_event internal_mouse_motion_event;
 typedef struct internal_mouse_button_event internal_mouse_button_event;
@@ -153,6 +154,8 @@ struct base_widget
   /// @brief Context of this widget.
   internal_context* context;
 
+  result_base_widget_ptr (*mark_need_resizing)(base_widget*, int16, int16);
+
   result_void (*calculate_size)(base_widget*);
 
   result_void (*internal_relayout)(const base_widget*);
@@ -243,7 +246,7 @@ struct base_widget_child_node
   base_widget_child_node* next;
 };
 
-typedef struct result_base_widget_ptr
+struct result_base_widget_ptr
 {
   bool ok;
   union
@@ -251,7 +254,7 @@ typedef struct result_base_widget_ptr
     base_widget* value;
     const char* error;
   };
-} result_base_widget_ptr;
+};
 
 typedef struct result_base_widget_child_node_ptr
 {

@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include "../include/macros.h"
 
+static result_base_widget_ptr default_internal_mark_need_resizing(
+  base_widget* widget, int16 delta, int16 delta_y);
+
 static result_void
 default_internal_calculate_size_callback(base_widget* widget);
 
@@ -117,6 +120,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
 
   widget->context = NULL;
 
+  widget->mark_need_resizing = default_internal_mark_need_resizing;
   widget->calculate_size = default_internal_calculate_size_callback;
   widget->internal_relayout = default_internal_relayout_callback;
   widget->internal_get_bounding_rect_callback =
@@ -251,6 +255,164 @@ result_void base_widget_free(base_widget* widget)
   free(widget);
 
   return ok_void();
+}
+
+static result_base_widget_ptr default_internal_mark_need_resizing(
+  base_widget* widget, int16 delta_x, int16 delta_y)
+{
+  if(widget->type == FLEX_ITEM)
+  {
+    widget->need_resizing = true;
+    if(widget->parent)
+    {
+      return widget->parent->mark_need_resizing(
+        widget->parent, delta_x, delta_y);
+    }
+    return ok(result_base_widget_ptr, widget);
+  }
+  else
+  {
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      // consume delta_x from main axis, delta_y from cross axis
+      uint16 main_axis_length = widget->w, cross_axis_length = widget->h;
+      uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+      base_widget_child_node* node = widget->children_head;
+      while(node)
+      {
+        needed_main_axis_length += node->child->w;
+        needed_cross_axis_length =
+          max(needed_cross_axis_length, node->child->h);
+        node = node->next;
+      }
+      int16 remaining_main_axis_length =
+        main_axis_length - needed_main_axis_length;
+      // remaining main axis length will always be greater than 0.
+      if(delta_x < 0)
+      {
+        if(remaining_main_axis_length > -delta_x)
+        {
+          delta_x = 0;
+        }
+        else
+        {
+          delta_x += remaining_main_axis_length;
+        }
+      }
+      else if(delta_x > 0)
+      {
+        if(remaining_main_axis_length > delta_x)
+        {
+          delta_x = 0;
+        }
+        else
+        {
+          delta_x -= remaining_main_axis_length;
+        }
+      }
+      int16 remaining_cross_axis_length =
+        cross_axis_length - needed_cross_axis_length;
+      // remaining cross axis length will always be greater than 0.
+      if(delta_y < 0)
+      {
+        if(remaining_cross_axis_length > -delta_y)
+        {
+          delta_y = 0;
+        }
+        else
+        {
+          delta_y += remaining_cross_axis_length;
+        }
+      }
+      else if(delta_y > 0)
+      {
+        if(remaining_cross_axis_length > delta_y)
+        {
+          delta_y = 0;
+        }
+        else
+        {
+          delta_y -= remaining_cross_axis_length;
+        }
+      }
+    }
+    else
+    {
+      // consume delta_y from main axis, delta_x from cross axis
+      uint16 main_axis_length = widget->h, cross_axis_length = widget->w;
+      uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+      base_widget_child_node* node = widget->children_head;
+      while(node)
+      {
+        needed_main_axis_length += node->child->h;
+        needed_cross_axis_length =
+          max(needed_cross_axis_length, node->child->w);
+        node = node->next;
+      }
+      int16 remaining_main_axis_length =
+        main_axis_length - needed_main_axis_length;
+      // remaining main axis length will always be greater then 0.
+      if(delta_y < 0)
+      {
+        if(remaining_main_axis_length > -delta_y)
+        {
+          delta_y = 0;
+        }
+        else
+        {
+          delta_y += remaining_main_axis_length;
+        }
+      }
+      else if(delta_y > 0)
+      {
+        if(remaining_main_axis_length > delta_y)
+        {
+          delta_y = 0;
+        }
+        else
+        {
+          delta_y -= remaining_main_axis_length;
+        }
+      }
+      int16 remaining_cross_axis_length =
+        cross_axis_length - needed_cross_axis_length;
+      // remaining cross axis length will always be greater than 0.
+      if(delta_x < 0)
+      {
+        if(remaining_cross_axis_length > -delta_x)
+        {
+          delta_x = 0;
+        }
+        else
+        {
+          delta_x += remaining_cross_axis_length;
+        }
+      }
+      else if(delta_x > 0)
+      {
+        if(remaining_cross_axis_length > delta_x)
+        {
+          delta_x = 0;
+        }
+        else
+        {
+          delta_x -= remaining_cross_axis_length;
+        }
+      }
+    }
+  }
+
+  if(delta_x == 0 && delta_y == 0)
+  {
+    return ok(result_base_widget_ptr, widget);
+  }
+
+  if(widget->parent)
+  {
+    return widget->parent->mark_need_resizing(widget->parent, delta_x, delta_y);
+  }
+
+  return ok(result_base_widget_ptr, widget);
 }
 
 result_void default_internal_calculate_size_callback(base_widget* widget)
