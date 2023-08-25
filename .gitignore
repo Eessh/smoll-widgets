@@ -52,6 +52,7 @@ Mkfile.old
 dkms.conf
 
 # Mine >_<
+.vs
 .idea
 *.sublime-workspace
 *.make

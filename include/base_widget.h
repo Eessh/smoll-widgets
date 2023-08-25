@@ -14,6 +14,10 @@ typedef struct internal_mouse_button_event internal_mouse_button_event;
 typedef struct internal_mouse_scroll_event internal_mouse_scroll_event;
 typedef struct internal_context internal_context;
 
+///////////////////////////////////////////////////////////////////////////////
+/// * Widget's Flex-Box
+///////////////////////////////////////////////////////////////////////////////
+
 /// @brief Type of widget, either it is a flex-box container or just a
 ///        flex-box item.
 typedef enum widget_type
@@ -80,6 +84,9 @@ typedef struct flex_container_data
 
   /// @brief Cross-axis flex-items alignment.
   flex_align align_items;
+
+  uint8 flex_grow;
+  uint8 flex_shrink;
 } flex_container_data;
 
 /// @brief Flex-box related data for `FLEX_ITEM`.
@@ -125,6 +132,10 @@ struct base_widget
     flex_item_data item;
   } flexbox_data;
 
+  /// @brief Flag to know whether widget's width and height needs to be
+  ///        re-calculated.
+  bool need_resizing;
+
   /// @brief Tells if widget should be taken into account while
   ///        layouting and rendering.
   bool visible;
@@ -141,6 +152,10 @@ struct base_widget
 
   /// @brief Context of this widget.
   internal_context* context;
+
+  result_void (*calculate_size)(base_widget*);
+
+  result_void (*internal_relayout)(const base_widget*);
 
   /// @brief Internal callback for getting bounding rectangle of widget.
   ///        Will be handy when layouting.
