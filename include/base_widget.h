@@ -156,10 +156,40 @@ struct base_widget
   /// @brief Context of this widget.
   internal_context* context;
 
-  result_base_widget_ptr (*mark_need_resizing)(base_widget*, int16, int16);
+  /**
+   * Internal callback for marking a widget's `need_resizing` flag to `true`
+   * if it can't expand to the given deltas.
+   * 
+   * Should be called by the widget in which the change of size has occurred,
+   * it will go on marking the parent widgets until it met the constraints.
+   * 
+   * This is an internal callback, override this with your own implementation
+   * only if you know what you are doing!
+   */
+  result_base_widget_ptr (*internal_mark_need_resizing)(base_widget*,
+                                                        int16,
+                                                        int16);
 
-  result_void (*calculate_size)(base_widget*);
+  /**
+   * Internal callback for calculating minimum size needed for the widget.
+   * 
+   * Should be called by the widget in which the change of size has occurred
+   * (after `internal_mark_need_resizing` pass).
+   * 
+   * This is an internal callback, override this with your own implementation
+   * only if you know what you are doing!
+   */
+  result_void (*internal_calculate_size)(base_widget*);
 
+  /**
+   * Internal callback for re-calculating layout for the widget.
+   * 
+   * Should be called by the widget in which the change of size has occurred
+   * (after `internal_mark_need_resizing` and `internal_calculate_size` pass)
+   * 
+   * This is an internal callback, override this with your own implementation
+   * only if you know what you are doing!
+   */
   result_void (*internal_relayout)(const base_widget*);
 
   /// @brief Internal callback for getting bounding rectangle of widget.
@@ -268,12 +298,19 @@ typedef struct result_base_widget_child_node_ptr
   };
 } result_base_widget_child_node_ptr;
 
+/**
+ * Wrapper for returning deltas: `delta_x`, `delta_y` when
+ * a widget's size is changed.
+ */
 struct sizing_delta
 {
   int16 x;
   int16 y;
 };
 
+/**
+ * Sizing delta result.
+ */
 struct result_sizing_delta
 {
   bool ok;
@@ -523,4 +560,3 @@ result_void internal_context_process_mouse_scroll_event(
   internal_context* context, internal_mouse_scroll_event* internal_event);
 
 #endif
-

@@ -2,12 +2,37 @@
 #include <stdlib.h>
 #include "../include/macros.h"
 
+/**
+ * @brief      Default callback function for internal mark need resizing
+ *             callback.
+ *
+ * @param      widget   pointer to widget.
+ * @param[in]  delta    change in size in x-axis.
+ * @param[in]  delta_y  change in size in y-axis.
+ *
+ * @return     Base widget pointer result.
+ */
 static result_base_widget_ptr default_internal_mark_need_resizing(
-  base_widget* widget, int16 delta, int16 delta_y);
+  base_widget* widget, int16 delta_x, int16 delta_y);
 
+/**
+ * @brief      Default callback function for internal calculate size
+ *             callback.
+ *
+ * @param      widget  pointer to widget.
+ *
+ * @return     Void result.
+ */
 static result_void
 default_internal_calculate_size_callback(base_widget* widget);
 
+/**
+ * @brief      Default callback function for internal relayout callback.
+ *
+ * @param[in]  widget  pointer to widget.
+ *
+ * @return     Void result.
+ */
 static result_void
 default_internal_relayout_callback(const base_widget* widget);
 
@@ -120,8 +145,8 @@ result_base_widget_ptr base_widget_new(widget_type type)
 
   widget->context = NULL;
 
-  widget->mark_need_resizing = default_internal_mark_need_resizing;
-  widget->calculate_size = default_internal_calculate_size_callback;
+  widget->internal_mark_need_resizing = default_internal_mark_need_resizing;
+  widget->internal_calculate_size = default_internal_calculate_size_callback;
   widget->internal_relayout = default_internal_relayout_callback;
   widget->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
@@ -266,7 +291,7 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
     widget->need_resizing = true;
     if(widget->parent)
     {
-      return widget->parent->mark_need_resizing(
+      return widget->parent->internal_mark_need_resizing(
         widget->parent, delta_x, delta_y);
     }
     return ok(result_base_widget_ptr, widget);
@@ -410,7 +435,8 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
 
   if(widget->parent)
   {
-    return widget->parent->mark_need_resizing(widget->parent, delta_x, delta_y);
+    return widget->parent->internal_mark_need_resizing(
+      widget->parent, delta_x, delta_y);
   }
 
   return ok(result_base_widget_ptr, widget);
@@ -439,7 +465,7 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
   {
     if(node->child->need_resizing)
     {
-      node->child->calculate_size(node->child);
+      node->child->internal_calculate_size(node->child);
     }
     main_axis_length += node->child->w;
     cross_axis_length = max(cross_axis_length, node->child->h);
@@ -610,14 +636,14 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   }
 
   result_base_widget_ptr __ =
-    widget->mark_need_resizing(widget, _.value.x, _.value.y);
+    widget->internal_mark_need_resizing(widget, _.value.x, _.value.y);
   if(!__.ok)
   {
     return error(result_bool, __.error);
   }
 
   base_widget* ancestor = __.value;
-  ancestor->calculate_size(ancestor);
+  ancestor->internal_calculate_size(ancestor);
   ancestor->internal_relayout(ancestor);
   ancestor->internal_render_callback(ancestor);
 
@@ -837,4 +863,3 @@ result_bool default_internal_mouse_scroll_callback(
 
   return ok(result_bool, false);
 }
-
