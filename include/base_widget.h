@@ -10,6 +10,8 @@
 typedef struct base_widget base_widget;
 typedef struct result_base_widget_ptr result_base_widget_ptr;
 typedef struct base_widget_child_node base_widget_child_node;
+typedef struct sizing_delta sizing_delta;
+typedef struct result_sizing_delta result_sizing_delta;
 typedef struct internal_mouse_motion_event internal_mouse_motion_event;
 typedef struct internal_mouse_button_event internal_mouse_button_event;
 typedef struct internal_mouse_scroll_event internal_mouse_scroll_event;
@@ -175,7 +177,7 @@ struct base_widget
   ///       result_bool ?
 
   /// @brief Internal callback for adjusting layout of this widget.
-  result_bool (*internal_fit_layout_callback)(base_widget*, bool);
+  result_sizing_delta (*internal_fit_layout_callback)(base_widget*, bool);
 
   /// @brief Internal callback for adjusting layout and sizing of this widget,
   ///        and automatically calling this callback on parent widgets
@@ -265,6 +267,22 @@ typedef struct result_base_widget_child_node_ptr
     const char* error;
   };
 } result_base_widget_child_node_ptr;
+
+struct sizing_delta
+{
+  int16 x;
+  int16 y;
+};
+
+struct result_sizing_delta
+{
+  bool ok;
+  union
+  {
+    sizing_delta value;
+    const char* error;
+  };
+};
 
 /// @brief Creates a new base widegt child node enclosing this widget.
 /// @param child the widget to create child node for.
@@ -505,3 +523,4 @@ result_void internal_context_process_mouse_scroll_event(
   internal_context* context, internal_mouse_scroll_event* internal_event);
 
 #endif
+

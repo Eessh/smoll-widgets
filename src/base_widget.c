@@ -127,7 +127,8 @@ result_base_widget_ptr base_widget_new(widget_type type)
     default_internal_get_bounding_rect_callback;
   widget->internal_get_background_callback = NULL;
   widget->internal_fit_layout_callback = NULL;
-  widget->internal_adjust_layout_callback = NULL;
+  widget->internal_adjust_layout_callback =
+    default_internal_adjust_layout_callback;
   widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
 
@@ -590,20 +591,35 @@ rect default_internal_get_bounding_rect_callback(const base_widget* widget)
 
 static result_bool default_internal_adjust_layout_callback(base_widget* widget)
 {
-  /// FIXME: Fix this shit!
-
-  result_bool _ = widget->internal_fit_layout_callback(widget, false);
+  // call fit layout on this widget, that should return the delta_x, delta_y
+  // using these deltas, mark need resizing from this widget, that should
+  // return the lowest ancestor which satisfies these deltas
+  // now call calculate sizing on this ancestor
+  // then call relayout on this ancestor
+  // then call internal render on this ancestor.
+  result_sizing_delta _ = widget->internal_fit_layout_callback(widget, false);
   if(!_.ok)
   {
-    return _;
+    return error(result_bool, _.error);
   }
 
-  if(!_.value)
+  if(_.value.x == 0 && _.value.y == 0)
   {
+    // deltas are 0
     return ok(result_bool, true);
   }
 
-  base_widget_child_node* node = widget->children_head;
+  result_base_widget_ptr __ =
+    widget->mark_need_resizing(widget, _.value.x, _.value.y);
+  if(!__.ok)
+  {
+    return error(result_bool, __.error);
+  }
+
+  base_widget* ancestor = __.value;
+  ancestor->calculate_size(ancestor);
+  ancestor->internal_relayout(ancestor);
+  ancestor->internal_render_callback(ancestor);
 
   return ok(result_bool, true);
 }
@@ -821,3 +837,4 @@ result_bool default_internal_mouse_scroll_callback(
 
   return ok(result_bool, false);
 }
+

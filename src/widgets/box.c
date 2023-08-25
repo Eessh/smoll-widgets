@@ -15,8 +15,9 @@ default_internal_get_background_callback(const base_widget* widget);
 /// @brief Default callback function for internal fit layout callback.
 /// @param widget pointer to base widget.
 /// @return Bool result.
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children);
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget,
+                                     bool call_on_children);
 
 static result_bool
 default_internal_assign_positions_callback(base_widget* widget);
@@ -85,16 +86,9 @@ static color default_internal_get_background_callback(const base_widget* widget)
   return b->background;
 }
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children)
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
-  if(!widget)
-  {
-    return error(
-      result_bool,
-      "Cannot process internal fit layout callback on a NULL pointed widget!");
-  }
-
   // Box is just a static container, does nothing
   // box widget doesn't resize according to children
   // just stays the same size, until unless changed width or height
@@ -111,7 +105,9 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
     }
   }
 
-  return ok(result_bool, false);
+  sizing_delta deltas = {.x = 0, .y = 0};
+
+  return ok(result_sizing_delta, deltas);
 }
 
 static result_bool

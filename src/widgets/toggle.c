@@ -20,8 +20,9 @@ struct toggle_private
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children);
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget,
+                                     bool call_on_children);
 
 static result_bool default_internal_render_callback(const base_widget* widget);
 
@@ -144,12 +145,14 @@ default_internal_get_bounding_rect_callback(const base_widget* widget)
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
 }
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children)
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
   // skip does nothing
 
-  return ok(result_bool, false);
+  sizing_delta deltas = {.x = 0, .y = 0};
+
+  return ok(result_sizing_delta, deltas);
 }
 
 static result_bool default_internal_render_callback(const base_widget* widget)

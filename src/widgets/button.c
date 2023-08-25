@@ -61,8 +61,9 @@ static void default_internal_derived_free_callback(base_widget* widget);
 /// @brief Default callback function for internal fit layout callback.
 /// @param widget pointer to base widget.
 /// @return Bool result.
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children);
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget,
+                                     bool call_on_children);
 
 /// @brief Default callback function for internal render callback.
 /// @param widget pointer to base widget.
@@ -337,38 +338,27 @@ static void default_internal_derived_free_callback(base_widget* widget)
   free(btn);
 }
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children)
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
-  if(!widget)
-  {
-    return error(result_bool,
-                 "Cannot process internal fit layout callback on "
-                 "a NULL pointed base widget!");
-  }
-
   button* btn = (button*)widget->derived;
 
   result_text_dimensions ___ = widget->context->backend->get_text_dimensions(
     btn->private_data->text, widget->context->font, widget->context->font_size);
   if(!___.ok)
   {
-    return error(result_bool, ___.error);
+    return error(result_sizing_delta, ___.error);
   }
   text_dimensions dimensions = ___.value;
 
   uint16 new_w = dimensions.w + 2 * btn->padding_x;
   uint16 new_h = dimensions.h + 2 * btn->padding_y;
-
-  if(widget->w == new_w && widget->h == new_h)
-  {
-    return ok(result_bool, false);
-  }
+  sizing_delta deltas = {.x = new_w - widget->w, .y = new_h - widget->h};
 
   widget->w = new_w;
   widget->h = new_h;
 
-  return ok(result_bool, true);
+  return ok(result_sizing_delta, deltas);
 }
 
 static result_bool default_internal_render_callback(const base_widget* widget)

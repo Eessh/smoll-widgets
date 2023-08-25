@@ -6,10 +6,11 @@
 static color
 default_internal_get_background_callback(const base_widget* widget);
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children);
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget,
+                                     bool call_on_children);
 
-static result_bool default_internal_adjust_layout_callback(base_widget* widget);
+// static result_bool default_internal_adjust_layout_callback(base_widget* widget);
 
 static result_bool
 default_internal_assign_positions_callback(base_widget* widget);
@@ -45,8 +46,8 @@ result_flex_row_view flex_row_view_new(base_widget* parent_base)
   v->base->internal_get_background_callback =
     default_internal_get_background_callback;
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
-  v->base->internal_adjust_layout_callback =
-    default_internal_adjust_layout_callback;
+  // v->base->internal_adjust_layout_callback =
+  //   default_internal_adjust_layout_callback;
   v->base->internal_assign_positions =
     default_internal_assign_positions_callback;
   v->base->internal_render_callback = default_internal_render_callback;
@@ -66,8 +67,8 @@ static color default_internal_get_background_callback(const base_widget* widget)
   return v->background;
 }
 
-static result_bool default_internal_fit_layout_callback(base_widget* widget,
-                                                        bool call_on_children)
+static result_sizing_delta
+default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
   if(call_on_children)
   {
@@ -94,36 +95,34 @@ static result_bool default_internal_fit_layout_callback(base_widget* widget,
   }
   total_width -= v->gap;
 
-  if(widget->w == total_width && widget->h == max_height + 2 * v->padding_y)
-  {
-    return ok(result_bool, false);
-  }
+  sizing_delta deltas = {.x = total_width - widget->w,
+                         .y = max_height + 2 * v->padding_y - widget->h};
 
   widget->w = total_width;
   widget->h = max_height + 2 * v->padding_y;
 
-  return ok(result_bool, true);
+  return ok(result_sizing_delta, deltas);
 }
 
-static result_bool default_internal_adjust_layout_callback(base_widget* widget)
-{
-  result_bool _ = widget->internal_fit_layout_callback(widget, false);
-  if(!_.ok)
-  {
-    return _;
-  }
-
-  if(_.value && widget->parent &&
-     widget->parent->internal_adjust_layout_callback)
-  {
-    return widget->parent->internal_adjust_layout_callback(widget->parent);
-  }
-
-  widget->internal_assign_positions(widget);
-  widget->internal_render_callback(widget);
-
-  return ok(result_bool, true);
-}
+// static result_bool default_internal_adjust_layout_callback(base_widget* widget)
+// {
+//   result_bool _ = widget->internal_fit_layout_callback(widget, false);
+//   if(!_.ok)
+//   {
+//     return _;
+//   }
+//
+//   if(_.value && widget->parent &&
+//      widget->parent->internal_adjust_layout_callback)
+//   {
+//     return widget->parent->internal_adjust_layout_callback(widget->parent);
+//   }
+//
+//   widget->internal_assign_positions(widget);
+//   widget->internal_render_callback(widget);
+//
+//   return ok(result_bool, true);
+// }
 
 static result_bool
 default_internal_assign_positions_callback(base_widget* widget)
