@@ -1,4 +1,6 @@
 #include "../include/base_widget.h"
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "../include/macros.h"
 
@@ -135,7 +137,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
       (flex_item_data){.flex_grow = 0, .flex_shrink = 0};
   }
 
-  widget->need_resizing = false;
+  widget->need_resizing = true;
 
   widget->visible = true;
 
@@ -444,11 +446,16 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
 
 result_void default_internal_calculate_size_callback(base_widget* widget)
 {
+  printf("Called on widget: %d\n", widget);
   if(widget->type == FLEX_ITEM)
   {
     if(widget->need_resizing)
     {
-      widget->internal_fit_layout_callback(widget, false);
+      if(widget->internal_fit_layout_callback)
+      {
+        printf("Called fit-layout\n");
+        widget->internal_fit_layout_callback(widget, false);
+      }
       widget->need_resizing = false;
     }
     return ok_void();
@@ -456,6 +463,18 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
 
   if(!widget->flexbox_data.container.is_fluid)
   {
+    // skip this widget but call calculate sizing on children widgets
+    base_widget_child_node* node = widget->children_head;
+    while(node)
+    {
+      result_void _ = node->child->internal_calculate_size(node->child);
+      if(!_.ok)
+      {
+        return _;
+      }
+      node = node->next;
+    }
+
     return ok_void();
   }
 
@@ -467,9 +486,29 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
     {
       node->child->internal_calculate_size(node->child);
     }
-    main_axis_length += node->child->w;
-    cross_axis_length = max(cross_axis_length, node->child->h);
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      main_axis_length += node->child->w;
+      cross_axis_length = max(cross_axis_length, node->child->h);
+    }
+    else
+    {
+      main_axis_length += node->child->h;
+      cross_axis_length = max(cross_axis_length, node->child->w);
+    }
     node = node->next;
+  }
+
+  // assigning calculated axes lengths to conatiner widget's dimensions.
+  if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+  {
+    widget->w = main_axis_length;
+    widget->h = cross_axis_length;
+  }
+  else
+  {
+    widget->w = cross_axis_length;
+    widget->h = main_axis_length;
   }
 
   return ok_void();
@@ -516,9 +555,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     node = node->next;
   }
 
+  printf("Needed main, cross axes lengths: %d, %d\n",
+         needed_main_axis_length,
+         needed_cross_axis_length);
+
   // adjusting sizing in main axis
   int16 remaining_main_axis_length = main_axis_length - needed_main_axis_length;
-  if(remaining_main_axis_length > 0)
+  if(remaining_main_axis_length > 0 && total_flex_grow > 0)
   {
     // share remaining space according to flex-grow of each child.
     node = widget->children_head;
@@ -526,11 +569,12 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     {
       if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
       {
-        node->child->w += ((node->child->type == FLEX_CONTAINER
-                              ? node->child->flexbox_data.container.flex_grow
-                              : node->child->flexbox_data.item.flex_grow) /
-                           total_flex_grow) *
-                          remaining_main_axis_length;
+        node->child->w +=
+          (uint16)(((node->child->type == FLEX_CONTAINER
+                       ? node->child->flexbox_data.container.flex_grow
+                       : node->child->flexbox_data.item.flex_grow) /
+                    total_flex_grow) *
+                   remaining_main_axis_length);
       }
       else
       {
@@ -543,7 +587,7 @@ result_void default_internal_relayout_callback(const base_widget* widget)
       node = node->next;
     }
   }
-  else if(remaining_main_axis_length < 0)
+  else if(remaining_main_axis_length < 0 && total_flex_shrink > 0)
   {
     // acquire needed space by shrinking children according
     // to their flex-shrink
@@ -594,6 +638,7 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   node = widget->children_head;
   while(node)
   {
+    printf("x, y: %d, %d\n", x, y);
     node->child->x = x;
     node->child->y = y;
     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
@@ -603,6 +648,17 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     else
     {
       y += node->child->h;
+    }
+    node = node->next;
+  }
+
+  // calling re-layout on children which are container widgets
+  node = widget->children_head;
+  while(node)
+  {
+    if(node->child->type == FLEX_CONTAINER)
+    {
+      node->child->internal_relayout(node->child);
     }
     node = node->next;
   }
@@ -617,6 +673,11 @@ rect default_internal_get_bounding_rect_callback(const base_widget* widget)
 
 static result_bool default_internal_adjust_layout_callback(base_widget* widget)
 {
+  if(!widget->internal_fit_layout_callback)
+  {
+    return ok(result_bool, false);
+  }
+
   // call fit layout on this widget, that should return the delta_x, delta_y
   // using these deltas, mark need resizing from this widget, that should
   // return the lowest ancestor which satisfies these deltas
@@ -643,6 +704,7 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   }
 
   base_widget* ancestor = __.value;
+  printf("Ancestor parent: %s\n", ancestor->parent);
   ancestor->internal_calculate_size(ancestor);
   ancestor->internal_relayout(ancestor);
   ancestor->internal_render_callback(ancestor);

@@ -20,9 +20,9 @@ struct toggle_private
 static rect
 default_internal_get_bounding_rect_callback(const base_widget* widget);
 
-static result_sizing_delta
-default_internal_fit_layout_callback(base_widget* widget,
-                                     bool call_on_children);
+// static result_sizing_delta
+// default_internal_fit_layout_callback(base_widget* widget,
+//                                      bool call_on_children);
 
 static result_bool default_internal_render_callback(const base_widget* widget);
 
@@ -73,7 +73,7 @@ result_toggle_ptr toggle_new(base_widget* parent_base)
 
   t->base->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
-  t->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
+  // t->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   t->base->internal_render_callback = default_internal_render_callback;
   t->base->internal_derived_free_callback =
     default_internal_derived_free_callback;
@@ -95,6 +95,9 @@ result_toggle_ptr toggle_new(base_widget* parent_base)
 
   t->private_data->user_on_callback = NULL;
   t->private_data->user_off_callback = NULL;
+
+  // setting need resizing flag to false
+  t->base->need_resizing = false;
 
   return ok(result_toggle_ptr, t);
 }
@@ -145,15 +148,15 @@ default_internal_get_bounding_rect_callback(const base_widget* widget)
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
 }
 
-static result_sizing_delta
-default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
-{
-  // skip does nothing
+// static result_sizing_delta
+// default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
+// {
+//   // skip does nothing
 
-  sizing_delta deltas = {.x = 0, .y = 0};
+//   sizing_delta deltas = {.x = 0, .y = 0};
 
-  return ok(result_sizing_delta, deltas);
-}
+//   return ok(result_sizing_delta, deltas);
+// }
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {

@@ -131,6 +131,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     bx->base->w = 1080;
     bx->base->h = 720;
     bx->background = (color){255, 255, 255, 255};
+    bx->base->flexbox_data.container.is_fluid = false;
   }
 
   // Setting button as root widget of smoll context
@@ -259,7 +260,8 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   }
 
   // Calling initial layouting, rendering functions
-  smoll_context_initial_fit_layout(sctx);
+  // smoll_context_initial_fit_layout(sctx);
+  smoll_context_initialize_layout(sctx);
   smoll_context_initial_render(sctx);
 
   // Event loop
@@ -287,11 +289,13 @@ INT WINAPI WinMain(HINSTANCE hInstance,
 void mouse_button_down_callback(button* btn, mouse_button_event event)
 {
   printf("Mouse button down!\n");
+  button_set_text(btn, "Clicked!");
 }
 
 void mouse_button_up_callback(button* btn, mouse_button_event event)
 {
   printf("Mouse button up!\n");
+  button_set_text(btn, "Hola!");
 }
 
 void mouse_enter_callback(button* btn, mouse_motion_event event)

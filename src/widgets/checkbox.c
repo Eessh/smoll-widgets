@@ -78,6 +78,9 @@ result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground)
   box->base->w = 20;
   box->base->h = 20;
 
+  // setting need resizing flag to false
+  box->base->need_resizing = false;
+
   return ok(result_checkbox_ptr, box);
 }
 

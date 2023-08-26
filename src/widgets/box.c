@@ -128,13 +128,6 @@ default_internal_assign_positions_callback(base_widget* widget)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  if(!widget)
-  {
-    return error(
-      result_bool,
-      "Cannot process internal render callback on a NULL pointed widget!");
-  }
-
   box* b = (box*)widget->derived;
 
   result_void _ = command_buffer_add_render_rect_command(

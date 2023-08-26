@@ -349,6 +349,25 @@ result_void smoll_context_initial_fit_layout(smoll_context* context)
   return ok_void();
 }
 
+result_void smoll_context_initialize_layout(smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_void,
+                 "Cannot initialize sizing of context pointing to NULL!");
+  }
+
+  base_widget* root = context->internal_ctx->root;
+
+  result_void _ = root->internal_calculate_size(root);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  return root->internal_relayout(root);
+}
+
 result_void smoll_context_render(smoll_context* context)
 {
   if(!context)
