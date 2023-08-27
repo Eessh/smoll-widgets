@@ -290,7 +290,7 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
 {
   if(widget->type == FLEX_ITEM)
   {
-    widget->need_resizing = true;
+    widget->need_resizing = false;
     if(widget->parent)
     {
       return widget->parent->internal_mark_need_resizing(
@@ -298,134 +298,205 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
     }
     return ok(result_base_widget_ptr, widget);
   }
-  else
+
+  if(!widget->flexbox_data.container.is_fluid)
   {
-    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    // widget is not fluid, doesn't resize
+    printf("Encountered non-fluid widget\n");
+    return ok(result_base_widget_ptr, widget);
+  }
+
+  if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+  {
+    // consume delta_x from main axis, delta_y from cross axis
+    uint16 main_axis_length = widget->w, cross_axis_length = widget->h;
+    uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+    base_widget_child_node* node = widget->children_head;
+    while(node)
     {
-      // consume delta_x from main axis, delta_y from cross axis
-      uint16 main_axis_length = widget->w, cross_axis_length = widget->h;
-      uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
-      base_widget_child_node* node = widget->children_head;
-      while(node)
+      needed_main_axis_length += node->child->w;
+      needed_cross_axis_length = max(needed_cross_axis_length, node->child->h);
+      node = node->next;
+    }
+    int16 remaining_main_axis_length =
+      main_axis_length - needed_main_axis_length;
+    if(remaining_main_axis_length > 0)
+    {
+      // main axis size needs to be decreased
+      if(remaining_main_axis_length >= -delta_x)
       {
-        needed_main_axis_length += node->child->w;
-        needed_cross_axis_length =
-          max(needed_cross_axis_length, node->child->h);
-        node = node->next;
-      }
-      int16 remaining_main_axis_length =
-        main_axis_length - needed_main_axis_length;
-      // remaining main axis length will always be greater than 0.
-      if(delta_x < 0)
-      {
-        if(remaining_main_axis_length > -delta_x)
+        if(!widget->flexbox_data.container.is_fluid)
         {
           delta_x = 0;
         }
-        else
-        {
-          delta_x += remaining_main_axis_length;
-        }
       }
-      else if(delta_x > 0)
+      else
       {
-        if(remaining_main_axis_length > delta_x)
-        {
-          delta_x = 0;
-        }
-        else
-        {
-          delta_x -= remaining_main_axis_length;
-        }
-      }
-      int16 remaining_cross_axis_length =
-        cross_axis_length - needed_cross_axis_length;
-      // remaining cross axis length will always be greater than 0.
-      if(delta_y < 0)
-      {
-        if(remaining_cross_axis_length > -delta_y)
-        {
-          delta_y = 0;
-        }
-        else
-        {
-          delta_y += remaining_cross_axis_length;
-        }
-      }
-      else if(delta_y > 0)
-      {
-        if(remaining_cross_axis_length > delta_y)
-        {
-          delta_y = 0;
-        }
-        else
-        {
-          delta_y -= remaining_cross_axis_length;
-        }
+        delta_x += remaining_main_axis_length;
       }
     }
-    else
+    else if(remaining_main_axis_length < 0)
     {
-      // consume delta_y from main axis, delta_x from cross axis
-      uint16 main_axis_length = widget->h, cross_axis_length = widget->w;
-      uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
-      base_widget_child_node* node = widget->children_head;
-      while(node)
+      // main axis size needs to be increased
+      if(remaining_main_axis_length >= delta_x)
       {
-        needed_main_axis_length += node->child->h;
-        needed_cross_axis_length =
-          max(needed_cross_axis_length, node->child->w);
-        node = node->next;
+        delta_x = 0;
       }
-      int16 remaining_main_axis_length =
-        main_axis_length - needed_main_axis_length;
-      // remaining main axis length will always be greater then 0.
-      if(delta_y < 0)
+      else
       {
-        if(remaining_main_axis_length > -delta_y)
+        delta_x -= remaining_main_axis_length;
+      }
+    }
+    // // remaining main axis length will always be greater than 0.
+    // if(delta_x < 0)
+    // {
+    //   if(remaining_main_axis_length > -delta_x)
+    //   {
+    //     if(!widget->flexbox_data.container.is_fluid)
+    //     {
+    //       printf("Widget not fuild!\n");
+    //       delta_x = 0;
+    //     }
+    //   }
+    //   else
+    //   {
+    //     delta_x += remaining_main_axis_length;
+    //   }
+    // }
+    // else if(delta_x > 0)
+    // {
+    //   if(remaining_main_axis_length > delta_x)
+    //   {
+    //     delta_x = 0;
+    //   }
+    //   else
+    //   {
+    //     delta_x -= remaining_main_axis_length;
+    //   }
+    // }
+    int16 remaining_cross_axis_length =
+      cross_axis_length - needed_cross_axis_length;
+    if(remaining_cross_axis_length > 0)
+    {
+      // main axis size needs to be decreased
+      if(remaining_cross_axis_length >= -delta_y)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          printf("Widget not fuild!\n");
+          delta_y = 0;
+        }
+      }
+      else
+      {
+        delta_y += remaining_cross_axis_length;
+      }
+    }
+    else if(remaining_cross_axis_length < 0)
+    {
+      // main axis size needs to be increased
+      if(remaining_cross_axis_length >= delta_y)
+      {
+        delta_y = 0;
+      }
+      else
+      {
+        delta_y -= remaining_cross_axis_length;
+      }
+    }
+    // // remaining cross axis length will always be greater than 0.
+    // if(delta_y < 0)
+    // {
+    //   if(remaining_cross_axis_length > -delta_y)
+    //   {
+    //     if(!widget->flexbox_data.container.is_fluid)
+    //     {
+    //       delta_y = 0;
+    //     }
+    //   }
+    //   else
+    //   {
+    //     delta_y += remaining_cross_axis_length;
+    //   }
+    // }
+    // else if(delta_y > 0)
+    // {
+    //   if(remaining_cross_axis_length > delta_y)
+    //   {
+    //     delta_y = 0;
+    //   }
+    //   else
+    //   {
+    //     delta_y -= remaining_cross_axis_length;
+    //   }
+    // }
+  }
+  else
+  {
+    // consume delta_y from main axis, delta_x from cross axis
+    uint16 main_axis_length = widget->h, cross_axis_length = widget->w;
+    uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+    base_widget_child_node* node = widget->children_head;
+    while(node)
+    {
+      needed_main_axis_length += node->child->h;
+      needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
+      node = node->next;
+    }
+    int16 remaining_main_axis_length =
+      main_axis_length - needed_main_axis_length;
+    // remaining main axis length will always be greater then 0.
+    if(delta_y < 0)
+    {
+      if(remaining_main_axis_length > -delta_y)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
         {
           delta_y = 0;
         }
-        else
-        {
-          delta_y += remaining_main_axis_length;
-        }
       }
-      else if(delta_y > 0)
+      else
       {
-        if(remaining_main_axis_length > delta_y)
-        {
-          delta_y = 0;
-        }
-        else
-        {
-          delta_y -= remaining_main_axis_length;
-        }
+        delta_y += remaining_main_axis_length;
       }
-      int16 remaining_cross_axis_length =
-        cross_axis_length - needed_cross_axis_length;
-      // remaining cross axis length will always be greater than 0.
-      if(delta_x < 0)
+    }
+    else if(delta_y > 0)
+    {
+      if(remaining_main_axis_length > delta_y)
       {
-        if(remaining_cross_axis_length > -delta_x)
+        delta_y = 0;
+      }
+      else
+      {
+        delta_y -= remaining_main_axis_length;
+      }
+    }
+    int16 remaining_cross_axis_length =
+      cross_axis_length - needed_cross_axis_length;
+    // remaining cross axis length will always be greater than 0.
+    if(delta_x < 0)
+    {
+      if(remaining_cross_axis_length > -delta_x)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
         {
           delta_x = 0;
         }
-        else
-        {
-          delta_x += remaining_cross_axis_length;
-        }
       }
-      else if(delta_x > 0)
+      else
       {
-        if(remaining_cross_axis_length > delta_x)
-        {
-          delta_x = 0;
-        }
-        else
-        {
-          delta_x -= remaining_cross_axis_length;
-        }
+        delta_x += remaining_cross_axis_length;
+      }
+    }
+    else if(delta_x > 0)
+    {
+      if(remaining_cross_axis_length > delta_x)
+      {
+        delta_x = 0;
+      }
+      else
+      {
+        delta_x -= remaining_cross_axis_length;
       }
     }
   }
