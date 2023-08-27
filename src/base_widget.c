@@ -347,33 +347,6 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
         delta_x -= remaining_main_axis_length;
       }
     }
-    // // remaining main axis length will always be greater than 0.
-    // if(delta_x < 0)
-    // {
-    //   if(remaining_main_axis_length > -delta_x)
-    //   {
-    //     if(!widget->flexbox_data.container.is_fluid)
-    //     {
-    //       printf("Widget not fuild!\n");
-    //       delta_x = 0;
-    //     }
-    //   }
-    //   else
-    //   {
-    //     delta_x += remaining_main_axis_length;
-    //   }
-    // }
-    // else if(delta_x > 0)
-    // {
-    //   if(remaining_main_axis_length > delta_x)
-    //   {
-    //     delta_x = 0;
-    //   }
-    //   else
-    //   {
-    //     delta_x -= remaining_main_axis_length;
-    //   }
-    // }
     int16 remaining_cross_axis_length =
       cross_axis_length - needed_cross_axis_length;
     if(remaining_cross_axis_length > 0)
@@ -383,7 +356,6 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
       {
         if(!widget->flexbox_data.container.is_fluid)
         {
-          printf("Widget not fuild!\n");
           delta_y = 0;
         }
       }
@@ -404,32 +376,6 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
         delta_y -= remaining_cross_axis_length;
       }
     }
-    // // remaining cross axis length will always be greater than 0.
-    // if(delta_y < 0)
-    // {
-    //   if(remaining_cross_axis_length > -delta_y)
-    //   {
-    //     if(!widget->flexbox_data.container.is_fluid)
-    //     {
-    //       delta_y = 0;
-    //     }
-    //   }
-    //   else
-    //   {
-    //     delta_y += remaining_cross_axis_length;
-    //   }
-    // }
-    // else if(delta_y > 0)
-    // {
-    //   if(remaining_cross_axis_length > delta_y)
-    //   {
-    //     delta_y = 0;
-    //   }
-    //   else
-    //   {
-    //     delta_y -= remaining_cross_axis_length;
-    //   }
-    // }
   }
   else
   {
@@ -445,9 +391,9 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
     }
     int16 remaining_main_axis_length =
       main_axis_length - needed_main_axis_length;
-    // remaining main axis length will always be greater then 0.
-    if(delta_y < 0)
+    if(remaining_main_axis_length > 0)
     {
+      // main axis should be shrinked
       if(remaining_main_axis_length > -delta_y)
       {
         if(!widget->flexbox_data.container.is_fluid)
@@ -460,8 +406,9 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
         delta_y += remaining_main_axis_length;
       }
     }
-    else if(delta_y > 0)
+    else if(remaining_main_axis_length < 0)
     {
+      // main axis should be increased
       if(remaining_main_axis_length > delta_y)
       {
         delta_y = 0;
@@ -473,9 +420,9 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
     }
     int16 remaining_cross_axis_length =
       cross_axis_length - needed_cross_axis_length;
-    // remaining cross axis length will always be greater than 0.
-    if(delta_x < 0)
+    if(remaining_cross_axis_length > 0)
     {
+      // cross axis should be shrinked
       if(remaining_cross_axis_length > -delta_x)
       {
         if(!widget->flexbox_data.container.is_fluid)
@@ -488,11 +435,15 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
         delta_x += remaining_cross_axis_length;
       }
     }
-    else if(delta_x > 0)
+    else if(remaining_cross_axis_length < 0)
     {
+      // cross axis should be increased
       if(remaining_cross_axis_length > delta_x)
       {
-        delta_x = 0;
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          delta_x = 0;
+        }
       }
       else
       {
@@ -517,14 +468,12 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
 
 result_void default_internal_calculate_size_callback(base_widget* widget)
 {
-  printf("Called on widget: %d\n", widget);
   if(widget->type == FLEX_ITEM)
   {
     if(widget->need_resizing)
     {
       if(widget->internal_fit_layout_callback)
       {
-        printf("Called fit-layout\n");
         widget->internal_fit_layout_callback(widget, false);
       }
       widget->need_resizing = false;
@@ -709,7 +658,7 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   node = widget->children_head;
   while(node)
   {
-    printf("x, y: %d, %d\n", x, y);
+    printf("assigning positions x, y: %d, %d\n", x, y);
     node->child->x = x;
     node->child->y = y;
     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
@@ -775,7 +724,7 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   }
 
   base_widget* ancestor = __.value;
-  printf("Ancestor parent: %s\n", ancestor->parent);
+  printf("Ancestor parent: %s\n", ancestor->parent ? "EXISTS" : "(NULL)");
   ancestor->internal_calculate_size(ancestor);
   ancestor->internal_relayout(ancestor);
   ancestor->internal_render_callback(ancestor);
