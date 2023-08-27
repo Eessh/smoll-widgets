@@ -1,4 +1,5 @@
 #include "../../include/widgets/progress_bar.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -152,6 +153,7 @@ result_void progress_bar_set_background(progress_bar* bar, color background)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  printf("Render: progress-bar\n");
   progress_bar* bar = (progress_bar*)widget->derived;
   rect bounding_rect =
     bar->base->internal_get_bounding_rect_callback(bar->base);

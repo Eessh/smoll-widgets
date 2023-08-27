@@ -198,6 +198,7 @@ result_void win32_cairo_backend_process_command(const command* cmd)
 
   if(cmd->type == RENDER_RECT)
   {
+    printf("BACKEND: Command: render rect\n");
     const rect bounding_rect = cmd->data.render_rect.bounding_rect;
     const color rect_color = cmd->data.render_rect.rect_color;
     cairo_rectangle(cairo,
@@ -214,6 +215,7 @@ result_void win32_cairo_backend_process_command(const command* cmd)
   }
   else if(cmd->type == RENDER_RECT_OUTLINED)
   {
+    printf("BACKEND: Command: render rect outlined\n");
     const rect bounding_rect = cmd->data.render_rect.bounding_rect;
     const color rect_color = cmd->data.render_rect.rect_color;
     cairo_rectangle(cairo,
@@ -231,6 +233,7 @@ result_void win32_cairo_backend_process_command(const command* cmd)
   else if(cmd->type == RENDER_TEXT)
   {
     const char* text = cmd->data.render_text.text;
+    printf("BACKEND: Command: render text: %s\n", text);
     const color text_color = cmd->data.render_text.text_color;
     const point text_coordinates = cmd->data.render_text.text_coordinates;
     cairo_set_source_rgba(cairo,
@@ -248,12 +251,14 @@ result_void win32_cairo_backend_process_command(const command* cmd)
   }
   else if(cmd->type == PUSH_CLIP_RECT)
   {
+    printf("BACKEND: Command: push clip rect\n");
     rect clip_rect = cmd->data.clip_rect;
     cairo_rectangle(cairo, clip_rect.x, clip_rect.y, clip_rect.w, clip_rect.h);
     cairo_clip(cairo);
   }
   else if(cmd->type == POP_CLIP_RECT)
   {
+    printf("BACKEND: Command: pop clip rect\n");
     cairo_reset_clip(cairo);
   }
   else if(cmd->type == SET_CURSOR_ARROW)
@@ -304,6 +309,7 @@ result_void win32_cairo_backend_process_command(const command* cmd)
   {
     SetCursor(resize_top_right__bottom_left);
   }
+  printf("BACKEND: cairo status: %d\n", cairo_status(cairo));
 
   return ok_void();
 }
@@ -341,6 +347,8 @@ result_void win32_cairo_backend_load_font(const char* font_name,
     return error(result_void, "Cannot load font pointing to NULL!");
   }
 
+  printf("BACKEND: font face: %s, font size: %d\n", font_name, font_size);
+
   cairo_select_font_face(cairo, font_name, 0, 0);
   cairo_set_font_size(cairo, font_size);
 
@@ -362,12 +370,24 @@ result_text_dimensions win32_cairo_backend_get_text_dimensions(
                  "Cannot get dimensions of text, with font pointing to NULL");
   }
 
-  win32_cairo_backend_load_font(font_name, font_size);
+  result_void _ = win32_cairo_backend_load_font(font_name, font_size);
+  if(!_.ok)
+  {
+    return error(result_text_dimensions, _.error);
+  }
+
+  printf("BACKEND: cairo status: %d\n", cairo_status(cairo));
 
   cairo_font_extents_t font_extents;
   cairo_font_extents(cairo, &font_extents);
   cairo_text_extents_t text_extents;
   cairo_text_extents(cairo, text, &text_extents);
+
+  printf("BACKEND: Text: %s\n", text);
+  printf("BACKEND: text_extents: (%f, %f)\n",
+         text_extents.width,
+         text_extents.height);
+  printf("BACKEND: font_extents height: %f\n", font_extents.height);
 
   text_dimensions dimensions = {.w = text_extents.width,
                                 .h = font_extents.height};

@@ -1,4 +1,5 @@
 #include "../../include/widgets/toggle.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -160,6 +161,7 @@ default_internal_get_bounding_rect_callback(const base_widget* widget)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  printf("Render: Toggle\n");
   toggle* t = (toggle*)widget->derived;
 
   color handle_color = t->private_data->state == TOGGLE_ON

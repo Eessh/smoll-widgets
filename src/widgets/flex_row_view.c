@@ -147,6 +147,7 @@ default_internal_assign_positions_callback(base_widget* widget)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  printf("Render: flex-row-view\n");
   flex_row_view* v = (flex_row_view*)widget->derived;
   result_void _ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,

@@ -1,5 +1,6 @@
 #include "../../include/widgets/box.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -128,6 +129,7 @@ default_internal_assign_positions_callback(base_widget* widget)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  printf("Render: Box\n");
   box* b = (box*)widget->derived;
 
   result_void _ = command_buffer_add_render_rect_command(

@@ -1,4 +1,5 @@
 #include "../../include/widgets/checkbox.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -130,6 +131,7 @@ result_void checkbox_set_unticked_callback(checkbox* box,
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  printf("Render: Checkbox\n");
   if(!widget->parent)
   {
     return error(result_bool,

@@ -352,10 +352,23 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
   }
   text_dimensions dimensions = ___.value;
 
+  printf("Text: %s, dimensions: %d, %d\n",
+         btn->private_data->text,
+         dimensions.w,
+         dimensions.h);
+  printf("Widget dimensions: %d, %d | padding: %d, %d\n",
+         widget->w,
+         widget->h,
+         btn->padding_x,
+         btn->padding_y);
+
   uint16 new_w = dimensions.w + 2 * btn->padding_x;
   uint16 new_h = dimensions.h + 2 * btn->padding_y;
-  sizing_delta deltas = {.x = new_w - widget->w, .y = new_h - widget->h};
+  sizing_delta deltas = {.x = (int16)new_w - (int16)widget->w,
+                         .y = (int16)new_h - (int16)widget->h};
+  printf("Button sizing deltas: {x: %d, y: %d}\n", deltas.x, deltas.y);
 
+  // setting widget's sizing, so no need to set need resizing flag
   widget->w = new_w;
   widget->h = new_h;
 
@@ -364,13 +377,7 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  if(!widget)
-  {
-    return error(result_bool,
-                 "Cannot process internal render callback on a "
-                 "NULL pointed base widget!");
-  }
-
+  printf("Render: Button\n");
   button* btn = (button*)widget->derived;
 
   color foreground =
@@ -385,11 +392,17 @@ static result_bool default_internal_render_callback(const base_widget* widget)
                                                     : btn->click_background);
 
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
+  printf("button bounding rect x, y, w, h: %d, %d, %d, %d\n",
+         bounding_rect.x,
+         bounding_rect.y,
+         bounding_rect.w,
+         bounding_rect.h);
 
   result_void __ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer, bounding_rect, background);
   if(!__.ok)
   {
+    printf("Error while adding render rect command: %s\n", __.error);
     return error(result_bool, __.error);
   }
 
@@ -403,6 +416,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
     (point){.x = bounding_rect.x, .y = bounding_rect.y});
   if(!___.ok)
   {
+    printf("Error while adding render text command: %s\n", ___.error);
     return error(result_bool, ___.error);
   }
 
