@@ -57,5 +57,8 @@ dkms.conf
 *.sublime-workspace
 .qtc_clangd
 Smoll-Widgets*
+build
+*.txt.user
 *.make
 Makefile
+

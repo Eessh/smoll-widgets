@@ -69,9 +69,9 @@ typedef enum flex_align
   FLEX_ALIGN_SPACE_EVENLY
 } flex_align;
 
-
 /// Sizing of flex-items along the cross-axis of flex-container.
-typedef enum flex_cross_axis_sizing {
+typedef enum flex_cross_axis_sizing
+{
   /// Child size along its parent's cross-axis will be according
   /// to the size of it's children.
   CROSS_AXIS_SIZING_FIT_CONTENT,

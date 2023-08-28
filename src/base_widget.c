@@ -135,7 +135,9 @@ result_base_widget_ptr base_widget_new(widget_type type)
   else
   {
     widget->flexbox_data.item =
-      (flex_item_data){.flex_grow = 0, .flex_shrink = 0, .cross_axis_sizing = CROSS_AXIS_SIZING_FIT_CONTENT};
+      (flex_item_data){.flex_grow = 0,
+                       .flex_shrink = 0,
+                       .cross_axis_sizing = CROSS_AXIS_SIZING_FIT_CONTENT};
   }
 
   widget->need_resizing = true;
