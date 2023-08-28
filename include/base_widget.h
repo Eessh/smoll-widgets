@@ -69,6 +69,18 @@ typedef enum flex_align
   FLEX_ALIGN_SPACE_EVENLY
 } flex_align;
 
+
+/// Sizing of flex-items along the cross-axis of flex-container.
+typedef enum flex_cross_axis_sizing {
+  /// Child size along its parent's cross-axis will be according
+  /// to the size of it's children.
+  CROSS_AXIS_SIZING_FIT_CONTENT,
+
+  /// Child will expand along its parent's cross-axis to fill the
+  /// remaining space.
+  CROSS_AXIS_SIZING_EXPAND
+} flex_cross_axis_sizing;
+
 /// @brief Flex-box related data for `FLEX_CONTAINER`.
 typedef struct flex_container_data
 {
@@ -80,26 +92,45 @@ typedef struct flex_container_data
   bool is_fluid;
 
   /// @brief Flex-box layouting direction.
+  /// Default value: `FLEX_DIRECTION_ROW`
   flex_direction direction;
 
   /// @brief Main-axis flex-items alignment.
+  /// Default value: `FLEX_ALIGN_START`
   flex_align justify_content;
 
   /// @brief Cross-axis flex-items alignment.
+  /// Default value: `FLEX_ALIGN_START`
   flex_align align_items;
 
+  /// Flex grow of container when this is inside of another container.
+  /// Default value: `0`
   uint8 flex_grow;
+
+  /// Flex shrink of container when this is inside of another container.
+  /// Default value: `0`
   uint8 flex_shrink;
+
+  /// Flex cross-axis sizing of container when this is inside of
+  /// another container.
+  /// Default value: `CROSS_AXIS_SIZING_FIT_CONTENT`
+  flex_cross_axis_sizing cross_axis_sizing;
 } flex_container_data;
 
 /// @brief Flex-box related data for `FLEX_ITEM`.
 typedef struct flex_item_data
 {
   /// @brief Determines the flex-item's share of remaining space in parent.
+  /// Default value: `0`
   uint8 flex_grow;
 
   /// @brief Determines the flex-item's potential to shrink.
+  /// Default value: `0`
   uint8 flex_shrink;
+
+  /// Cross axis sizing of widget.
+  /// Default value: `CROSS_AXIS_SIZING_FIT_CONTENT`
+  flex_cross_axis_sizing cross_axis_sizing;
 } flex_item_data;
 
 ///////////////////////////////////////////////////////////////////////////////
