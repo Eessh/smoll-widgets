@@ -415,7 +415,7 @@ typedef enum internal_event_state
 
 /// @brief Internal mouse motion event.
 ///        This event has BUBBLING_UP phase.
-typedef struct internal_mouse_motion_event
+struct internal_mouse_motion_event
 {
   /// @brief The actual mouse motion event with data about event.
   mouse_motion_event event;
@@ -429,11 +429,11 @@ typedef struct internal_mouse_motion_event
   /// @brief Tells if this internal event still propagates through
   ///        the target's parents.
   bool propagation;
-} internal_mouse_motion_event;
+};
 
 /// @brief Internal mouse button event.
 ///        This event has BUBBLING_UP phase.
-typedef struct internal_mouse_button_event
+struct internal_mouse_button_event
 {
   /// @brief The actual mouse button event with data about event.
   mouse_button_event event;
@@ -447,18 +447,18 @@ typedef struct internal_mouse_button_event
   /// @brief Tells if this internal event still propagates through
   ///        the target's parents.
   bool propagation;
-} internal_mouse_button_event;
+};
 
 /// @brief Internal mouse scroll event.
 ///        This event does not have a BUBBLING_UP phase.
-typedef struct internal_mouse_scroll_event
+struct internal_mouse_scroll_event
 {
   /// @brief The actual mouse scroll event with data about event.
   mouse_scroll_event event;
 
   /// @brief Target widget of this internal event.
   base_widget* target;
-} internal_mouse_scroll_event;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 /// * Internal Context
@@ -470,7 +470,7 @@ typedef struct internal_mouse_scroll_event
 ///        Do not allocate this on stack, as there will be high possibility
 ///        of memory leak by not freeing UI tree when the context
 ///        goes out of scope.
-typedef struct internal_context
+struct internal_context
 {
   /// @brief Local mouse x-coordinate.
   uint16 mouse_x;
@@ -525,7 +525,7 @@ typedef struct internal_context
 
   /// @brief Backend.
   render_backend* backend;
-} internal_context;
+};
 
 /// @brief Internal context pointer result.
 typedef struct result_internal_context_ptr
