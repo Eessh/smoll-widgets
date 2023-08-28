@@ -55,5 +55,7 @@ dkms.conf
 .vs
 .idea
 *.sublime-workspace
+.qtc_clangd
+Smoll-Widgets*
 *.make
 Makefile
