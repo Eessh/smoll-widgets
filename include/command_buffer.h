@@ -86,26 +86,6 @@ typedef struct command
   } data;
 } command;
 
-/// Command node for linked list of command buffer.
-/// TODO: Move to private.
-typedef struct command_node
-{
-  command* cmd;
-
-  struct command_node* next;
-} command_node;
-
-/// Buffer for holding all commands produced by widgets.
-/// This is cleaned up for every frame.
-/// TODO: Move to private.
-typedef struct command_buffer
-{
-  command_node* head;
-  command_node* tail;
-
-  uint16 length;
-} command_buffer;
-
 /// Command pointer result.
 typedef struct result_command_ptr
 {
@@ -116,6 +96,10 @@ typedef struct result_command_ptr
     const char* error;
   };
 } result_command_ptr;
+
+typedef struct command_node command_node;
+
+typedef struct command_buffer command_buffer;
 
 /// Command buffer pointer result.
 typedef struct result_command_buffer_ptr
@@ -220,6 +204,10 @@ result_void command_free(command* cmd);
 ///
 /// Returns command buffer pointer result (`result_command_buffer_ptr`).
 result_command_buffer_ptr command_buffer_new();
+
+/// Gives length of command buffer.
+/// Returns `-1` if pointer to buffer is `NULL`.
+int16 command_buffer_length(command_buffer* buffer);
 
 /// Adds the given command to the command buffer.
 ///

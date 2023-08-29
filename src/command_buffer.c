@@ -3,6 +3,24 @@
 #include <string.h>
 #include "../include/macros.h"
 
+/// Command node for linked list of command buffer.
+struct command_node
+{
+  command* cmd;
+
+  struct command_node* next;
+};
+
+/// Buffer for holding all commands produced by widgets.
+/// This is cleaned up for every frame.
+struct command_buffer
+{
+  command_node* head;
+  command_node* tail;
+
+  uint16 length;
+};
+
 result_command_ptr command_new_render_rect(const rect bounding_rect,
                                            const color rect_color)
 {
@@ -185,6 +203,16 @@ result_command_buffer_ptr command_buffer_new()
   buffer->length = 0;
 
   return ok(result_command_buffer_ptr, buffer);
+}
+
+int16 command_buffer_length(command_buffer* buffer)
+{
+  if(!buffer)
+  {
+    return -1;
+  }
+
+  return buffer->length;
 }
 
 result_void command_buffer_add_command(command_buffer* buffer, command* cmd)

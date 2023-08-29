@@ -388,7 +388,7 @@ result_void smoll_context_render(smoll_context* context)
       "Registered backend doesn't contain process command callback function!");
   }
 
-  while(context->internal_ctx->cmd_buffer->length)
+  while(command_buffer_length(context->internal_ctx->cmd_buffer) > 0)
   {
     command* cmd =
       command_buffer_get_next_command(context->internal_ctx->cmd_buffer).value;
