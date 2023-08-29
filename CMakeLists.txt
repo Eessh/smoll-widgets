@@ -22,3 +22,7 @@ add_library(smoll-widgets STATIC
   ${PROJECT_SOURCE_DIR}/src/widgets/progress_bar.c
   ${PROJECT_SOURCE_DIR}/src/widgets/toggle.c
 )
+
+# Startup example powered by SDL2+Cairo backend.
+# Useful for testing and also SDL2 is cross-platform.
+add_subdirectory(backends/sdl2_cairo)
