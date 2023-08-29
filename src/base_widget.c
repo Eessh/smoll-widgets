@@ -257,7 +257,7 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child)
 
   base_widget_child_node* temp = base->children_head;
   base_widget_child_node* prev_temp = NULL;
-  while(temp->child != child)
+  while(temp && temp->child != child)
   {
     prev_temp = temp;
     temp = temp->next;
@@ -268,6 +268,15 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child)
     // child node not found with given child
     return error(result_void,
                  "Child node not found with given child to remove!");
+  }
+
+  if(!prev_temp)
+  {
+    // first child is to be deleted
+    base_widget_child_node* _ = base->children_head;
+    base->children_head = _->next;
+    base_widget_child_node_free(_);
+    return ok_void();
   }
 
   prev_temp->next = temp->next;
