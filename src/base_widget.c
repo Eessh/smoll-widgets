@@ -130,6 +130,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
                             .align_items = FLEX_ALIGN_START,
                             .flex_grow = 0,
                             .flex_shrink = 0,
+                            .gap = 0,
                             .cross_axis_sizing = CROSS_AXIS_SIZING_FIT_CONTENT};
   }
   else
@@ -317,10 +318,12 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
     base_widget_child_node* node = widget->children_head;
     while(node)
     {
-      needed_main_axis_length += node->child->w;
+      needed_main_axis_length +=
+        node->child->w + widget->flexbox_data.container.gap;
       needed_cross_axis_length = max(needed_cross_axis_length, node->child->h);
       node = node->next;
     }
+    needed_main_axis_length -= widget->flexbox_data.container.gap;
     int16 remaining_main_axis_length =
       main_axis_length - needed_main_axis_length;
     if(remaining_main_axis_length > 0)
@@ -388,10 +391,12 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
     base_widget_child_node* node = widget->children_head;
     while(node)
     {
-      needed_main_axis_length += node->child->h;
+      needed_main_axis_length +=
+        node->child->h + widget->flexbox_data.container.gap;
       needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
       node = node->next;
     }
+    needed_main_axis_length -= widget->flexbox_data.container.gap;
     int16 remaining_main_axis_length =
       main_axis_length - needed_main_axis_length;
     if(remaining_main_axis_length > 0)
@@ -519,10 +524,12 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
       main_axis_length += node->child->h;
       cross_axis_length = max(cross_axis_length, node->child->w);
     }
+    main_axis_length += widget->flexbox_data.container.gap;
     node = node->next;
   }
+  main_axis_length -= widget->flexbox_data.container.gap;
 
-  // assigning calculated axes lengths to conatiner widget's dimensions.
+  // assigning calculated axes lengths to widget's dimensions.
   if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
   {
     widget->w = main_axis_length;
@@ -569,6 +576,7 @@ result_void default_internal_relayout_callback(const base_widget* widget)
       needed_main_axis_length += node->child->h;
       needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
     }
+    needed_main_axis_length += widget->flexbox_data.container.gap;
     total_flex_grow += node->child->type == FLEX_CONTAINER
                          ? node->child->flexbox_data.container.flex_grow
                          : node->child->flexbox_data.item.flex_grow;
@@ -577,6 +585,7 @@ result_void default_internal_relayout_callback(const base_widget* widget)
                            : node->child->flexbox_data.item.flex_shrink;
     node = node->next;
   }
+  needed_main_axis_length -= widget->flexbox_data.container.gap;
 
   printf("Needed main, cross axes lengths: %d, %d\n",
          needed_main_axis_length,
@@ -666,11 +675,11 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     node->child->y = y;
     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
     {
-      x += node->child->w;
+      x += node->child->w + widget->flexbox_data.container.gap;
     }
     else
     {
-      y += node->child->h;
+      y += node->child->h + widget->flexbox_data.container.gap;
     }
     node = node->next;
   }

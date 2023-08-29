@@ -111,6 +111,10 @@ typedef struct flex_container_data
   /// Default value: `0`
   uint8 flex_shrink;
 
+  /// Gap between children widgets along the flex-direction.
+  /// Default value: `0`
+  uint8 gap;
+
   /// Flex cross-axis sizing of container when this is inside of
   /// another container.
   /// Default value: `CROSS_AXIS_SIZING_FIT_CONTENT`

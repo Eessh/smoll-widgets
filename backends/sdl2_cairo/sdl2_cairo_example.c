@@ -94,7 +94,7 @@ int main()
     row_view->base->y = 0;
     row_view->padding_x = 10;
     row_view->padding_y = 10;
-    row_view->gap = 10;
+    row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }
 
