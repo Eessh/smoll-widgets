@@ -17,8 +17,6 @@ add_library(smoll-widgets STATIC
   ${PROJECT_SOURCE_DIR}/src/widgets/box.c
   ${PROJECT_SOURCE_DIR}/src/widgets/button.c
   ${PROJECT_SOURCE_DIR}/src/widgets/checkbox.c
-  ${PROJECT_SOURCE_DIR}/src/widgets/flex_column_view.c
-  ${PROJECT_SOURCE_DIR}/src/widgets/flex_row_view.c
   ${PROJECT_SOURCE_DIR}/src/widgets/flex_view.c
   ${PROJECT_SOURCE_DIR}/src/widgets/progress_bar.c
   ${PROJECT_SOURCE_DIR}/src/widgets/toggle.c
