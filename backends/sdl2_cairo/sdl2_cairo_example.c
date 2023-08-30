@@ -64,7 +64,7 @@ int main()
   // Creating box widget
   box* bx = NULL;
   {
-    result_box_ptr _ = box_new(NULL, FLEX_DIRECTION_COLUMN);
+    result_box_ptr _ = box_new(NULL, FLEX_DIRECTION_ROW);
     if(!_.ok)
     {
       printf("Error while creating box: %s", _.error);
@@ -89,6 +89,8 @@ int main()
     }
     row_view = _.value;
     row_view->base->flexbox_data.container.align_items = FLEX_ALIGN_CENTER;
+    row_view->base->flexbox_data.container.cross_axis_sizing =
+      CROSS_AXIS_SIZING_EXPAND;
     row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }
@@ -154,6 +156,7 @@ int main()
     t = _.value;
     t->base->w = 50;
     t->base->h = 20;
+    //    t->base->flexbox_data.item.cross_axis_sizing = CROSS_AXIS_SIZING_EXPAND;
     t->handle_width_fraction = 0.4;
     t->padding_x = 2;
     t->padding_y = 2;

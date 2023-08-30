@@ -656,22 +656,33 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   }
 
   // adjusting sizing in cross axis
-  if(needed_cross_axis_length != cross_axis_length)
+  node = widget->children_head;
+  while(node)
   {
-    cross_axis_length = needed_cross_axis_length;
-    node = widget->children_head;
-    while(node)
+    flex_cross_axis_sizing cross_axis_sizing =
+      node->child->type == FLEX_CONTAINER
+        ? node->child->flexbox_data.container.cross_axis_sizing
+        : node->child->flexbox_data.item.cross_axis_sizing;
+
+    if(cross_axis_sizing == CROSS_AXIS_SIZING_FIT_CONTENT)
     {
-      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
-      {
-        node->child->h = cross_axis_length;
-      }
-      else
-      {
-        node->child->w = cross_axis_length;
-      }
       node = node->next;
+      continue;
     }
+
+    // expand child widget's width or height to cross-axis length
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      printf("Height expanded!\n");
+      node->child->h = cross_axis_length;
+    }
+    else
+    {
+      printf("Width expanded!\n");
+      node->child->w = cross_axis_length;
+    }
+
+    node = node->next;
   }
 
   // assigning positions
