@@ -3,7 +3,6 @@
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
 #include "../../include/widgets/checkbox.h"
-#include "../../include/widgets/flex_row_view.h"
 #include "../../include/widgets/flex_view.h"
 #include "../../include/widgets/progress_bar.h"
 #include "../../include/widgets/toggle.h"
@@ -65,14 +64,12 @@ int main()
   // Creating box widget
   box* bx = NULL;
   {
-    result_box_ptr _ = box_new(NULL);
+    result_box_ptr _ = box_new(NULL, FLEX_DIRECTION_COLUMN);
     if(!_.ok)
     {
       printf("Error while creating box: %s", _.error);
     }
     bx = _.value;
-    bx->base->x = 0;
-    bx->base->y = 0;
     bx->base->w = 1080;
     bx->base->h = 720;
     bx->background = (color){255, 255, 255, 255};
@@ -104,10 +101,6 @@ int main()
       printf("Error while creating button: %s", _.error);
     }
     btn = _.value;
-    btn->base->x = 100;
-    btn->base->y = 100;
-    btn->base->w = 400;
-    btn->base->h = 400;
     btn->padding_x = 6;
     btn->padding_y = 4;
     btn->foreground = (color){255, 255, 255, 255};
@@ -133,10 +126,6 @@ int main()
       printf("Error while creating button: %s", _.error);
     }
     btn1 = _.value;
-    btn1->base->x = 300;
-    btn1->base->y = 300;
-    btn1->base->w = 400;
-    btn1->base->h = 400;
     btn1->padding_x = 6;
     btn1->padding_y = 4;
     btn1->foreground = (color){255, 255, 255, 255};
@@ -162,8 +151,6 @@ int main()
       printf("Error while creating toggle: %s", _.error);
     }
     t = _.value;
-    t->base->x = 100;
-    t->base->y = 200;
     t->base->w = 50;
     t->base->h = 20;
     t->handle_width_fraction = 0.4;
@@ -201,7 +188,6 @@ int main()
   }
 
   // Calling initial layouting, rendering functions
-  // smoll_context_initial_fit_layout(sctx);
   smoll_context_initialize_layout(sctx);
   smoll_context_initial_render(sctx);
 

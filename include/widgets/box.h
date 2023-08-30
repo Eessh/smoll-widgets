@@ -39,6 +39,6 @@ typedef struct result_box_ptr
 /// @brief Creates new box widget.
 /// @param parent_base pointer to base widget of parent.
 /// @return Box pointer result.
-result_box_ptr box_new(base_widget* parent_base);
+result_box_ptr box_new(base_widget* parent_base, flex_direction direction);
 
 #endif
