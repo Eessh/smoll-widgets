@@ -88,6 +88,7 @@ int main()
       printf("Error while creating flex-row view: %s", _.error);
     }
     row_view = _.value;
+    row_view->base->flexbox_data.container.align_items = FLEX_ALIGN_CENTER;
     row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }

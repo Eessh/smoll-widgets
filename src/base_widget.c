@@ -681,7 +681,40 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   {
     printf("assigning positions x, y: %d, %d\n", x, y);
     node->child->x = x;
-    node->child->y = y;
+
+    // flex-align in cross-axis
+    switch(widget->flexbox_data.container.align_items)
+    {
+    case FLEX_ALIGN_START: {
+      node->child->y = y;
+      break;
+    }
+    case FLEX_ALIGN_CENTER: {
+      uint16 remaining_space = cross_axis_length - node->child->h;
+      node->child->y = y + (remaining_space / 2);
+      break;
+    }
+    case FLEX_ALIGN_END: {
+      uint16 remaining_space = cross_axis_length - node->child->h;
+      node->child->y = y + remaining_space;
+      break;
+    }
+    case FLEX_ALIGN_SPACE_BETWEEN: {
+      return error(result_void,
+                   "flex-align: space-between not implemented yet!");
+    }
+    case FLEX_ALIGN_SPACE_AROUND: {
+      return error(result_void,
+                   "flex-align: space-around not implemented yet!");
+    }
+    case FLEX_ALIGN_SPACE_EVENLY: {
+      return error(result_void,
+                   "flex-align: space-evenly not implemented yet!");
+    }
+    default:
+      break;
+    }
+
     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
     {
       x += node->child->w + widget->flexbox_data.container.gap;
