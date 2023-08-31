@@ -3,7 +3,7 @@
 #include "../../include/widgets/box.h"
 #include "../../include/widgets/button.h"
 #include "../../include/widgets/checkbox.h"
-#include "../../include/widgets/flex_row_view.h"
+#include "../../include/widgets/flex_view.h"
 #include "../../include/widgets/progress_bar.h"
 #include "../../include/widgets/toggle.h"
 #include "win32_cairo_backend.h"
@@ -120,7 +120,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   // Creating box widget
   box* bx = NULL;
   {
-    result_box_ptr _ = box_new(NULL);
+    result_box_ptr _ = box_new(NULL, FLEX_DIRECTION_ROW);
     if(!_.ok)
     {
       printf("Error while creating box: %s", _.error);
@@ -138,9 +138,9 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   smoll_context_set_root_widget(sctx, bx->base);
 
   // Creating flex-row view
-  flex_row_view* row_view = NULL;
+  flex_view* row_view = NULL;
   {
-    result_flex_row_view _ = flex_row_view_new(bx->base);
+    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_ROW);
     if(!_.ok)
     {
       printf("Error while creating flex-row view: %s", _.error);
@@ -148,9 +148,9 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     row_view = _.value;
     row_view->base->x = 0;
     row_view->base->y = 0;
-    row_view->padding_x = 10;
-    row_view->padding_y = 10;
-    row_view->gap = 10;
+    row_view->base->flexbox_data.container.cross_axis_sizing =
+      CROSS_AXIS_SIZING_EXPAND;
+    row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }
 
