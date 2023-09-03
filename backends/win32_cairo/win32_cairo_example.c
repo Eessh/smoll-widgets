@@ -126,8 +126,6 @@ INT WINAPI WinMain(HINSTANCE hInstance,
       printf("Error while creating box: %s", _.error);
     }
     bx = _.value;
-    bx->base->x = 0;
-    bx->base->y = 0;
     bx->base->w = 1080;
     bx->base->h = 720;
     bx->background = (color){255, 255, 255, 255};
@@ -146,8 +144,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
       printf("Error while creating flex-row view: %s", _.error);
     }
     row_view = _.value;
-    row_view->base->x = 0;
-    row_view->base->y = 0;
+    row_view->base->flexbox_data.container.align_items = FLEX_ALIGN_CENTER;
     row_view->base->flexbox_data.container.cross_axis_sizing =
       CROSS_AXIS_SIZING_EXPAND;
     row_view->base->flexbox_data.container.gap = 10;
@@ -163,10 +160,6 @@ INT WINAPI WinMain(HINSTANCE hInstance,
       printf("Error while creating button: %s", _.error);
     }
     btn = _.value;
-    btn->base->x = 100;
-    btn->base->y = 100;
-    btn->base->w = 400;
-    btn->base->h = 400;
     btn->padding_x = 6;
     btn->padding_y = 4;
     btn->foreground = (color){255, 255, 255, 255};
@@ -192,10 +185,6 @@ INT WINAPI WinMain(HINSTANCE hInstance,
       printf("Error while creating button: %s", _.error);
     }
     btn1 = _.value;
-    btn1->base->x = 300;
-    btn1->base->y = 300;
-    btn1->base->w = 400;
-    btn1->base->h = 400;
     btn1->padding_x = 6;
     btn1->padding_y = 4;
     btn1->foreground = (color){255, 255, 255, 255};
@@ -221,8 +210,6 @@ INT WINAPI WinMain(HINSTANCE hInstance,
       printf("Error while creating toggle: %s", _.error);
     }
     t = _.value;
-    t->base->x = 100;
-    t->base->y = 200;
     t->base->w = 50;
     t->base->h = 20;
     t->handle_width_fraction = 0.4;
