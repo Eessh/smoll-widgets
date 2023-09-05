@@ -132,7 +132,8 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     bx->base->flexbox_data.container.is_fluid = false;
   }
 
-  // Setting button as root widget of smoll context
+  // Setting box widget as root widget of smoll context
+  // root widget has to be fixed size
   smoll_context_set_root_widget(sctx, bx->base);
 
   // Creating flex-row view
