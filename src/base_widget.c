@@ -298,6 +298,138 @@ result_void base_widget_free(base_widget* widget)
   return ok_void();
 }
 
+result_bool widget_set_flex_direction(base_widget* widget,
+                                      flex_direction direction)
+{
+  if(!widget)
+  {
+    return error(result_bool,
+                 "Cannot set flex-drection of NULL pointed widget!");
+  }
+
+  if(widget->type != FLEX_CONTAINER)
+  {
+    return ok(result_bool, false);
+  }
+
+  widget->flexbox_data.container.direction = direction;
+
+  return ok(result_bool, true);
+}
+
+result_bool widget_set_justify_content(base_widget* widget,
+                                       flex_align justify_content)
+{
+  if(!widget)
+  {
+    return error(result_bool,
+                 "Cannot set justify-container of NULL pointed widget!");
+  }
+
+  if(widget->type != FLEX_CONTAINER)
+  {
+    return ok(result_bool, false);
+  }
+
+  widget->flexbox_data.container.justify_content = justify_content;
+
+  return ok(result_bool, true);
+}
+
+result_bool widget_set_align_items(base_widget* widget, flex_align align_items)
+{
+  if(!widget)
+  {
+    return error(result_bool, "Cannot set align-items of NULL pointed widget!");
+  }
+
+  if(widget->type != FLEX_CONTAINER)
+  {
+    return ok(result_bool, false);
+  }
+
+  widget->flexbox_data.container.align_items = align_items;
+
+  return ok(result_bool, true);
+}
+
+result_bool widget_set_gap(base_widget* widget, uint8 gap)
+{
+  if(!widget)
+  {
+    return error(result_bool, "Cannot set gap of NULL pointed widget!");
+  }
+
+  if(widget->type != FLEX_CONTAINER)
+  {
+    return ok(result_bool, false);
+  }
+
+  widget->flexbox_data.container.gap = gap;
+
+  return ok(result_bool, true);
+}
+
+result_void widget_set_flex_grow(base_widget* widget, uint8 flex_grow)
+{
+  if(!widget)
+  {
+    return error(result_void, "Cannot set flex-grow of NULL pointed widget!");
+  }
+
+  if(widget->type == FLEX_CONTAINER)
+  {
+    widget->flexbox_data.container.flex_grow = flex_grow;
+  }
+  else
+  {
+    widget->flexbox_data.item.flex_grow = flex_grow;
+  }
+
+  return ok_void();
+}
+
+result_void widget_set_flex_shrink(base_widget* widget, uint8 flex_shrink)
+{
+  if(!widget)
+  {
+    return error(result_void, "Cannot set flex-shrink of NULL pointed widget!");
+  }
+
+  if(widget->type == FLEX_CONTAINER)
+  {
+    widget->flexbox_data.container.flex_shrink = flex_shrink;
+  }
+  else
+  {
+    widget->flexbox_data.item.flex_shrink = flex_shrink;
+  }
+
+  return ok_void();
+}
+
+result_void
+widget_set_cross_axis_sizing(base_widget* widget,
+                             flex_cross_axis_sizing cross_axis_sizing)
+{
+  if(!widget)
+  {
+    return error(result_void,
+                 "Cannot set cross-axis-sizing of NULL pointed widget!");
+  }
+
+  if(widget->type == FLEX_CONTAINER)
+  {
+    widget->flexbox_data.container.cross_axis_sizing = cross_axis_sizing;
+  }
+  else
+  {
+    widget->flexbox_data.item.cross_axis_sizing = cross_axis_sizing;
+  }
+
+  return ok_void();
+}
+
 static result_base_widget_ptr default_internal_mark_need_resizing(
   base_widget* widget, int16 delta_x, int16 delta_y)
 {

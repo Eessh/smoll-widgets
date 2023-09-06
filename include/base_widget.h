@@ -390,6 +390,28 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child);
 result_void base_widget_free(base_widget* widget);
 
 ///////////////////////////////////////////////////////////////////////////////
+/// * Helper functions for setting widget's flex properties
+///////////////////////////////////////////////////////////////////////////////
+
+result_bool widget_set_flex_direction(base_widget* widget,
+                                      flex_direction direction);
+
+result_bool widget_set_justify_content(base_widget* widget,
+                                       flex_align justify_content);
+
+result_bool widget_set_align_items(base_widget* widget, flex_align align_items);
+
+result_bool widget_set_gap(base_widget* widget, uint8 gap);
+
+result_void widget_set_flex_grow(base_widget* widget, uint8 flex_grow);
+
+result_void widget_set_flex_shrink(base_widget* widget, uint8 flex_shrink);
+
+result_void
+widget_set_cross_axis_sizing(base_widget* widget,
+                             flex_cross_axis_sizing cross_axis_sizing);
+
+///////////////////////////////////////////////////////////////////////////////
 /// * Internal Events
 ///////////////////////////////////////////////////////////////////////////////
 
