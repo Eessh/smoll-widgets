@@ -4,10 +4,12 @@ Super simple backend agnostic widgets writen in C.
 
 ### Features
 - Lightweight.
+- Flex-box like layouting.
 - You can build your own custom widgets.
-- Provides incremental render updates (can be used by both Stateful Rendering & Immediate Mode Rendering architectures).
 - Simple backend API (just write 5 functions `init_backend()`, `deinit_backend()`, `translate_events()`, `render_rect()`, `render_text()`).
+- Provides incremental render updates (can be used by both Stateful Rendering & Immediate Mode Rendering architectures).
 - Software Rendering/Hardware(GPU) Accelerated Rendering, depends upon backend.
+- More to come ... 😎
 
 ### Implemented Backends
 - [SDL2 + Cairo](backends/sdl2_cairo)
