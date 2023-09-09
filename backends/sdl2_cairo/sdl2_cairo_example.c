@@ -94,10 +94,6 @@ int main()
     widget_set_justify_content(row_view->base, FLEX_ALIGN_CENTER);
     widget_set_cross_axis_sizing(row_view->base, CROSS_AXIS_SIZING_EXPAND);
     widget_set_gap(row_view->base, 10);
-    //    row_view->base->flexbox_data.container.align_items = FLEX_ALIGN_CENTER;
-    //    row_view->base->flexbox_data.container.cross_axis_sizing =
-    //      CROSS_AXIS_SIZING_EXPAND;
-    //    row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }
 

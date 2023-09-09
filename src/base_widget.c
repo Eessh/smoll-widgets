@@ -819,6 +819,35 @@ result_void default_internal_relayout_callback(const base_widget* widget)
 
   // assigning positions
   int16 x = widget->x, y = widget->y;
+
+  // justify-content flex-align
+  switch(widget->flexbox_data.container.justify_content)
+  {
+  case FLEX_ALIGN_START: {
+    // do nothing
+    break;
+  }
+  case FLEX_ALIGN_CENTER: {
+    x += remaining_main_axis_length / 2;
+    break;
+  }
+  case FLEX_ALIGN_END: {
+    x += remaining_main_axis_length;
+    break;
+  }
+  case FLEX_ALIGN_SPACE_BETWEEN: {
+    return error(result_void, "flex-align: space-between not implemented yet!");
+  }
+  case FLEX_ALIGN_SPACE_AROUND: {
+    return error(result_void, "flex-align: space-around not implemented yet!");
+  }
+  case FLEX_ALIGN_SPACE_EVENLY: {
+    return error(result_void, "flex-align: space-evenly not implemented yet!");
+  }
+  default:
+    break;
+  }
+
   node = widget->children_head;
   while(node)
   {
