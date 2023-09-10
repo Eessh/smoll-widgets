@@ -49,25 +49,33 @@ typedef enum flex_direction
   FLEX_DIRECTION_COLUMN
 } flex_direction;
 
-/// @brief Alignment of children in flex-box container.
-typedef enum flex_align
+/// @brief Alignment of children in main-axis of flex-box container.
+typedef enum flex_justify_content
 {
   /// @brief Children will be aligned from left-end
   ///        (or top if `FLEX_DIRECTION_COLUMN`) of parent.
-  FLEX_ALIGN_START,
+  JUSTIFY_CONTENT_START,
 
   /// @brief Children will be placed in center of parent.
-  FLEX_ALIGN_CENTER,
+  JUSTIFY_CONTENT_CENTER,
 
   /// @brief Children will be aligned from right-end
   ///        (or bottom if `FLEX_DIRECTION_COLUMN`) of parent.
-  FLEX_ALIGN_END,
+  JUSTIFY_CONTENT_END,
 
-  /// @brief Not supported yet.
-  FLEX_ALIGN_SPACE_BETWEEN,
-  FLEX_ALIGN_SPACE_AROUND,
-  FLEX_ALIGN_SPACE_EVENLY
-} flex_align;
+  // Not implemented yet
+  JUSTIFY_CONTENT_SPACE_BETWEEN,
+  JUSTIFY_CONTENT_SPACE_AROUND,
+  JUSTIFY_CONTENT_SPACE_EVENLY
+} flex_justify_content;
+
+/// @brief Alignment of children in cross-axis of flex-box container.
+typedef enum flex_align_items
+{
+  ALIGN_ITEMS_START,
+  ALIGN_ITEMS_CENTER,
+  ALIGN_ITEMS_END
+} flex_align_items;
 
 /// Sizing of flex-items along the cross-axis of flex-container.
 typedef enum flex_cross_axis_sizing
@@ -97,11 +105,11 @@ typedef struct flex_container_data
 
   /// @brief Main-axis flex-items alignment.
   /// Default value: `FLEX_ALIGN_START`
-  flex_align justify_content;
+  flex_justify_content justify_content;
 
   /// @brief Cross-axis flex-items alignment.
   /// Default value: `FLEX_ALIGN_START`
-  flex_align align_items;
+  flex_align_items align_items;
 
   /// Flex grow of container when this is inside of another container.
   /// Default value: `0`
@@ -397,9 +405,10 @@ result_bool widget_set_flex_direction(base_widget* widget,
                                       flex_direction direction);
 
 result_bool widget_set_justify_content(base_widget* widget,
-                                       flex_align justify_content);
+                                       flex_justify_content justify_content);
 
-result_bool widget_set_align_items(base_widget* widget, flex_align align_items);
+result_bool widget_set_align_items(base_widget* widget,
+                                   flex_align_items align_items);
 
 result_bool widget_set_gap(base_widget* widget, uint8 gap);
 

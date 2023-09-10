@@ -126,8 +126,8 @@ result_base_widget_ptr base_widget_new(widget_type type)
     widget->flexbox_data.container =
       (flex_container_data){.is_fluid = true,
                             .direction = FLEX_DIRECTION_ROW,
-                            .justify_content = FLEX_ALIGN_START,
-                            .align_items = FLEX_ALIGN_START,
+                            .justify_content = JUSTIFY_CONTENT_START,
+                            .align_items = ALIGN_ITEMS_START,
                             .flex_grow = 0,
                             .flex_shrink = 0,
                             .gap = 0,
@@ -318,7 +318,7 @@ result_bool widget_set_flex_direction(base_widget* widget,
 }
 
 result_bool widget_set_justify_content(base_widget* widget,
-                                       flex_align justify_content)
+                                       flex_justify_content justify_content)
 {
   if(!widget)
   {
@@ -336,7 +336,8 @@ result_bool widget_set_justify_content(base_widget* widget,
   return ok(result_bool, true);
 }
 
-result_bool widget_set_align_items(base_widget* widget, flex_align align_items)
+result_bool widget_set_align_items(base_widget* widget,
+                                   flex_align_items align_items)
 {
   if(!widget)
   {
@@ -823,25 +824,25 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   // justify-content flex-align
   switch(widget->flexbox_data.container.justify_content)
   {
-  case FLEX_ALIGN_START: {
+  case JUSTIFY_CONTENT_START: {
     // do nothing
     break;
   }
-  case FLEX_ALIGN_CENTER: {
+  case JUSTIFY_CONTENT_CENTER: {
     x += remaining_main_axis_length / 2;
     break;
   }
-  case FLEX_ALIGN_END: {
+  case JUSTIFY_CONTENT_END: {
     x += remaining_main_axis_length;
     break;
   }
-  case FLEX_ALIGN_SPACE_BETWEEN: {
+  case JUSTIFY_CONTENT_SPACE_BETWEEN: {
     return error(result_void, "flex-align: space-between not implemented yet!");
   }
-  case FLEX_ALIGN_SPACE_AROUND: {
+  case JUSTIFY_CONTENT_SPACE_AROUND: {
     return error(result_void, "flex-align: space-around not implemented yet!");
   }
-  case FLEX_ALIGN_SPACE_EVENLY: {
+  case JUSTIFY_CONTENT_SPACE_EVENLY: {
     return error(result_void, "flex-align: space-evenly not implemented yet!");
   }
   default:
@@ -857,31 +858,19 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     // flex-align in cross-axis
     switch(widget->flexbox_data.container.align_items)
     {
-    case FLEX_ALIGN_START: {
+    case ALIGN_ITEMS_START: {
       node->child->y = y;
       break;
     }
-    case FLEX_ALIGN_CENTER: {
+    case ALIGN_ITEMS_CENTER: {
       uint16 remaining_space = cross_axis_length - node->child->h;
       node->child->y = y + (remaining_space / 2);
       break;
     }
-    case FLEX_ALIGN_END: {
+    case ALIGN_ITEMS_END: {
       uint16 remaining_space = cross_axis_length - node->child->h;
       node->child->y = y + remaining_space;
       break;
-    }
-    case FLEX_ALIGN_SPACE_BETWEEN: {
-      return error(result_void,
-                   "flex-align: space-between not implemented yet!");
-    }
-    case FLEX_ALIGN_SPACE_AROUND: {
-      return error(result_void,
-                   "flex-align: space-around not implemented yet!");
-    }
-    case FLEX_ALIGN_SPACE_EVENLY: {
-      return error(result_void,
-                   "flex-align: space-evenly not implemented yet!");
     }
     default:
       break;
