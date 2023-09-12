@@ -146,8 +146,9 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     }
     row_view = _.value;
     row_view->base->flexbox_data.container.flex_grow = 1;
-    row_view->base->flexbox_data.container.align_items = FLEX_ALIGN_CENTER;
-    row_view->base->flexbox_data.container.justify_content = FLEX_ALIGN_CENTER;
+    row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
+    row_view->base->flexbox_data.container.justify_content =
+      JUSTIFY_CONTENT_CENTER;
     row_view->base->flexbox_data.container.cross_axis_sizing =
       CROSS_AXIS_SIZING_EXPAND;
     row_view->base->flexbox_data.container.gap = 10;

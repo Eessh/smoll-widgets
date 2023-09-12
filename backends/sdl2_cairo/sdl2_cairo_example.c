@@ -89,12 +89,27 @@ int main()
       printf("Error while creating flex-row view: %s", _.error);
     }
     row_view = _.value;
-    widget_set_flex_grow(row_view->base, 1);
-    widget_set_align_items(row_view->base, FLEX_ALIGN_CENTER);
-    widget_set_justify_content(row_view->base, FLEX_ALIGN_CENTER);
+    widget_set_align_items(row_view->base, ALIGN_ITEMS_CENTER);
+    widget_set_justify_content(row_view->base, JUSTIFY_CONTENT_CENTER);
     widget_set_cross_axis_sizing(row_view->base, CROSS_AXIS_SIZING_EXPAND);
     widget_set_gap(row_view->base, 10);
     row_view->background = (color){128, 128, 128, 255};
+  }
+
+  // Creating another flex view
+  flex_view* col_view = NULL;
+  {
+    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_COLUMN);
+    if(!_.ok)
+    {
+      printf("Error while creating flex-column view: %s", _.error);
+    }
+    col_view = _.value;
+    widget_set_flex_grow(col_view->base, 1);
+    widget_set_justify_content(col_view->base, JUSTIFY_CONTENT_START);
+    widget_set_align_items(col_view->base, ALIGN_ITEMS_START);
+    widget_set_cross_axis_sizing(col_view->base, CROSS_AXIS_SIZING_EXPAND);
+    col_view->background = (color){33, 66, 99, 255};
   }
 
   // Creating button widget
