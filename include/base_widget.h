@@ -409,23 +409,69 @@ result_void base_widget_free(base_widget* widget);
 /// * Helper functions for setting widget's properties
 ///////////////////////////////////////////////////////////////////////////////
 
+/// @brief Sets visibility of widget.
+///        If set to `false`, the widget will not render,
+///        but will be inside UI tree. The space occupied by this widget will
+///        be shared among other children. If you need to remove the widget
+///        from the UI tree, use function: `base_widget_remove_child()`.
+///        This will internally trigger the re-layouting of UI tree.
+/// @param widget pointer to base widget.
+/// @param visible visibility of widget.
+/// @return Bool result.
 result_bool widget_set_visibility(base_widget* widget, bool visible);
 
+/// @brief Set flex-direction of widget.
+///        This will internally trigger the re-layouting of UI tree.
+/// @param widget pointer to base widget.
+/// @param direction direction of flex-box's main-axis.
+/// @return Bool result.
 result_bool widget_set_flex_direction(base_widget* widget,
                                       flex_direction direction);
 
+/// @brief Sets flex property justify-content of widget.
+///        This will internally trigger the re-layouting of UI tree.
+/// @param widget pointer to base widget.
+/// @param justify_content justify-content value of widget.
+/// @return Bool result.
 result_bool widget_set_justify_content(base_widget* widget,
                                        flex_justify_content justify_content);
 
+/// @brief Sets flex property align-items of widget.
+///        This will internally trigger the re-layouting of UI tree.
+/// @param widget pointer to base widget.
+/// @param align_items align-items value of widget.
+/// @return Bool result.
 result_bool widget_set_align_items(base_widget* widget,
                                    flex_align_items align_items);
 
+/// @brief Sets flex-gap of widget.
+///        This will internally trigger the re-layouting of UI tree.
+/// @param widget pointer to base widget.
+/// @param gap spacing between children.
+/// @return Bool result.
 result_bool widget_set_gap(base_widget* widget, uint8 gap);
 
+/// @brief Sets flex-grow of widget.
+///        This will internally trigger the re-layouting of UI tree,
+///        if widget is a `FLEX_CONTAINER`.
+/// @param widget pointer to base widget.
+/// @param flex_grow flex-grow value.
+/// @return Void result.
 result_void widget_set_flex_grow(base_widget* widget, uint8 flex_grow);
 
+/// @brief Sets flex-shrink of widget.
+///        This will internally trigger the re-layouting of UI tree,
+///        if widget is a `FLEX_CONTAINER`.
+/// @param widget pointer to base widget.
+/// @param flex_shrink flex-shrink value.
+/// @return Void result.
 result_void widget_set_flex_shrink(base_widget* widget, uint8 flex_shrink);
 
+/// @brief Sets flex property cross-axis-sizing of widget.
+///        This will internally trigger the re-layouting of UI tree.
+/// @param widget pointer to base widget.
+/// @param cross_axis_sizing value of cross-axis-sizing.
+/// @return Void result.
 result_void
 widget_set_cross_axis_sizing(base_widget* widget,
                              flex_cross_axis_sizing cross_axis_sizing);

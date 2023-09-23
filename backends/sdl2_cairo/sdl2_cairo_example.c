@@ -8,8 +8,8 @@
 #include "../../include/widgets/toggle.h"
 #include "sdl2_cairo_backend.h"
 
-static progress_bar* bar = NULL;
-static checkbox* cbox = NULL;
+progress_bar* bar = NULL;
+checkbox* cbox = NULL;
 
 // Callbacks function prototypes
 void mouse_button_down_callback(button* btn, mouse_button_event event);
