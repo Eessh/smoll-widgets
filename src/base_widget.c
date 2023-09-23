@@ -334,6 +334,9 @@ result_bool widget_set_flex_direction(base_widget* widget,
 
   widget->flexbox_data.container.direction = direction;
 
+  // triggering re-adjust layout on this widget
+  widget->internal_adjust_layout_callback(widget);
+
   return ok(result_bool, true);
 }
 
@@ -353,6 +356,9 @@ result_bool widget_set_justify_content(base_widget* widget,
 
   widget->flexbox_data.container.justify_content = justify_content;
 
+  // triggering re-adjust layout on this widget
+  widget->internal_adjust_layout_callback(widget);
+
   return ok(result_bool, true);
 }
 
@@ -371,6 +377,9 @@ result_bool widget_set_align_items(base_widget* widget,
 
   widget->flexbox_data.container.align_items = align_items;
 
+  // triggering re-adjust layout on this widget
+  widget->internal_adjust_layout_callback(widget);
+
   return ok(result_bool, true);
 }
 
@@ -388,6 +397,9 @@ result_bool widget_set_gap(base_widget* widget, uint8 gap)
 
   widget->flexbox_data.container.gap = gap;
 
+  // triggering re-adjust layout on this widget
+  widget->internal_adjust_layout_callback(widget);
+
   return ok(result_bool, true);
 }
 
@@ -401,6 +413,9 @@ result_void widget_set_flex_grow(base_widget* widget, uint8 flex_grow)
   if(widget->type == FLEX_CONTAINER)
   {
     widget->flexbox_data.container.flex_grow = flex_grow;
+
+    // triggering re-adjust layout on this widget
+    widget->internal_adjust_layout_callback(widget);
   }
   else
   {
@@ -420,6 +435,9 @@ result_void widget_set_flex_shrink(base_widget* widget, uint8 flex_shrink)
   if(widget->type == FLEX_CONTAINER)
   {
     widget->flexbox_data.container.flex_shrink = flex_shrink;
+
+    // triggering re-adjust layout on this widget
+    widget->internal_adjust_layout_callback(widget);
   }
   else
   {
@@ -442,6 +460,9 @@ widget_set_cross_axis_sizing(base_widget* widget,
   if(widget->type == FLEX_CONTAINER)
   {
     widget->flexbox_data.container.cross_axis_sizing = cross_axis_sizing;
+
+    // triggering re-adjust layout on this widget
+    widget->internal_adjust_layout_callback(widget);
   }
   else
   {

@@ -26,4 +26,7 @@
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 
+/// @brief Macro ot get base widget of given widget.
+#define base(widget) (widget->base)
+
 #endif
