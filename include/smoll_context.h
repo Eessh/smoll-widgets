@@ -54,6 +54,10 @@ result_void smoll_context_set_default_font(smoll_context* context,
 result_void smoll_context_set_root_widget(smoll_context* context,
                                           base_widget* root_widget_base);
 
+result_void
+smoll_context_process_viewport_resize_event(smoll_context* context,
+                                            viewport_resize_event event);
+
 /// @brief Processes the mouse motion event on the given smoll context.
 ///        The event should be externally constructed by the backend provider.
 ///        Smoll context, cannot construct events itself, it just processes

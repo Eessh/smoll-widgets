@@ -222,6 +222,20 @@ int main()
       }
 
       // Translating & processing events
+      else if(event.type == SDL_WINDOWEVENT)
+      {
+        if(event.window.event == SDL_WINDOWEVENT_RESIZED)
+        {
+          smoll_context_process_viewport_resize_event(
+            sctx, translate_sdl2_window_resize_event(event.window));
+        }
+        else if(event.window.event == SDL_WINDOWEVENT_RESTORED ||
+                event.window.event == SDL_WINDOWEVENT_MAXIMIZED)
+        {
+          smoll_context_process_viewport_resize_event(
+            sctx, translate_sdl2_window_maximized_or_restored_event());
+        }
+      }
       else if(event.type == SDL_MOUSEMOTION)
       {
         smoll_context_process_mouse_motion_event(

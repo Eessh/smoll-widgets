@@ -260,9 +260,8 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
   }
   else if(cmd->type == CLEAR_WINDOW)
   {
-    SDL_Surface* window_surface = SDL_GetWindowSurface(window);
-    SDL_FillRect(
-      window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
+    cairo_set_source_rgb(cairo, 0.0f, 0.0f, 0.0f);
+    cairo_fill(cairo);
   }
 
   return ok_void();
@@ -332,6 +331,27 @@ void deinit_sdl2()
 void deinit_cairo()
 {
   cairo_destroy(cairo);
+}
+
+viewport_resize_event translate_sdl2_window_resize_event(SDL_WindowEvent event)
+{
+  // destroying previous cairo object as SDL_Window's surface is recreated
+  cairo_destroy(cairo);
+  init_cairo();
+
+  return (viewport_resize_event){.w = (uint16)event.data1,
+                                 .h = (uint16)event.data2};
+}
+
+viewport_resize_event translate_sdl2_window_maximized_or_restored_event()
+{
+  // destroying previous cairo object as SDL_Window's surface is recreated
+  cairo_destroy(cairo);
+  init_cairo();
+
+  int w, h;
+  SDL_GetWindowSizeInPixels(window, &w, &h);
+  return (viewport_resize_event){.w = (uint16)w, .h = (uint16)h};
 }
 
 mouse_motion_event translate_sdl2_mouse_motion_event(SDL_MouseMotionEvent event)

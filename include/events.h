@@ -3,6 +3,11 @@
 
 #include "types.h"
 
+typedef struct viewport_resize_event
+{
+  uint16 w, h;
+} viewport_resize_event;
+
 typedef struct mouse_motion_event
 {
   uint16 x, y;

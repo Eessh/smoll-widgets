@@ -21,6 +21,10 @@ cairo_t* sdl2_cairo_backend_get_cairo_instance();
 /// @return Void result.
 result_void sdl2_cairo_backend_destroy(render_backend* backend);
 
+viewport_resize_event translate_sdl2_window_resize_event(SDL_WindowEvent event);
+
+viewport_resize_event translate_sdl2_window_maximized_or_restored_event();
+
 /// @brief Translates SDL2 mouse motion event to smoll context event.
 /// @param event SDL2 Mouse Motion event.
 /// @return Smoll context's mouse motion event.

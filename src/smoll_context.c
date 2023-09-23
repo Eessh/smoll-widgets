@@ -108,6 +108,36 @@ result_void smoll_context_set_root_widget(smoll_context* context,
   // setting root widget's context.
   root_widget_base->context = context->internal_ctx;
 
+  root_widget_base->w = context->internal_ctx->viewport_w;
+  root_widget_base->h = context->internal_ctx->viewport_h;
+
+  return ok_void();
+}
+
+result_void
+smoll_context_process_viewport_resize_event(smoll_context* context,
+                                            viewport_resize_event event)
+{
+  if(!context)
+  {
+    return error(
+      result_void,
+      "Cannot process viewport resize event on NULL pointed context!");
+  }
+
+  context->internal_ctx->viewport_w = event.w;
+  context->internal_ctx->viewport_h = event.h;
+
+  command_buffer_add_clear_window_command(context->internal_ctx->cmd_buffer);
+
+  base_widget* root = context->internal_ctx->root;
+  root->w = event.w;
+  root->h = event.h;
+
+  root->internal_calculate_size(root);
+  root->internal_relayout(root);
+  root->internal_render_callback(root);
+
   return ok_void();
 }
 
