@@ -41,7 +41,9 @@ typedef enum command_type
   SET_CURSOR_HAND,
   SET_CURSOR_PROCESSING,
   SET_CURSOR_LOADING,
-  SET_CURSOR_PROHIBITED
+  SET_CURSOR_PROHIBITED,
+
+  CLEAR_WINDOW
 } command_type;
 
 /// Data for `RENDER_RECT` command.
@@ -187,6 +189,8 @@ result_command_ptr command_new_pop_clip_rect();
  */
 result_command_ptr command_new_set_cursor(command_type cursor_type);
 
+result_command_ptr command_new_clear_window();
+
 /**
  * @brief      Frees command.
  *
@@ -260,6 +264,8 @@ result_void command_buffer_add_pop_clip_rect_command(command_buffer* buffer);
 /// Returns void result (`result_void`).
 result_void command_buffer_add_set_cursor_command(command_buffer* buffer,
                                                   command_type cursor_type);
+
+result_void command_buffer_add_clear_window_command(command_buffer* buffer);
 
 /// Returns the next command in the command buffer.
 /// It's the backend's responsibility to free the command

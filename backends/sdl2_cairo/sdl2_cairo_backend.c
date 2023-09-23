@@ -258,6 +258,12 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
   {
     SDL_SetCursor(resize_top_right__bottom_left);
   }
+  else if(cmd->type == CLEAR_WINDOW)
+  {
+    SDL_Surface* window_surface = SDL_GetWindowSurface(window);
+    SDL_FillRect(
+      window_surface, NULL, SDL_MapRGB(window_surface->format, 0, 0, 0));
+  }
 
   return ok_void();
 }
