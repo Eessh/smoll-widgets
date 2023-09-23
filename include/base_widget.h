@@ -585,7 +585,8 @@ typedef struct result_internal_context_ptr
 
 /// @brief Creates a new internal context.
 /// @return Internal context pointer result.
-result_internal_context_ptr internal_context_create();
+result_internal_context_ptr internal_context_create(uint16 viewport_width,
+                                                    uint16 viewport_height);
 
 /// @brief Frees resources used by internal context.
 /// @param context pointer to internal context.

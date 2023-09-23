@@ -3,7 +3,8 @@
 #include "../include/command_buffer.h"
 #include "../include/macros.h"
 
-result_internal_context_ptr internal_context_create()
+result_internal_context_ptr internal_context_create(uint16 viewport_width,
+                                                    uint16 viewport_height)
 {
   internal_context* context =
     (internal_context*)calloc(1, sizeof(internal_context));
@@ -19,8 +20,8 @@ result_internal_context_ptr internal_context_create()
   context->global_mouse_x = 0;
   context->global_mouse_y = 0;
 
-  context->viewport_w = 0;
-  context->viewport_h = 0;
+  context->viewport_w = viewport_width;
+  context->viewport_h = viewport_height;
 
   context->root = NULL;
   context->overlay_widget = NULL;

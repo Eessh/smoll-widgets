@@ -16,7 +16,8 @@ struct smoll_context
   internal_context* internal_ctx;
 };
 
-result_smoll_context_ptr smoll_context_create()
+result_smoll_context_ptr smoll_context_create(uint16 viewport_width,
+                                              uint16 viewport_height)
 {
   smoll_context* context = (smoll_context*)calloc(1, sizeof(smoll_context));
   if(!context)
@@ -25,7 +26,8 @@ result_smoll_context_ptr smoll_context_create()
                  "Unable to allocate memory for smoll context!");
   }
 
-  result_internal_context_ptr _ = internal_context_create();
+  result_internal_context_ptr _ =
+    internal_context_create(viewport_width, viewport_height);
   if(!_.ok)
   {
     free(context);

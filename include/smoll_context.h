@@ -25,7 +25,8 @@ typedef struct result_smoll_context_ptr
 
 /// @brief Creates smoll context.
 /// @return Smoll context pointer result.
-result_smoll_context_ptr smoll_context_create();
+result_smoll_context_ptr smoll_context_create(uint16 viewport_width,
+                                              uint16 viewport_height);
 
 /// @brief Frees resources used by smoll context.
 /// @param context pointer to smoll context.

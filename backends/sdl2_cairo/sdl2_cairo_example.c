@@ -26,7 +26,7 @@ int main()
 
   // Creating smoll context
   {
-    result_smoll_context_ptr _ = smoll_context_create();
+    result_smoll_context_ptr _ = smoll_context_create(1080, 720);
     if(!_.ok)
     {
       printf("Error: %s", _.error);
@@ -71,8 +71,6 @@ int main()
       printf("Error while creating box: %s", _.error);
     }
     bx = _.value;
-    bx->base->w = 1080;
-    bx->base->h = 720;
     bx->background = (color){255, 255, 255, 255};
     bx->base->flexbox_data.container.is_fluid = false;
   }
