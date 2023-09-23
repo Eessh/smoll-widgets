@@ -184,6 +184,14 @@ struct base_widget
 
   /// @brief Tells if widget should be taken into account while
   ///        layouting and rendering.
+  ///
+  ///        Modify this value using the function:
+  ///        `widget_set_visibility()`.
+  ///        Changing visibility will just not render the widget, and
+  ///        gives the space taken by this widget to other children.
+  ///        The state of the widget will be the same.
+  ///        To entirely remove the widget from UI tree use function:
+  ///        `base_widget_remove_child()`.
   bool visible;
 
   /// @brief Pointer to derived widget.
@@ -398,8 +406,10 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child);
 result_void base_widget_free(base_widget* widget);
 
 ///////////////////////////////////////////////////////////////////////////////
-/// * Helper functions for setting widget's flex properties
+/// * Helper functions for setting widget's properties
 ///////////////////////////////////////////////////////////////////////////////
+
+result_bool widget_set_visibility(base_widget* widget, bool visible);
 
 result_bool widget_set_flex_direction(base_widget* widget,
                                       flex_direction direction);

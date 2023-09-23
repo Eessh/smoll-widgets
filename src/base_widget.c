@@ -298,6 +298,26 @@ result_void base_widget_free(base_widget* widget)
   return ok_void();
 }
 
+result_bool widget_set_visibility(base_widget* widget, bool visible)
+{
+  if(!widget)
+  {
+    return error(result_bool, "Cannot set visibility of NULL pointed widget!");
+  }
+
+  widget->visible = visible;
+
+  // calling internal adjust layout callback
+  // on parent widget as visibility of one of its child has changed
+  if(!widget->parent)
+  {
+    /// TODO: Handle case when root node is set invisible. What to do?
+    return ok(result_bool, true);
+  }
+
+  return widget->parent->internal_adjust_layout_callback(widget->parent);
+}
+
 result_bool widget_set_flex_direction(base_widget* widget,
                                       flex_direction direction)
 {
@@ -618,6 +638,12 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
 
 result_void default_internal_calculate_size_callback(base_widget* widget)
 {
+  if(!widget->visible)
+  {
+    // avoiding calculations when widget is not visible
+    return ok_void();
+  }
+
   if(widget->type == FLEX_ITEM)
   {
     if(widget->need_resizing)
@@ -637,10 +663,13 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
     base_widget_child_node* node = widget->children_head;
     while(node)
     {
-      result_void _ = node->child->internal_calculate_size(node->child);
-      if(!_.ok)
+      if(node->child->visible)
       {
-        return _;
+        result_void _ = node->child->internal_calculate_size(node->child);
+        if(!_.ok)
+        {
+          return _;
+        }
       }
       node = node->next;
     }
@@ -652,6 +681,13 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
   base_widget_child_node* node = widget->children_head;
   while(node)
   {
+    // skipping invisible nodes
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
     if(node->child->need_resizing)
     {
       node->child->internal_calculate_size(node->child);
@@ -688,6 +724,12 @@ result_void default_internal_calculate_size_callback(base_widget* widget)
 
 result_void default_internal_relayout_callback(const base_widget* widget)
 {
+  if(!widget->visible)
+  {
+    // avoiding calculations when widget is not visible
+    return ok_void();
+  }
+
   if(widget->type == FLEX_ITEM)
   {
     return error(
@@ -708,6 +750,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   base_widget_child_node* node = widget->children_head;
   while(node)
   {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
     {
       needed_main_axis_length += node->child->w;
@@ -741,6 +790,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     node = widget->children_head;
     while(node)
     {
+      // avoiding invisible children in layout tree
+      if(!node->child->visible)
+      {
+        node = node->next;
+        continue;
+      }
+
       if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
       {
         node->child->w +=
@@ -768,6 +824,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     node = widget->children_head;
     while(node)
     {
+      // avoiding invisible children in layout tree
+      if(!node->child->visible)
+      {
+        node = node->next;
+        continue;
+      }
+
       if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
       {
         node->child->w += ((node->child->type == FLEX_CONTAINER
@@ -792,6 +855,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   node = widget->children_head;
   while(node)
   {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
     flex_cross_axis_sizing cross_axis_sizing =
       node->child->type == FLEX_CONTAINER
         ? node->child->flexbox_data.container.cross_axis_sizing
@@ -852,6 +922,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   node = widget->children_head;
   while(node)
   {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
     printf("assigning positions x, y: %d, %d\n", x, y);
     node->child->x = x;
 
@@ -891,6 +968,13 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   node = widget->children_head;
   while(node)
   {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
     if(node->child->type == FLEX_CONTAINER)
     {
       node->child->internal_relayout(node->child);
@@ -908,6 +992,19 @@ rect default_internal_get_bounding_rect_callback(const base_widget* widget)
 
 static result_bool default_internal_adjust_layout_callback(base_widget* widget)
 {
+  if(!widget->visible)
+  {
+    // escalate this call to its parent
+    if(!widget->parent)
+    {
+      /// TODO: What to do when root widget is invisible?
+      /// And internal adjust layout callback is called.
+      return ok(result_bool, true);
+    }
+
+    return widget->parent->internal_adjust_layout_callback(widget->parent);
+  }
+
   if(!widget->internal_fit_layout_callback)
   {
     return ok(result_bool, false);

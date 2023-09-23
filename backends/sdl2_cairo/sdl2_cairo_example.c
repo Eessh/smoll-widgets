@@ -9,6 +9,7 @@
 #include "sdl2_cairo_backend.h"
 
 static progress_bar* bar = NULL;
+static checkbox* cbox = NULL;
 
 // Callbacks function prototypes
 void mouse_button_down_callback(button* btn, mouse_button_event event);
@@ -197,7 +198,6 @@ int main()
   }
 
   // Creating checkbox
-  checkbox* cbox = NULL;
   {
     result_checkbox_ptr _ =
       checkbox_new(row_view->base, (color){255, 255, 255, 255});
@@ -291,10 +291,12 @@ void on_callback(toggle* t)
 {
   printf("Setting progress bar percent to: 80\n");
   progress_bar_set_percent(bar, 80);
+  widget_set_visibility(cbox->base, true);
 }
 
 void off_callback(toggle* t)
 {
   printf("Setting progress bar percent to: 60\n");
   progress_bar_set_percent(bar, 60);
+  widget_set_visibility(cbox->base, false);
 }
