@@ -5,6 +5,7 @@
 #include "../../include/widgets/checkbox.h"
 #include "../../include/widgets/flex_view.h"
 #include "../../include/widgets/progress_bar.h"
+#include "../../include/widgets/split_view.h"
 #include "../../include/widgets/toggle.h"
 #include "sdl2_cairo_backend.h"
 
@@ -79,37 +80,56 @@ int main()
   // root widget has to be fixed size
   smoll_context_set_root_widget(sctx, bx->base);
 
+  // creating split view
+  split_view* split = NULL;
+  {
+    result_split_view_ptr _ = split_view_new(bx->base, SPLIT_HORIZONTAL);
+    if(!_.ok)
+    {
+      printf("Error while creating split-view: %s", _.error);
+    }
+    split = _.value;
+    split->handle_size = 10;
+  }
+
   // Creating flex-row view
   flex_view* row_view = NULL;
   {
-    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_ROW);
+    result_flex_view_ptr _ = flex_view_new(NULL, FLEX_DIRECTION_ROW);
     if(!_.ok)
     {
       printf("Error while creating flex-row view: %s", _.error);
     }
     row_view = _.value;
-    widget_set_align_items(row_view->base, ALIGN_ITEMS_CENTER);
-    widget_set_justify_content(row_view->base, JUSTIFY_CONTENT_CENTER);
-    widget_set_cross_axis_sizing(row_view->base, CROSS_AXIS_SIZING_EXPAND);
-    widget_set_gap(row_view->base, 10);
+    row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
+    row_view->base->flexbox_data.container.justify_content =
+      JUSTIFY_CONTENT_CENTER;
+    row_view->base->flexbox_data.container.cross_axis_sizing =
+      CROSS_AXIS_SIZING_EXPAND;
+    row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }
 
   // Creating another flex view
   flex_view* col_view = NULL;
   {
-    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_COLUMN);
+    result_flex_view_ptr _ = flex_view_new(NULL, FLEX_DIRECTION_COLUMN);
     if(!_.ok)
     {
       printf("Error while creating flex-column view: %s", _.error);
     }
     col_view = _.value;
-    widget_set_flex_grow(col_view->base, 1);
-    widget_set_justify_content(col_view->base, JUSTIFY_CONTENT_START);
-    widget_set_align_items(col_view->base, ALIGN_ITEMS_START);
-    widget_set_cross_axis_sizing(col_view->base, CROSS_AXIS_SIZING_EXPAND);
+    col_view->base->flexbox_data.container.flex_grow = 1;
+    col_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_START;
+    col_view->base->flexbox_data.container.justify_content =
+      JUSTIFY_CONTENT_START;
+    col_view->base->flexbox_data.container.cross_axis_sizing =
+      CROSS_AXIS_SIZING_EXPAND;
     col_view->background = (color){33, 66, 99, 255};
   }
+
+  // attaching flex row view to split view
+  split_view_connect_children(split, row_view->base, col_view->base);
 
   // Creating button widget
   button* btn = NULL;
