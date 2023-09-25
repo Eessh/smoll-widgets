@@ -5,6 +5,7 @@
 #include "../../include/widgets/checkbox.h"
 #include "../../include/widgets/flex_view.h"
 #include "../../include/widgets/progress_bar.h"
+#include "../../include/widgets/split.h"
 #include "../../include/widgets/split_view.h"
 #include "../../include/widgets/toggle.h"
 #include "sdl2_cairo_backend.h"
@@ -81,21 +82,21 @@ int main()
   smoll_context_set_root_widget(sctx, bx->base);
 
   // creating split view
-  split_view* split = NULL;
-  {
-    result_split_view_ptr _ = split_view_new(bx->base, SPLIT_HORIZONTAL);
-    if(!_.ok)
-    {
-      printf("Error while creating split-view: %s", _.error);
-    }
-    split = _.value;
-    split->handle_size = 10;
-  }
+  // split_view* split = NULL;
+  // {
+  //   result_split_view_ptr _ = split_view_new(bx->base, SPLIT_HORIZONTAL);
+  //   if(!_.ok)
+  //   {
+  //     printf("Error while creating split-view: %s", _.error);
+  //   }
+  //   split = _.value;
+  //   split->handle_size = 10;
+  // }
 
   // Creating flex-row view
   flex_view* row_view = NULL;
   {
-    result_flex_view_ptr _ = flex_view_new(NULL, FLEX_DIRECTION_ROW);
+    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_ROW);
     if(!_.ok)
     {
       printf("Error while creating flex-row view: %s", _.error);
@@ -113,7 +114,7 @@ int main()
   // Creating another flex view
   flex_view* col_view = NULL;
   {
-    result_flex_view_ptr _ = flex_view_new(NULL, FLEX_DIRECTION_COLUMN);
+    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_COLUMN);
     if(!_.ok)
     {
       printf("Error while creating flex-column view: %s", _.error);
@@ -129,7 +130,19 @@ int main()
   }
 
   // attaching flex row view to split view
-  split_view_connect_children(split, row_view->base, col_view->base);
+  // split_view_connect_children(split, row_view->base, col_view->base);
+
+  // creating splitter
+  split* splitter = NULL;
+  {
+    result_split_ptr _ = split_new(
+      bx->base, SPLIT_DIRECTION_VERTICAL, row_view->base, col_view->base);
+    if(!_.ok)
+    {
+      printf("Error while creating splitter: %s", _.error);
+    }
+    splitter = _.value;
+  }
 
   // Creating button widget
   button* btn = NULL;
@@ -179,6 +192,25 @@ int main()
     button_set_mouse_up_callback(btn1, mouse_button_up_callback);
     button_set_mouse_enter_callback(btn1, mouse_enter_callback);
     button_set_mouse_leave_callback(btn1, mouse_leave_callback);
+  }
+
+  // Creating another button widget
+  button* btn2 = NULL;
+  {
+    result_button_ptr _ = button_new(col_view->base, "Hello there!");
+    if(!_.ok)
+    {
+      printf("Error while creating button: %s", _.error);
+    }
+    btn2 = _.value;
+    btn2->padding_x = 6;
+    btn2->padding_y = 4;
+    btn2->foreground = (color){255, 255, 255, 255};
+    btn2->background = (color){16, 16, 16, 255};
+    btn2->hover_foreground = (color){0, 255, 0, 255};
+    btn2->hover_background = (color){64, 64, 64, 255};
+    btn2->click_foreground = (color){255, 0, 0, 255};
+    btn2->click_background = (color){128, 128, 128, 255};
   }
 
   // Creating toggle widget
