@@ -235,6 +235,61 @@ result_void base_widget_add_child(base_widget* base, base_widget* child)
   return ok_void();
 }
 
+result_void base_widget_add_child_after(base_widget* base,
+                                        base_widget* child,
+                                        base_widget* after_this_widget)
+{
+  if(!base)
+  {
+    return error(result_void,
+                 "Cannot attach child to NULL pointed parent widget!");
+  }
+
+  if(base->type == FLEX_ITEM)
+  {
+    return error(result_void,
+                 "Cannot attach child to widget of type FLEX_ITEM!");
+  }
+
+  if(!child)
+  {
+    return error(result_void,
+                 "Cannot attach NULL pointed child to parent widget!");
+  }
+
+  if(!after_this_widget)
+  {
+    return error(
+      result_void,
+      "Cannot attach child after a widget, which is pointing to NULL!");
+  }
+
+  base_widget_child_node* temp = base->children_head;
+  while(temp && temp->child != after_this_widget)
+  {
+    temp = temp->next;
+  }
+  if(!temp)
+  {
+    return error(result_void,
+                 "Cannot find the 'after_this_widget' in children of the given "
+                 "base widget!");
+  }
+
+  result_base_widget_child_node_ptr _ = base_widget_child_node_new(child);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  _.value->next = temp->next;
+  temp->next = _.value;
+  child->context = base->context;
+  child->parent = base;
+
+  return ok_void();
+}
+
 result_void base_widget_remove_child(base_widget* base, base_widget* child)
 {
   if(!base)

@@ -394,6 +394,10 @@ result_base_widget_ptr base_widget_new(widget_type type);
 /// @return Void result.
 result_void base_widget_add_child(base_widget* base, base_widget* child);
 
+result_void base_widget_add_child_after(base_widget* base,
+                                        base_widget* child,
+                                        base_widget* after_this_widget);
+
 /// @brief Removes the given widget from this widget's children.
 /// @param base pointer to base widget, from which the child should be removed.
 /// @param child pointer to base widget of the child.
