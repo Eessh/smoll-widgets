@@ -308,6 +308,8 @@ struct base_widget
   ///        callbacks appropriately.
   bool (*mouse_enter_callback)(base_widget*, const mouse_motion_event);
 
+  bool (*mouse_move_callback)(base_widget* widget, const mouse_motion_event);
+
   /// @brief Derived widget's callback for mouse leave callback.
   ///        It's the derived widget's responsibility for using these
   ///        callbacks appropriately.

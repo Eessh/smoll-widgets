@@ -16,6 +16,8 @@ struct split_private
 
   base_widget* first_widget;
   base_widget* second_widget;
+
+  uint32 clicked_x, clicked_y;
 };
 
 static void default_internal_derived_free_callback(base_widget* widget);
@@ -34,6 +36,9 @@ static bool default_mouse_button_up_callback(base_widget* widget,
 
 static bool default_mouse_enter_callback(base_widget* widget,
                                          mouse_motion_event event);
+
+static bool default_mouse_move_callback(base_widget* widget,
+                                        mouse_motion_event event);
 
 static bool default_mouse_leave_callback(base_widget* widget,
                                          mouse_motion_event event);
@@ -96,9 +101,9 @@ result_split_ptr split_new(base_widget* parent_base,
   s->base->mouse_button_down_callback = default_mouse_button_down_callback;
   s->base->mouse_button_up_callback = default_mouse_button_up_callback;
   s->base->mouse_enter_callback = default_mouse_enter_callback;
+  s->base->mouse_move_callback = default_mouse_move_callback;
   s->base->mouse_leave_callback = default_mouse_leave_callback;
 
-  s->base->flexbox_data.item.cross_axis_sizing = CROSS_AXIS_SIZING_EXPAND;
   s->direction = direction;
   s->split_color = (color){255, 0, 0, 255};
   s->split_hover_color = (color){0, 255, 0, 255};
@@ -107,6 +112,9 @@ result_split_ptr split_new(base_widget* parent_base,
   s_private->first_widget = first_widget;
   s_private->second_widget = second_widget;
   s_private->state = SPLIT_NORMAL;
+
+  // making split widget to expand along cross-axis of parent
+  s->base->flexbox_data.item.cross_axis_sizing = CROSS_AXIS_SIZING_EXPAND;
 
   if(direction == SPLIT_DIRECTION_VERTICAL)
   {
@@ -194,6 +202,8 @@ static bool default_mouse_button_down_callback(base_widget* widget,
   split* s = (split*)widget->derived;
 
   s->private_data->state = SPLIT_CLICKED;
+  s->private_data->clicked_x = event.x;
+  s->private_data->clicked_y = event.y;
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
@@ -241,6 +251,53 @@ static bool default_mouse_enter_callback(base_widget* widget,
     {
       return false;
     }
+  }
+
+  return true;
+}
+
+static bool default_mouse_move_callback(base_widget* widget,
+                                        mouse_motion_event event)
+{
+  split* s = (split*)widget->derived;
+
+  if(s->private_data->state != SPLIT_CLICKED)
+  {
+    // ignore
+    return false;
+  }
+
+  // marking first, second widgets as non-fluid, if they are containers
+  if(s->private_data->first_widget->type == FLEX_CONTAINER)
+  {
+    s->private_data->first_widget->flexbox_data.container.is_fluid = false;
+  }
+  if(s->private_data->second_widget->type == FLEX_CONTAINER)
+  {
+    s->private_data->second_widget->flexbox_data.container.is_fluid = false;
+  }
+
+  if(s->direction == SPLIT_DIRECTION_VERTICAL)
+  {
+    // measure delta along x-axis
+    int32 delta = s->private_data->clicked_x - event.x;
+    s->private_data->first_widget->w += delta;
+    s->private_data->second_widget->w -= delta;
+  }
+  else
+  {
+    // measure delta along y-axis
+    int32 delta = s->private_data->clicked_y - event.y;
+    s->private_data->first_widget->h += delta;
+    s->private_data->second_widget->h -= delta;
+  }
+
+  // triggering re-layout on parent widget
+  result_bool _ =
+    widget->parent->internal_adjust_layout_callback(widget->parent);
+  if(!_.ok)
+  {
+    return false;
   }
 
   return true;

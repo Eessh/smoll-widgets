@@ -1198,6 +1198,14 @@ result_bool default_internal_mouse_motion_callback(
       widget->mouse_enter_callback(widget, internal_event->event);
     }
   }
+  else
+  {
+    // call target widget's mouse motion callback if present
+    if(widget->mouse_move_callback)
+    {
+      widget->mouse_move_callback(widget, internal_event->event);
+    }
+  }
 
   if(widget->context->active_scrollbar &&
      widget->context->active_scrollbar == widget)
