@@ -118,13 +118,13 @@ result_split_ptr split_new(base_widget* parent_base,
 
   if(direction == SPLIT_DIRECTION_VERTICAL)
   {
-    s->base->w = 2;
+    s->base->w = 10;
     s->base->h = parent_base->h;
   }
   else
   {
     s->base->w = parent_base->w;
-    s->base->h = 2;
+    s->base->h = 10;
   }
 
   return ok(result_split_ptr, s);
@@ -280,14 +280,14 @@ static bool default_mouse_move_callback(base_widget* widget,
   if(s->direction == SPLIT_DIRECTION_VERTICAL)
   {
     // measure delta along x-axis
-    int32 delta = s->private_data->clicked_x - event.x;
+    int32 delta = event.x - s->private_data->clicked_x;
     s->private_data->first_widget->w += delta;
     s->private_data->second_widget->w -= delta;
   }
   else
   {
     // measure delta along y-axis
-    int32 delta = s->private_data->clicked_y - event.y;
+    int32 delta = event.y - s->private_data->clicked_y;
     s->private_data->first_widget->h += delta;
     s->private_data->second_widget->h -= delta;
   }
@@ -299,6 +299,8 @@ static bool default_mouse_move_callback(base_widget* widget,
   {
     return false;
   }
+
+  widget->parent->internal_render_callback(widget->parent);
 
   return true;
 }

@@ -60,6 +60,47 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
                  "Unable to allocate memory for private fields of split view!");
   }
 
+  // creating first child's conatainer
+  result_base_widget_ptr __ = base_widget_new(FLEX_CONTAINER);
+  if(!__.ok)
+  {
+    free(v);
+    base_widget_free(_.value);
+    free(v_private);
+    return error(
+      result_split_view_ptr,
+      "Unable to allocate memory for first-child's container of split view!");
+  }
+  base_widget* first_container = __.value;
+
+  // creating second child's contaniner
+  __ = base_widget_new(FLEX_CONTAINER);
+  if(!__.ok)
+  {
+    free(v);
+    base_widget_free(_.value);
+    free(v_private);
+    base_widget_free(first_container);
+    return error(
+      result_split_view_ptr,
+      "Unable to allocate memory for second-child's container of split view!");
+  }
+  base_widget* second_container = __.value;
+
+  // creating split
+  __ = base_widget_new(FLEX_ITEM);
+  if(!__.ok)
+  {
+    free(v);
+    base_widget_free(_.value);
+    free(v_private);
+    base_widget_free(first_container);
+    base_widget_free(second_container);
+    return error(result_split_view_ptr,
+                 "Unable to allocate memory for split of split view!");
+  }
+  base_widget* split = __.value;
+
   v->base = _.value;
   v->base->derived = v;
   v->base->parent = parent_base;
@@ -70,6 +111,11 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   {
     base_widget_add_child(parent_base, v->base);
   }
+
+  // adding containers and split
+  base_widget_add_child(v->base, first_container);
+  base_widget_add_child(v->base, split);
+  base_widget_add_child(v->base, second_container);
 
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   v->base->internal_render_callback = default_internal_render_callback;
