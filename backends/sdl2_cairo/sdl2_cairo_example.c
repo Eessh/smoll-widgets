@@ -82,16 +82,19 @@ int main()
   smoll_context_set_root_widget(sctx, bx->base);
 
   // creating split view
-  // split_view* split = NULL;
-  // {
-  //   result_split_view_ptr _ = split_view_new(bx->base, SPLIT_HORIZONTAL);
-  //   if(!_.ok)
-  //   {
-  //     printf("Error while creating split-view: %s", _.error);
-  //   }
-  //   split = _.value;
-  //   split->handle_size = 10;
-  // }
+  //  split_view* split = NULL;
+  //  {
+  //    result_split_view_ptr _ = split_view_new(bx->base, SPLIT_VERTICAL);
+  //    if(!_.ok)
+  //    {
+  //      printf("Error while creating split-view: %s", _.error);
+  //    }
+  //    split = _.value;
+  //    split->base->flexbox_data.container.flex_grow = 1;
+  //    split->base->flexbox_data.container.cross_axis_sizing =
+  //      CROSS_AXIS_SIZING_EXPAND;
+  //    split->handle_size = 10;
+  //  }
 
   // Creating flex-row view
   flex_view* row_view = NULL;
@@ -102,6 +105,7 @@ int main()
       printf("Error while creating flex-row view: %s", _.error);
     }
     row_view = _.value;
+    row_view->base->flexbox_data.container.flex_grow = 1;
     row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
     row_view->base->flexbox_data.container.justify_content =
       JUSTIFY_CONTENT_CENTER;
@@ -129,9 +133,6 @@ int main()
     col_view->background = (color){33, 66, 99, 255};
   }
 
-  // attaching flex row view to split view
-  // split_view_connect_children(split, row_view->base, col_view->base);
-
   // creating splitter
   split* splitter = NULL;
   {
@@ -143,6 +144,9 @@ int main()
     }
     splitter = _.value;
   }
+
+  // attaching flex row view to split view
+  //  split_view_connect_children(split, row_view->base, col_view->base);
 
   // Creating button widget
   button* btn = NULL;

@@ -875,12 +875,11 @@ result_void default_internal_relayout_callback(const base_widget* widget)
 
       if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
       {
-        node->child->w +=
-          (uint16)(((node->child->type == FLEX_CONTAINER
-                       ? node->child->flexbox_data.container.flex_grow
-                       : node->child->flexbox_data.item.flex_grow) /
-                    total_flex_grow) *
-                   remaining_main_axis_length);
+        node->child->w += ((node->child->type == FLEX_CONTAINER
+                              ? node->child->flexbox_data.container.flex_grow
+                              : node->child->flexbox_data.item.flex_grow) /
+                           total_flex_grow) *
+                          remaining_main_axis_length;
       }
       else
       {
@@ -1129,14 +1128,11 @@ static void default_internal_free_callback(base_widget* widget)
 
   // freeing children widgets (not children nodes, node will be free later
   // in base_widget_free)
-  if(widget->children_head)
+  base_widget_child_node* node = widget->children_head;
+  while(node)
   {
-    base_widget_child_node* node = widget->children_head;
-    while(node)
-    {
-      node->child->internal_free_callback(node->child);
-      node = node->next;
-    }
+    node->child->internal_free_callback(node->child);
+    node = node->next;
   }
 
   // freeing derived widget fields

@@ -268,14 +268,14 @@ static bool default_mouse_move_callback(base_widget* widget,
   }
 
   // marking first, second widgets as non-fluid, if they are containers
-  if(s->private_data->first_widget->type == FLEX_CONTAINER)
-  {
-    s->private_data->first_widget->flexbox_data.container.is_fluid = false;
-  }
-  if(s->private_data->second_widget->type == FLEX_CONTAINER)
-  {
-    s->private_data->second_widget->flexbox_data.container.is_fluid = false;
-  }
+  //  if(s->private_data->first_widget->type == FLEX_CONTAINER)
+  //  {
+  //    s->private_data->first_widget->flexbox_data.container.is_fluid = false;
+  //  }
+  //  if(s->private_data->second_widget->type == FLEX_CONTAINER)
+  //  {
+  //    s->private_data->second_widget->flexbox_data.container.is_fluid = false;
+  //  }
 
   if(s->direction == SPLIT_DIRECTION_VERTICAL)
   {
@@ -291,6 +291,12 @@ static bool default_mouse_move_callback(base_widget* widget,
     s->private_data->first_widget->h += delta;
     s->private_data->second_widget->h -= delta;
   }
+
+  // triggering re-layout on first and second widgets
+  s->private_data->first_widget->internal_adjust_layout_callback(
+    s->private_data->first_widget);
+  s->private_data->second_widget->internal_adjust_layout_callback(
+    s->private_data->second_widget);
 
   // triggering re-layout on parent widget
   result_bool _ =

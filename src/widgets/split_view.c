@@ -1,6 +1,7 @@
 #include "../../include/widgets/split_view.h"
 #include <stdlib.h>
 #include "../../include/macros.h"
+#include "../../include/widgets/box.h"
 
 typedef enum handle_state
 {
@@ -21,6 +22,8 @@ default_internal_fit_layout_callback(base_widget* widget,
                                      bool call_on_children);
 
 static result_bool default_internal_render_callback(const base_widget* widget);
+
+static result_bool split_internal_render_callback(const base_widget* widget);
 
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event);
@@ -60,47 +63,6 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
                  "Unable to allocate memory for private fields of split view!");
   }
 
-  // creating first child's conatainer
-  result_base_widget_ptr __ = base_widget_new(FLEX_CONTAINER);
-  if(!__.ok)
-  {
-    free(v);
-    base_widget_free(_.value);
-    free(v_private);
-    return error(
-      result_split_view_ptr,
-      "Unable to allocate memory for first-child's container of split view!");
-  }
-  base_widget* first_container = __.value;
-
-  // creating second child's contaniner
-  __ = base_widget_new(FLEX_CONTAINER);
-  if(!__.ok)
-  {
-    free(v);
-    base_widget_free(_.value);
-    free(v_private);
-    base_widget_free(first_container);
-    return error(
-      result_split_view_ptr,
-      "Unable to allocate memory for second-child's container of split view!");
-  }
-  base_widget* second_container = __.value;
-
-  // creating split
-  __ = base_widget_new(FLEX_ITEM);
-  if(!__.ok)
-  {
-    free(v);
-    base_widget_free(_.value);
-    free(v_private);
-    base_widget_free(first_container);
-    base_widget_free(second_container);
-    return error(result_split_view_ptr,
-                 "Unable to allocate memory for split of split view!");
-  }
-  base_widget* split = __.value;
-
   v->base = _.value;
   v->base->derived = v;
   v->base->parent = parent_base;
@@ -112,20 +74,60 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
     base_widget_add_child(parent_base, v->base);
   }
 
+  // creating first child's container
+  result_box_ptr __ = box_new(v->base, FLEX_DIRECTION_COLUMN);
+  if(!__.ok)
+  {
+    free(v);
+    base_widget_free(_.value);
+    free(v_private);
+    return error(
+      result_split_view_ptr,
+      "Unable to allocate memory for first-child's container of split view!");
+  }
+  box* first_container = __.value;
+  first_container->base->flexbox_data.container.is_fluid = false;
+
+  // creating second child's contaniner
+  __ = box_new(v->base, FLEX_DIRECTION_COLUMN);
+  if(!__.ok)
+  {
+    free(v);
+    base_widget_free(_.value);
+    free(v_private);
+    return error(
+      result_split_view_ptr,
+      "Unable to allocate memory for second-child's container of split view!");
+  }
+  box* second_container = __.value;
+  second_container->base->flexbox_data.container.is_fluid = false;
+
+  // creating split
+  result_base_widget_ptr ___ = base_widget_new(FLEX_ITEM);
+  if(!___.ok)
+  {
+    free(v);
+    base_widget_free(_.value);
+    free(v_private);
+    return error(result_split_view_ptr,
+                 "Unable to allocate memory for split of split view!");
+  }
+  base_widget* split = ___.value;
+
   // adding containers and split
-  base_widget_add_child(v->base, first_container);
+  // base_widget_add_child(v->base, first_container->base);
   base_widget_add_child(v->base, split);
-  base_widget_add_child(v->base, second_container);
+  // base_widget_add_child(v->base, second_container->base);
 
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   v->base->internal_render_callback = default_internal_render_callback;
   v->base->internal_derived_free_callback =
     default_internal_derived_free_callback;
 
-  v->base->mouse_button_down_callback = default_mouse_button_down_callback;
-  v->base->mouse_button_up_callback = default_mouse_button_up_callback;
-  v->base->mouse_enter_callback = default_mouse_enter_callback;
-  v->base->mouse_leave_callback = default_mouse_leave_callback;
+  //  v->base->mouse_button_down_callback = default_mouse_button_down_callback;
+  //  v->base->mouse_button_up_callback = default_mouse_button_up_callback;
+  //  v->base->mouse_enter_callback = default_mouse_enter_callback;
+  //  v->base->mouse_leave_callback = default_mouse_leave_callback;
 
   v->base->flexbox_data.container.direction =
     type == SPLIT_HORIZONTAL ? FLEX_DIRECTION_ROW : FLEX_DIRECTION_COLUMN;
@@ -135,6 +137,27 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   v->handle_hover_color = (color){0, 255, 0, 255};
   v->handle_click_color = (color){0, 0, 255, 255};
   v_private->state = HANDLE_NORMAL;
+
+  first_container->base->internal_render_callback =
+    default_internal_render_callback;
+  second_container->base->internal_render_callback =
+    default_internal_render_callback;
+
+  first_container->background = (color){0, 0, 0, 255};
+  second_container->background = (color){16, 16, 16, 255};
+
+  split->flexbox_data.item.cross_axis_sizing = CROSS_AXIS_SIZING_EXPAND;
+  split->internal_render_callback = split_internal_render_callback;
+  if(type == SPLIT_HORIZONTAL)
+  {
+    split->w = v->base->w;
+    split->h = 10;
+  }
+  else
+  {
+    split->w = 10;
+    split->h = v->base->h;
+  }
 
   return ok(result_split_view_ptr, v);
 }
@@ -154,21 +177,12 @@ result_void split_view_connect_children(split_view* view,
     return error(result_void, "first_child or second_child is NULL!");
   }
 
-  base_widget_add_child(view->base, first_child);
+  base_widget_child_node* first_container_node = view->base->children_head;
+  base_widget_child_node* second_container_node =
+    first_container_node->next->next;
 
-  //  result_base_widget_ptr _ = base_widget_new(FLEX_ITEM);
-  //  if(!_.ok)
-  //  {
-  //    return error(result_void, _.error);
-  //  }
-  //  base_widget* handle = _.value;
-  //  handle->w =
-  //    view->type == SPLIT_HORIZONTAL ? view->handle_size : view->base->w;
-  //  handle->h =
-  //    view->type == SPLIT_HORIZONTAL ? view->base->h : view->handle_size;
-  //  base_widget_add_child(view->base, handle);
-
-  base_widget_add_child(view->base, second_child);
+  base_widget_add_child(first_container_node->child, first_child);
+  base_widget_add_child(second_container_node->child, second_child);
 
   return ok_void();
 }
@@ -179,6 +193,20 @@ static void default_internal_derived_free_callback(base_widget* widget)
 
   free(v->private_data);
   free(v);
+}
+
+static result_bool split_internal_render_callback(const base_widget* widget)
+{
+  result_void _ = command_buffer_add_render_rect_command(
+    widget->context->cmd_buffer,
+    (rect){widget->x, widget->y, widget->w, widget->h},
+    (color){0, 255, 0, 255});
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
+  return ok(result_bool, true);
 }
 
 static result_sizing_delta
@@ -228,47 +256,25 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
   return ok(result_sizing_delta, deltas);
 }
 
+static result_sizing_delta
+container_internal_fit_layout_callback(base_widget* widget,
+                                       bool call_on_children)
+{
+  sizing_delta deltas = {.x = 0, .y = 0};
+
+  return ok(result_sizing_delta, deltas);
+}
+
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  split_view* v = (split_view*)widget->derived;
-
-  base_widget* first_child = NULL;
-  base_widget* second_child = NULL;
-
-  if(widget->children_head)
+  base_widget_child_node* temp = widget->children_head;
+  while(temp)
   {
-    first_child = widget->children_head->child;
-    second_child =
-      widget->children_head->next ? widget->children_head->next->child : NULL;
-  }
-
-  result_void _ = command_buffer_add_render_rect_command(
-    widget->context->cmd_buffer,
-    v->type == SPLIT_HORIZONTAL
-      ? (rect){first_child ? first_child->w + 1 : widget->x,
-               widget->y,
-               v->handle_size,
-               widget->h}
-      : (rect){widget->x,
-               first_child ? first_child->h + 1 : widget->y,
-               widget->w,
-               v->handle_size},
-    v->private_data->state == HANDLE_NORMAL
-      ? v->handle_color
-      : (v->private_data->state == HANDLE_HOVERED ? v->handle_hover_color
-                                                  : v->handle_click_color));
-  if(!_.ok)
-  {
-    return error(result_bool, _.error);
-  }
-
-  if(first_child)
-  {
-    first_child->internal_render_callback(first_child);
-  }
-  if(second_child)
-  {
-    second_child->internal_render_callback(second_child);
+    if(temp->child->internal_render_callback)
+    {
+      temp->child->internal_render_callback(temp->child);
+    }
+    temp = temp->next;
   }
 
   return ok(result_bool, true);

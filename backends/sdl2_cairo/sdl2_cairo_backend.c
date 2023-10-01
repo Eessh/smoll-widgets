@@ -350,7 +350,8 @@ viewport_resize_event translate_sdl2_window_maximized_or_restored_event()
   init_cairo();
 
   int w, h;
-  SDL_GetWindowSizeInPixels(window, &w, &h);
+  SDL_GetWindowSize(window, &w, &h);
+  //  SDL_GetWindowSizeInPixels(window, &w, &h);
   return (viewport_resize_event){.w = (uint16)w, .h = (uint16)h};
 }
 
