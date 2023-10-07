@@ -243,6 +243,8 @@ struct base_widget
    */
   result_void (*internal_relayout)(const base_widget*);
 
+  result_void (*pre_internal_relayout_hook)(const base_widget*);
+
   /// @brief Internal callback for getting bounding rectangle of widget.
   ///        Will be handy when layouting.
   rect (*internal_get_bounding_rect_callback)(const base_widget*);

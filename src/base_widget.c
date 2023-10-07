@@ -154,6 +154,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
   widget->internal_mark_need_resizing = default_internal_mark_need_resizing;
   widget->internal_calculate_size = default_internal_calculate_size_callback;
   widget->internal_relayout = default_internal_relayout_callback;
+  widget->pre_internal_relayout_hook = NULL;
   widget->internal_get_bounding_rect_callback =
     default_internal_get_bounding_rect_callback;
   widget->internal_get_background_callback = NULL;
@@ -1052,6 +1053,10 @@ result_void default_internal_relayout_callback(const base_widget* widget)
 
     if(node->child->type == FLEX_CONTAINER)
     {
+      if(node->child->pre_internal_relayout_hook)
+      {
+        node->child->pre_internal_relayout_hook(node->child);
+      }
       node->child->internal_relayout(node->child);
     }
     node = node->next;
@@ -1113,6 +1118,10 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   base_widget* ancestor = __.value;
   printf("Ancestor parent: %s\n", ancestor->parent ? "EXISTS" : "(NULL)");
   ancestor->internal_calculate_size(ancestor);
+  if(ancestor->pre_internal_relayout_hook)
+  {
+    ancestor->pre_internal_relayout_hook(ancestor);
+  }
   ancestor->internal_relayout(ancestor);
   ancestor->internal_render_callback(ancestor);
 
