@@ -1,7 +1,7 @@
 workspace("smoll-widgets")
 	configurations({ "Debug", "Release" })
 	filter("configurations:Debug")
-		defines({ "DEBUG" })
+		defines({ "DEBUG", "LOG_BOII__COLORED_LOGS", "LOG_BOII__HIGHLIGHT_WARN_ERROR_FATAL_STRINGS" })
 		symbols("On")
 	filter("configurations:Release")
 		defines({ "NDEBUG", "O3" })
@@ -15,9 +15,11 @@ workspace("smoll-widgets")
 		language("C")
 		includedirs({
 			"include",
+			"log-boii"
 		})
 		files({
 			"src/**.c",
+			"log-boii/*.c"
 		})
 	
 	-- SDL2 + Cairo example

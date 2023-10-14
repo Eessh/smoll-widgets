@@ -1,6 +1,14 @@
 #ifndef SMOLL_WIDGETS__MACROS_H
 #define SMOLL_WIDGETS__MACROS_H
 
+#include "../log-boii/log_boii.h"
+
+#ifdef DEBUG
+#  define DEBUG_MODE 1
+#else
+#  define DEBUG_MODE 0
+#endif
+
 /// @brief Ok return type for result_void
 #define ok_void()                                                              \
   (result_void)                                                                \
@@ -28,5 +36,47 @@
 
 /// @brief Macro ot get base widget of given widget.
 #define base(widget) (widget->base)
+
+#define trace(...)                                                             \
+  do                                                                           \
+  {                                                                            \
+    if(DEBUG_MODE)                                                             \
+      log_trace(__VA_ARGS__);                                                  \
+  } while(0)
+
+#define debug(...)                                                             \
+  do                                                                           \
+  {                                                                            \
+    if(DEBUG_MODE)                                                             \
+      log_debug(__VA_ARGS__);                                                  \
+  } while(0)
+
+#define info(...)                                                              \
+  do                                                                           \
+  {                                                                            \
+    if(DEBUG_MODE)                                                             \
+      log_info(__VA_ARGS__);                                                   \
+  } while(0)
+
+#define warn(...)                                                              \
+  do                                                                           \
+  {                                                                            \
+    if(DEBUG_MODE)                                                             \
+      log_warn(__VA_ARGS__);                                                   \
+  } while(0)
+
+//#define error(...)                                                             \
+//  do                                                                           \
+//  {                                                                            \
+//    if(DEBUG_MODE)                                                             \
+//      log_error(__VA_ARGS__);                                                   \
+//  } while(0)
+
+#define fatal(...)                                                             \
+  do                                                                           \
+  {                                                                            \
+    if(DEBUG_MODE)                                                             \
+      log_fatal(__VA_ARGS__);                                                  \
+  } while(0)
 
 #endif
