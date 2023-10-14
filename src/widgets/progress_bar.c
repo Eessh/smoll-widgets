@@ -1,5 +1,4 @@
 #include "../../include/widgets/progress_bar.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -60,6 +59,27 @@ result_progress_bar_ptr progress_bar_new(base_widget* parent_base,
   bar->private_data = bar_private;
 
   return ok(result_progress_bar_ptr, bar);
+}
+
+result_progress_bar_ptr
+progress_bar_new_with_debug_name(base_widget* parent_base,
+                                 uint8 percent,
+                                 color foreground,
+                                 color background,
+                                 const char* debug_name)
+{
+  result_progress_bar_ptr _ =
+    progress_bar_new(parent_base, percent, foreground, background);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  _.value->debug_name = debug_name;
+
+  trace("Progress-Bar: created with debug-name: %s", debug_name);
+
+  return _;
 }
 
 result_uint8 progress_bar_get_percent(const progress_bar* bar)
@@ -153,15 +173,29 @@ result_void progress_bar_set_background(progress_bar* bar, color background)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  printf("Render: progress-bar\n");
   progress_bar* bar = (progress_bar*)widget->derived;
+  color bg = bar->private_data->background, fg = bar->private_data->foreground;
+  info("Progress-Bar(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
+       "background: (%d, %d, %d, %d), foreground: (%d, %d, %d, %d)",
+       bar->debug_name,
+       widget->x,
+       widget->y,
+       widget->w,
+       widget->h,
+       bg.r,
+       bg.g,
+       bg.b,
+       bg.a,
+       fg.r,
+       fg.g,
+       fg.b,
+       fg.a);
+
   rect bounding_rect =
     bar->base->internal_get_bounding_rect_callback(bar->base);
 
-  result_void _ =
-    command_buffer_add_render_rect_command(bar->base->context->cmd_buffer,
-                                           bounding_rect,
-                                           bar->private_data->background);
+  result_void _ = command_buffer_add_render_rect_command(
+    bar->base->context->cmd_buffer, bounding_rect, bg);
   if(!_.ok)
   {
     return error(result_bool, _.error);
@@ -169,9 +203,8 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   bounding_rect.w *= (float32)(bar->private_data->percent / 100.0f);
 
-  _ = command_buffer_add_render_rect_command(bar->base->context->cmd_buffer,
-                                             bounding_rect,
-                                             bar->private_data->foreground);
+  _ = command_buffer_add_render_rect_command(
+    bar->base->context->cmd_buffer, bounding_rect, fg);
   if(!_.ok)
   {
     return error(result_bool, _.error);

@@ -7,6 +7,8 @@ typedef struct progress_bar_private progress_bar_private;
 
 typedef struct progress_bar
 {
+  const char* debug_name;
+
   base_widget* base;
 
   progress_bar_private* private_data;
@@ -26,6 +28,13 @@ result_progress_bar_ptr progress_bar_new(base_widget* parent_base,
                                          uint8 percent,
                                          color foreground,
                                          color background);
+
+result_progress_bar_ptr
+progress_bar_new_with_debug_name(base_widget* parent_base,
+                                 uint8 percent,
+                                 color foreground,
+                                 color background,
+                                 const char* debug_name);
 
 result_uint8 progress_bar_get_percent(const progress_bar* bar);
 
