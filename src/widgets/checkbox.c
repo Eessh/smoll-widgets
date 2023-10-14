@@ -1,5 +1,4 @@
 #include "../../include/widgets/checkbox.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -85,6 +84,23 @@ result_checkbox_ptr checkbox_new(base_widget* parent_base, color foreground)
   return ok(result_checkbox_ptr, box);
 }
 
+result_checkbox_ptr checkbox_new_with_debug_name(base_widget* parent_base,
+                                                 color foreground,
+                                                 const char* debug_name)
+{
+  result_checkbox_ptr _ = checkbox_new(parent_base, foreground);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  _.value->debug_name = debug_name;
+
+  trace("Checkbox: created with debug-name: %s", debug_name);
+
+  return _;
+}
+
 result_void checkbox_set_ticked_callback(checkbox* box,
                                          void (*callback)(checkbox*))
 {
@@ -131,7 +147,6 @@ result_void checkbox_set_unticked_callback(checkbox* box,
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  printf("Render: Checkbox\n");
   if(!widget->parent)
   {
     return error(result_bool,
@@ -146,6 +161,20 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   }
 
   checkbox* box = (checkbox*)widget->derived;
+  color fg = box->private_data->foreground;
+
+  info("Checkbox(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
+       "foreground: (%d, %d, %d, %d)",
+       box->debug_name,
+       widget->x,
+       widget->y,
+       widget->w,
+       widget->h,
+       fg.r,
+       fg.g,
+       fg.b,
+       fg.a);
+
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
 
   result_void _ = command_buffer_add_render_rect_command(
@@ -158,7 +187,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   }
 
   _ = command_buffer_add_render_rect_outline_command(
-    widget->context->cmd_buffer, bounding_rect, box->private_data->foreground);
+    widget->context->cmd_buffer, bounding_rect, fg);
   if(!_.ok)
   {
     return error(result_bool, _.error);
@@ -186,12 +215,8 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
-  if(!widget)
-  {
-    return;
-  }
-
   checkbox* box = (checkbox*)widget->derived;
+  info("Checkbox(%s): internal-derived-free()", box->debug_name);
 
   // freeing checkbox private struct
   free(box->private_data);
