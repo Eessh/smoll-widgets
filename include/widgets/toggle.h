@@ -12,6 +12,8 @@ typedef struct toggle_private toggle_private;
 ///        This should not be root widget.
 typedef struct toggle
 {
+  const char* debug_name;
+
   /// @brief The fractional amount handle width should be of toggle
   ///        widget width.
   ///        Default value: 0.5.
@@ -64,6 +66,9 @@ typedef struct result_toggle_ptr
 /// @param parent_base pointer to base widget of parent.
 /// @return Toggle pointer result.
 result_toggle_ptr toggle_new(base_widget* parent_base);
+
+result_toggle_ptr toggle_new_with_debug_name(base_widget* parent_base,
+                                             const char* debug_name);
 
 /// @brief Sets callback function for toggle ON event.
 /// @param t pointer to toggle.

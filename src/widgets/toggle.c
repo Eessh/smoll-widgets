@@ -1,5 +1,4 @@
 #include "../../include/widgets/toggle.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -103,6 +102,22 @@ result_toggle_ptr toggle_new(base_widget* parent_base)
   return ok(result_toggle_ptr, t);
 }
 
+result_toggle_ptr toggle_new_with_debug_name(base_widget* parent_base,
+                                             const char* debug_name)
+{
+  result_toggle_ptr _ = toggle_new(parent_base);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  _.value->debug_name = debug_name;
+
+  trace("Toggle: created with debug-name: %s", debug_name);
+
+  return _;
+}
+
 result_void toggle_set_on_callback(toggle* t, void (*callback)(toggle*))
 {
   if(!t)
@@ -161,7 +176,6 @@ default_internal_get_bounding_rect_callback(const base_widget* widget)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  printf("Render: Toggle\n");
   toggle* t = (toggle*)widget->derived;
 
   color handle_color = t->private_data->state == TOGGLE_ON
@@ -169,6 +183,22 @@ static result_bool default_internal_render_callback(const base_widget* widget)
                          : t->off_handle_color;
   color background =
     t->private_data->state == TOGGLE_ON ? t->on_background : t->off_background;
+
+  info("Toggle(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
+       "background: (%d, %d, %d, %d), handle-color: (%d, %d, %d, %d)",
+       t->debug_name,
+       widget->x,
+       widget->y,
+       widget->w,
+       widget->h,
+       background.r,
+       background.g,
+       background.b,
+       background.a,
+       handle_color.r,
+       handle_color.g,
+       handle_color.b,
+       handle_color.a);
 
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
 
@@ -207,12 +237,8 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
-  if(!widget)
-  {
-    return;
-  }
-
   toggle* t = (toggle*)widget->derived;
+  info("Toggle(%s): internal-derived-free()", t->debug_name);
 
   // freeing toggle private struct
   free(t->private_data);
