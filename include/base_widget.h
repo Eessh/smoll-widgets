@@ -152,6 +152,8 @@ typedef struct flex_item_data
 /// @brief Base widget.
 struct base_widget
 {
+  const char* debug_name;
+
   /// @brief Widget's x-coordinate.
   int16 x;
 
