@@ -1,5 +1,4 @@
 #include "../../include/widgets/button.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../../include/macros.h"
@@ -185,6 +184,23 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   return ok(result_button_ptr, btn);
 }
 
+result_button_ptr button_new_with_debug_name(base_widget* parent_base,
+                                             const char* text,
+                                             const char* debug_name)
+{
+  result_button_ptr _ = button_new(parent_base, text);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  _.value->debug_name = debug_name;
+
+  trace("Button: created with debug-name: %s", debug_name);
+
+  return _;
+}
+
 result_const_char_ptr button_get_text(const button* btn)
 {
   if(!btn)
@@ -321,12 +337,8 @@ default_internal_get_bounding_rect_callback(const base_widget* widget)
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
-  if(!widget)
-  {
-    return;
-  }
-
   button* btn = (button*)widget->derived;
+  info("Button(%s): internal-derived-free()", btn->debug_name);
 
   // freeing button text
   free(btn->private_data->text);
@@ -343,6 +355,7 @@ static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
   button* btn = (button*)widget->derived;
+  info("Button(%s): internal-fit-layout()", btn->debug_name);
 
   result_text_dimensions ___ = widget->context->backend->get_text_dimensions(
     btn->private_data->text, widget->context->font, widget->context->font_size);
@@ -352,21 +365,22 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
   }
   text_dimensions dimensions = ___.value;
 
-  printf("Text: %s, dimensions: %d, %d\n",
-         btn->private_data->text,
-         dimensions.w,
-         dimensions.h);
-  printf("Widget dimensions: %d, %d | padding: %d, %d\n",
-         widget->w,
-         widget->h,
-         btn->padding_x,
-         btn->padding_y);
+  debug("  > Text: %s, dimensions: %d, %d\n",
+        btn->private_data->text,
+        dimensions.w,
+        dimensions.h);
+  debug("  > Widget dimensions: %d, %d | padding: %d, %d\n",
+        widget->w,
+        widget->h,
+        btn->padding_x,
+        btn->padding_y);
 
   uint16 new_w = dimensions.w + 2 * btn->padding_x;
   uint16 new_h = dimensions.h + 2 * btn->padding_y;
   sizing_delta deltas = {.x = (int16)new_w - (int16)widget->w,
                          .y = (int16)new_h - (int16)widget->h};
-  printf("Button sizing deltas: {x: %d, y: %d}\n", deltas.x, deltas.y);
+
+  info("  > sizing-deltas: (%d, %d)", deltas.x, deltas.y);
 
   // setting widget's sizing, so no need to set need resizing flag
   widget->w = new_w;
@@ -377,7 +391,6 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  printf("Render: Button\n");
   button* btn = (button*)widget->derived;
 
   color foreground =
@@ -391,18 +404,29 @@ static result_bool default_internal_render_callback(const base_widget* widget)
       : (btn->private_data->state == BUTTON_HOVERED ? btn->hover_background
                                                     : btn->click_background);
 
+  info("Button(%s): internal-render(), text: \"%s\", (x, y, w, h): (%d, %d, "
+       "%d, %d), background: (%d, %d, %d, %d), foreground: (%d, %d, %d, %d)",
+       btn->debug_name,
+       btn->private_data->text,
+       widget->x,
+       widget->y,
+       widget->w,
+       widget->h,
+       background.r,
+       background.g,
+       background.b,
+       background.a,
+       foreground.r,
+       foreground.g,
+       foreground.b,
+       foreground.a);
+
   rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
-  printf("button bounding rect x, y, w, h: %d, %d, %d, %d\n",
-         bounding_rect.x,
-         bounding_rect.y,
-         bounding_rect.w,
-         bounding_rect.h);
 
   result_void __ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer, bounding_rect, background);
   if(!__.ok)
   {
-    printf("Error while adding render rect command: %s\n", __.error);
     return error(result_bool, __.error);
   }
 
@@ -416,7 +440,6 @@ static result_bool default_internal_render_callback(const base_widget* widget)
     (point){.x = bounding_rect.x, .y = bounding_rect.y});
   if(!___.ok)
   {
-    printf("Error while adding render text command: %s\n", ___.error);
     return error(result_bool, ___.error);
   }
 
