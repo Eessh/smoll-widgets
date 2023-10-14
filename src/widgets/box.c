@@ -1,6 +1,5 @@
 #include "../../include/widgets/box.h"
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -52,6 +51,7 @@ result_box_ptr box_new(base_widget* parent_base, flex_direction direction)
 
   b->base->flexbox_data.container.direction = direction;
 
+  b->debug_name = "Box";
   b->padding_x = 0;
   b->padding_y = 0;
   b->background = (color){255, 255, 255, 255};
@@ -59,15 +59,44 @@ result_box_ptr box_new(base_widget* parent_base, flex_direction direction)
   return ok(result_box_ptr, b);
 }
 
+result_box_ptr box_new_with_debug_name(base_widget* parent_base,
+                                       flex_direction direction,
+                                       const char* debug_name)
+{
+  result_box_ptr _ = box_new(parent_base, direction);
+  if(!_.ok)
+  {
+    return _;
+  }
+
+  _.value->debug_name = debug_name;
+
+  trace("Box: created with debug-name: %s", debug_name);
+
+  return _;
+}
+
 static color default_internal_get_background_callback(const base_widget* widget)
 {
   box* b = (box*)widget->derived;
-  return b->background;
+  color bg = b->background;
+
+  trace("Box(%s): internal-get-background(), background-color: %d, %d, %d, %d",
+        b->debug_name,
+        bg.r,
+        bg.b,
+        bg.g,
+        bg.a);
+
+  return bg;
 }
 
 static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
+  box* b = (box*)widget->derived;
+  trace("Box(%s): internal-fit-layout(), sizing-deltas: 0, 0", b->debug_name);
+
   // Box is just a static container, does nothing
   // box widget doesn't resize according to children
   // just stays the same size, until unless changed width or height
@@ -91,13 +120,26 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
-  printf("Render: Box\n");
   box* b = (box*)widget->derived;
+  color bg = b->background;
+
+  trace(
+    "Box(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), background: "
+    "(%d, %d, %d, %d)",
+    b->debug_name,
+    widget->x,
+    widget->y,
+    widget->w,
+    widget->h,
+    bg.r,
+    bg.b,
+    bg.g,
+    bg.a);
 
   result_void _ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,
     widget->internal_get_bounding_rect_callback(widget),
-    b->background);
+    bg);
   if(!_.ok)
   {
     return error(result_bool, _.error);

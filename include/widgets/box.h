@@ -10,6 +10,8 @@
 ///        Preferably use this box widget as root widget.
 typedef struct box
 {
+  const char* debug_name;
+
   /// @brief X-axis padding. This will be the value for both padding-left
   ///        and padding-right.
   uint16 padding_x;
@@ -40,5 +42,9 @@ typedef struct result_box_ptr
 /// @param parent_base pointer to base widget of parent.
 /// @return Box pointer result.
 result_box_ptr box_new(base_widget* parent_base, flex_direction direction);
+
+result_box_ptr box_new_with_debug_name(base_widget* parent_base,
+                                       flex_direction direction,
+                                       const char* debug_name);
 
 #endif
