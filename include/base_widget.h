@@ -599,10 +599,10 @@ struct internal_context
   ///        No events will be given to the root widget.
   base_widget* overlay_widget;
 
-  /// @brief Active scrollbar widget.
+  /// @brief Active draggable widget.
   ///        If this exists, all mouse motion events will be forwarded
   ///        to this widget.
-  base_widget* active_scrollbar;
+  base_widget* active_draggable_widget;
 
   /// @brief Widget with keyboard focus.
   ///        If this exists, all keyboard events will be forwarded

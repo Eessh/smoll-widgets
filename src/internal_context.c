@@ -25,7 +25,7 @@ result_internal_context_ptr internal_context_create(uint16 viewport_width,
 
   context->root = NULL;
   context->overlay_widget = NULL;
-  context->active_scrollbar = NULL;
+  context->active_draggable_widget = NULL;
   context->keyboard_focused_widget = NULL;
   context->mouse_focused_widget = NULL;
 

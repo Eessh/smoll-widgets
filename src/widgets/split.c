@@ -198,7 +198,6 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 static bool default_mouse_button_down_callback(base_widget* widget,
                                                mouse_button_event event)
 {
-  printf("BUTTTTTTTTTTTTTTTTTTTTTON DOWNNNNNNNNNN!\n");
   split* s = (split*)widget->derived;
 
   s->private_data->state = SPLIT_CLICKED;
@@ -217,7 +216,6 @@ static bool default_mouse_button_down_callback(base_widget* widget,
 static bool default_mouse_button_up_callback(base_widget* widget,
                                              mouse_button_event event)
 {
-  printf("BUTTTTTTTTTTTTTTTTTTTTTON UPUPUUPPPPPPPP!\n");
   split* s = (split*)widget->derived;
 
   s->private_data->state = SPLIT_NORMAL;

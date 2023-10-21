@@ -365,11 +365,11 @@ default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
   }
   text_dimensions dimensions = ___.value;
 
-  debug("  > Text: %s, dimensions: %d, %d\n",
+  debug("  > Text: \"%s\", dimensions: %d, %d",
         btn->private_data->text,
         dimensions.w,
         dimensions.h);
-  debug("  > Widget dimensions: %d, %d | padding: %d, %d\n",
+  debug("  > Widget dimensions: %d, %d | padding: %d, %d",
         widget->w,
         widget->h,
         btn->padding_x,

@@ -9,8 +9,6 @@ typedef enum split_type
   SPLIT_VERTICAL
 } split_type;
 
-typedef struct split_view_private split_view_private;
-
 typedef struct split_view
 {
   split_type type;
@@ -19,8 +17,6 @@ typedef struct split_view
   color handle_color, handle_hover_color, handle_click_color;
 
   base_widget* base;
-
-  split_view_private* private_data;
 } split_view;
 
 typedef struct result_split_view_ptr

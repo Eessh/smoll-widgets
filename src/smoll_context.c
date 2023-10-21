@@ -152,14 +152,14 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
 
   // if internal context has active scrollbar widget
   // forward all mouse motion & mouse button events to that widget
-  if(context->internal_ctx->active_scrollbar)
+  if(context->internal_ctx->active_draggable_widget)
   {
     // constructing event object.
     internal_mouse_motion_event internal_event = {
       .event = event,
       .propagation = true,
       .state = AT_TARGET,
-      .target = context->internal_ctx->active_scrollbar};
+      .target = context->internal_ctx->active_draggable_widget};
 
     return internal_context_process_mouse_motion_event(context->internal_ctx,
                                                        &internal_event);
@@ -223,14 +223,14 @@ result_void smoll_context_process_mouse_button_event(smoll_context* context,
 
   // if internal context has active scrollbar widget
   // forward all mouse motion & mouse button events to that widget
-  if(context->internal_ctx->active_scrollbar)
+  if(context->internal_ctx->active_draggable_widget)
   {
     // constructing event object.
     internal_mouse_button_event internal_event = {
       .event = event,
       .propagation = true,
       .state = AT_TARGET,
-      .target = context->internal_ctx->active_scrollbar};
+      .target = context->internal_ctx->active_draggable_widget};
 
     return internal_context_process_mouse_button_event(context->internal_ctx,
                                                        &internal_event);

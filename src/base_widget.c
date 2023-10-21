@@ -545,7 +545,7 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
   if(!widget->flexbox_data.container.is_fluid)
   {
     // widget is not fluid, doesn't resize
-    printf("Encountered non-fluid widget\n");
+    debug("Encountered non-fluid widget.");
     return ok(result_base_widget_ptr, widget);
   }
 
@@ -855,9 +855,9 @@ result_void default_internal_relayout_callback(const base_widget* widget)
   }
   needed_main_axis_length -= widget->flexbox_data.container.gap;
 
-  printf("Needed main, cross axes lengths: %d, %d\n",
-         needed_main_axis_length,
-         needed_cross_axis_length);
+  debug("Needed main, cross axes lengths: %d, %d",
+        needed_main_axis_length,
+        needed_cross_axis_length);
 
   // adjusting sizing in main axis
   int16 remaining_main_axis_length = main_axis_length - needed_main_axis_length;
@@ -952,12 +952,12 @@ result_void default_internal_relayout_callback(const base_widget* widget)
     // expand child widget's width or height to cross-axis length
     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
     {
-      printf("Height expanded!\n");
+      debug("Height expanded!");
       node->child->h = cross_axis_length;
     }
     else
     {
-      printf("Width expanded!\n");
+      debug("Width expanded!");
       node->child->w = cross_axis_length;
     }
 
@@ -1005,7 +1005,7 @@ result_void default_internal_relayout_callback(const base_widget* widget)
       continue;
     }
 
-    printf("assigning positions x, y: %d, %d\n", x, y);
+    debug("assigning positions x, y: %d, %d", x, y);
     node->child->x = x;
 
     // flex-align in cross-axis
@@ -1116,7 +1116,7 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   }
 
   base_widget* ancestor = __.value;
-  printf("Ancestor parent: %s\n", ancestor->parent ? "EXISTS" : "(NULL)");
+  debug("Ancestor parent: %s", ancestor->parent ? "EXISTS" : "(NULL)");
   ancestor->internal_calculate_size(ancestor);
   if(ancestor->pre_internal_relayout_hook)
   {
@@ -1212,8 +1212,8 @@ result_bool default_internal_mouse_motion_callback(
     }
   }
 
-  if(widget->context->active_scrollbar &&
-     widget->context->active_scrollbar == widget)
+  if(widget->context->active_draggable_widget &&
+     widget->context->active_draggable_widget == widget)
   {
     // this widget is the scrollbar widget
     // consuming mouse motion events
@@ -1296,8 +1296,8 @@ result_bool default_internal_mouse_button_callback(
     }
   }
 
-  if(widget->context->active_scrollbar &&
-     widget->context->active_scrollbar == widget)
+  if(widget->context->active_draggable_widget &&
+     widget->context->active_draggable_widget == widget)
   {
     // this widget is the scrollbar widget
     // consuming mouse button events

@@ -1,4 +1,5 @@
 #include "../../include/widgets/split_view.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 #include "../../include/widgets/box.h"
@@ -10,32 +11,49 @@ typedef enum handle_state
   HANDLE_CLICKED
 } handle_state;
 
-struct split_view_private
+typedef struct split_private
 {
   handle_state state;
-};
+  point last_clicked;
+  float32 ratio;
+} split_private;
 
-static void default_internal_derived_free_callback(base_widget* widget);
+typedef struct split
+{
+  base_widget* base;
+
+  split_private* private_data;
+} split;
+
+split* split_new();
+
+static void split_internal_derived_free_callback(base_widget* widget);
 
 static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget,
                                      bool call_on_children);
 
+static result_void
+default_pre_internal_relayout_hook(const base_widget* widget);
+
 static result_bool default_internal_render_callback(const base_widget* widget);
 
 static result_bool split_internal_render_callback(const base_widget* widget);
 
-static bool default_mouse_button_down_callback(base_widget* widget,
-                                               mouse_button_event event);
-
-static bool default_mouse_button_up_callback(base_widget* widget,
+static bool split_mouse_button_down_callback(base_widget* widget,
                                              mouse_button_event event);
 
-static bool default_mouse_enter_callback(base_widget* widget,
-                                         mouse_motion_event event);
+static bool split_mouse_button_up_callback(base_widget* widget,
+                                           mouse_button_event event);
 
-static bool default_mouse_leave_callback(base_widget* widget,
-                                         mouse_motion_event event);
+static bool split_mouse_enter_callback(base_widget* widget,
+                                       mouse_motion_event event);
+
+static bool split_mouse_leave_callback(base_widget* widget,
+                                       mouse_motion_event event);
+
+static bool split_mouse_move_callback(base_widget* widget,
+                                      mouse_motion_event event);
 
 result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
 {
@@ -53,21 +71,9 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
     return error(result_split_view_ptr, _.error);
   }
 
-  split_view_private* v_private =
-    (split_view_private*)calloc(1, sizeof(split_view_private));
-  if(!v_private)
-  {
-    free(v);
-    base_widget_free(_.value);
-    return error(result_split_view_ptr,
-                 "Unable to allocate memory for private fields of split view!");
-  }
-
   v->base = _.value;
   v->base->derived = v;
   v->base->parent = parent_base;
-
-  v->private_data = v_private;
 
   if(parent_base)
   {
@@ -80,13 +86,24 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   {
     free(v);
     base_widget_free(_.value);
-    free(v_private);
     return error(
       result_split_view_ptr,
       "Unable to allocate memory for first-child's container of split view!");
   }
   box* first_container = __.value;
   first_container->base->flexbox_data.container.is_fluid = false;
+  first_container->background = (color){255, 0, 0, 255};
+
+  // creating splitter
+  struct split* splitter = split_new();
+  if(!splitter)
+  {
+    free(v);
+    base_widget_free(_.value);
+    return error(result_split_view_ptr,
+                 "Unable to allocate memory for splitter of split view!");
+  }
+  base_widget_add_child(v->base, splitter->base);
 
   // creating second child's contaniner
   __ = box_new(v->base, FLEX_DIRECTION_COLUMN);
@@ -94,49 +111,48 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   {
     free(v);
     base_widget_free(_.value);
-    free(v_private);
     return error(
       result_split_view_ptr,
       "Unable to allocate memory for second-child's container of split view!");
   }
   box* second_container = __.value;
   second_container->base->flexbox_data.container.is_fluid = false;
+  second_container->background = (color){0, 0, 255, 255};
 
-  // creating split
-  result_base_widget_ptr ___ = base_widget_new(FLEX_ITEM);
-  if(!___.ok)
-  {
-    free(v);
-    base_widget_free(_.value);
-    free(v_private);
-    return error(result_split_view_ptr,
-                 "Unable to allocate memory for split of split view!");
-  }
-  base_widget* split = ___.value;
+  // creating splitter
+  // struct split* splitter = split_new();
+  // if(!splitter)
+  // {
+  //   free(v);
+  //   base_widget_free(_.value);
+  //   return error(result_split_view_ptr,
+  //                "Unable to allocate memory for splitter of split view!");
+  // }
 
   // adding containers and split
   // base_widget_add_child(v->base, first_container->base);
-  base_widget_add_child(v->base, split);
+  // base_widget_add_child(v->base, splitter->base);
   // base_widget_add_child(v->base, second_container->base);
 
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
+  v->base->pre_internal_relayout_hook = default_pre_internal_relayout_hook;
   v->base->internal_render_callback = default_internal_render_callback;
-  v->base->internal_derived_free_callback =
-    default_internal_derived_free_callback;
+  splitter->base->internal_derived_free_callback =
+    split_internal_derived_free_callback;
 
-  //  v->base->mouse_button_down_callback = default_mouse_button_down_callback;
-  //  v->base->mouse_button_up_callback = default_mouse_button_up_callback;
-  //  v->base->mouse_enter_callback = default_mouse_enter_callback;
-  //  v->base->mouse_leave_callback = default_mouse_leave_callback;
+  splitter->base->mouse_button_down_callback = split_mouse_button_down_callback;
+  splitter->base->mouse_button_up_callback = split_mouse_button_up_callback;
+  splitter->base->mouse_enter_callback = split_mouse_enter_callback;
+  splitter->base->mouse_leave_callback = split_mouse_leave_callback;
+  splitter->base->mouse_move_callback = split_mouse_move_callback;
 
   v->base->flexbox_data.container.direction =
-    type == SPLIT_HORIZONTAL ? FLEX_DIRECTION_ROW : FLEX_DIRECTION_COLUMN;
+    type == SPLIT_VERTICAL ? FLEX_DIRECTION_ROW : FLEX_DIRECTION_COLUMN;
 
   v->handle_size = 2;
   v->handle_color = (color){255, 0, 0, 255};
   v->handle_hover_color = (color){0, 255, 0, 255};
   v->handle_click_color = (color){0, 0, 255, 255};
-  v_private->state = HANDLE_NORMAL;
 
   first_container->base->internal_render_callback =
     default_internal_render_callback;
@@ -146,17 +162,18 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   first_container->background = (color){0, 0, 0, 255};
   second_container->background = (color){16, 16, 16, 255};
 
-  split->flexbox_data.item.cross_axis_sizing = CROSS_AXIS_SIZING_EXPAND;
-  split->internal_render_callback = split_internal_render_callback;
+  splitter->base->flexbox_data.item.cross_axis_sizing =
+    CROSS_AXIS_SIZING_EXPAND;
+  splitter->base->internal_render_callback = split_internal_render_callback;
   if(type == SPLIT_HORIZONTAL)
   {
-    split->w = v->base->w;
-    split->h = 10;
+    splitter->base->w = v->base->w;
+    splitter->base->h = 10;
   }
   else
   {
-    split->w = 10;
-    split->h = v->base->h;
+    splitter->base->w = 10;
+    splitter->base->h = v->base->h;
   }
 
   return ok(result_split_view_ptr, v);
@@ -187,16 +204,57 @@ result_void split_view_connect_children(split_view* view,
   return ok_void();
 }
 
-static void default_internal_derived_free_callback(base_widget* widget)
+split* split_new()
 {
-  split_view* v = (split_view*)widget->derived;
+  split* s = (split*)calloc(1, sizeof(split));
+  if(!s)
+  {
+    return NULL;
+  }
 
-  free(v->private_data);
-  free(v);
+  result_base_widget_ptr _ = base_widget_new(FLEX_ITEM);
+  if(!_.ok)
+  {
+    free(s);
+    return NULL;
+  }
+  s->base = _.value;
+  s->base->derived = s;
+
+  s->private_data = (split_private*)calloc(1, sizeof(split_private));
+  if(!s->private_data)
+  {
+    free(s);
+    base_widget_free(s->base);
+    return NULL;
+  }
+  s->private_data->state = HANDLE_NORMAL;
+  s->private_data->last_clicked = (point){0, 0};
+  s->private_data->ratio = 0.5f;
+
+  return s;
+}
+
+static void split_internal_derived_free_callback(base_widget* widget)
+{
+  split* s = (split*)widget->derived;
+
+  free(s->private_data);
+  free(s);
 }
 
 static result_bool split_internal_render_callback(const base_widget* widget)
 {
+  info("SplitView(): split.internal-render-callback(), (x, y, w, h): (%d, %d, "
+       "%d, %d), color: (%d, %d, %d, %d)",
+       widget->x,
+       widget->y,
+       widget->w,
+       widget->h,
+       0,
+       255,
+       0,
+       255);
   result_void _ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,
     (rect){widget->x, widget->y, widget->w, widget->h},
@@ -207,6 +265,37 @@ static result_bool split_internal_render_callback(const base_widget* widget)
   }
 
   return ok(result_bool, true);
+}
+
+static result_void default_pre_internal_relayout_hook(const base_widget* widget)
+{
+  info("Called internal re-layout hook");
+  base_widget_child_node* first_container = widget->children_head;
+  base_widget_child_node* splitter_node = first_container->next;
+  base_widget_child_node* second_container = splitter_node->next;
+
+  split_view* s = (split_view*)widget->derived;
+  float32 ratio = ((split*)(splitter_node->child->derived))->private_data->ratio;
+  if(s->type == SPLIT_HORIZONTAL)
+  {
+    first_container->child->w = (widget->w - splitter_node->child->w)*ratio;
+    second_container->child->w = (widget->w - splitter_node->child->w)*((float32)(1-ratio));
+    splitter_node->child->w = 10;
+    first_container->child->h = widget->h;
+    second_container->child->h = widget->h;
+    splitter_node->child->h = widget->h;
+  }
+  else
+  {
+    first_container->child->w = widget->w;
+    second_container->child->w = widget->w;
+    splitter_node->child->w = widget->w;
+    first_container->child->h = (widget->h - splitter_node->child->h)*ratio;
+    second_container->child->h = (widget->h - splitter_node->child->h)*((float32)(1-ratio));
+    splitter_node->child->h = 10;
+  }
+
+  return ok_void();
 }
 
 static result_sizing_delta
@@ -280,20 +369,27 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   return ok(result_bool, true);
 }
 
-static bool default_mouse_button_down_callback(base_widget* widget,
-                                               mouse_button_event event)
+static bool split_mouse_button_down_callback(base_widget* widget,
+                                             mouse_button_event event)
 {
-  split_view* v = (split_view*)widget->derived;
+  // setting context's active draggable widget
+  widget->context->active_draggable_widget = widget;
+
+  split* v = (split*)widget->derived;
 
   v->private_data->state = HANDLE_CLICKED;
+  v->private_data->last_clicked = (point){event.x, event.y};
 
   return true;
 }
 
-static bool default_mouse_button_up_callback(base_widget* widget,
-                                             mouse_button_event event)
+static bool split_mouse_button_up_callback(base_widget* widget,
+                                           mouse_button_event event)
 {
-  split_view* v = (split_view*)widget->derived;
+  // removing context's active draggable widget
+  widget->context->active_draggable_widget = NULL;
+
+  split* v = (split*)widget->derived;
 
   v->private_data->state = HANDLE_NORMAL;
 
@@ -306,13 +402,32 @@ static bool default_mouse_button_up_callback(base_widget* widget,
   return true;
 }
 
-static bool default_mouse_enter_callback(base_widget* widget,
-                                         mouse_motion_event event)
+static bool split_mouse_enter_callback(base_widget* widget,
+                                       mouse_motion_event event)
 {
-  split_view* v = (split_view*)widget->derived;
+  split* v = (split*)widget->derived;
 
   v->private_data->state = HANDLE_HOVERED;
 
+  if(((split_view*)(widget->parent->derived))->type == SPLIT_VERTICAL)
+  {
+    result_void _ = command_buffer_add_set_cursor_command(
+      widget->context->cmd_buffer, SET_CURSOR_RESIZE_LEFT_RIGHT);
+    if(!_.ok)
+    {
+      return false;
+    }
+  }
+  else
+  {
+    result_void _ = command_buffer_add_set_cursor_command(
+      widget->context->cmd_buffer, SET_CURSOR_RESIZE_TOP_BOTTOM);
+    if(!_.ok)
+    {
+      return false;
+    }
+  }
+
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
   {
@@ -322,18 +437,55 @@ static bool default_mouse_enter_callback(base_widget* widget,
   return true;
 }
 
-static bool default_mouse_leave_callback(base_widget* widget,
-                                         mouse_motion_event event)
+static bool split_mouse_leave_callback(base_widget* widget,
+                                       mouse_motion_event event)
 {
-  split_view* v = (split_view*)widget->derived;
+  split* v = (split*)widget->derived;
 
   v->private_data->state = HANDLE_NORMAL;
+
+  command_buffer_add_set_cursor_command(widget->context->cmd_buffer,
+                                        SET_CURSOR_ARROW);
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)
   {
     return false;
   }
+
+  return true;
+}
+
+static bool split_mouse_move_callback(base_widget* widget,
+                                      mouse_motion_event event)
+{
+  split* v = (split*)widget->derived;
+
+  if(v->private_data->state != HANDLE_CLICKED)
+  {
+    return false;
+  }
+
+  base_widget* parent = widget->parent;
+  base_widget* first_child = parent->children_head->child;
+  base_widget* second_child = parent->children_head->next->next->child;
+  split_type type = ((split_view*)(parent->derived))->type;
+  if(type == SPLIT_VERTICAL)
+  {
+    int16 delta = v->private_data->last_clicked.x - event.x;
+    first_child->w += delta;
+    second_child->w -= delta;
+  }
+  else
+  {
+    int16 delta = v->private_data->last_clicked.y - event.y;
+    first_child->h += delta;
+    second_child->h -= delta;
+  }
+
+  parent->internal_relayout(parent);
+
+  parent->internal_render_callback(parent);
 
   return true;
 }

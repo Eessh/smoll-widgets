@@ -77,7 +77,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
 
   // Creating smoll context
   {
-    result_smoll_context_ptr _ = smoll_context_create();
+    result_smoll_context_ptr _ = smoll_context_create(1080, 720);
     if(!_.ok)
     {
       printf("Error: %s", _.error);
