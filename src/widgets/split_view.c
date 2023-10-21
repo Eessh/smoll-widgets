@@ -74,6 +74,9 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   v->base = _.value;
   v->base->derived = v;
   v->base->parent = parent_base;
+  v->type = type;
+  v->base->flexbox_data.container.direction =
+    type == SPLIT_VERTICAL ? FLEX_DIRECTION_ROW : FLEX_DIRECTION_COLUMN;
 
   if(parent_base)
   {
@@ -145,9 +148,6 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   splitter->base->mouse_enter_callback = split_mouse_enter_callback;
   splitter->base->mouse_leave_callback = split_mouse_leave_callback;
   splitter->base->mouse_move_callback = split_mouse_move_callback;
-
-  v->base->flexbox_data.container.direction =
-    type == SPLIT_VERTICAL ? FLEX_DIRECTION_ROW : FLEX_DIRECTION_COLUMN;
 
   v->handle_size = 2;
   v->handle_color = (color){255, 0, 0, 255};
@@ -275,11 +275,13 @@ static result_void default_pre_internal_relayout_hook(const base_widget* widget)
   base_widget_child_node* second_container = splitter_node->next;
 
   split_view* s = (split_view*)widget->derived;
-  float32 ratio = ((split*)(splitter_node->child->derived))->private_data->ratio;
-  if(s->type == SPLIT_HORIZONTAL)
+  float32 ratio =
+    ((split*)(splitter_node->child->derived))->private_data->ratio;
+  if(s->type == SPLIT_VERTICAL)
   {
-    first_container->child->w = (widget->w - splitter_node->child->w)*ratio;
-    second_container->child->w = (widget->w - splitter_node->child->w)*((float32)(1-ratio));
+    first_container->child->w = (widget->w - splitter_node->child->w) * ratio;
+    second_container->child->w =
+      (widget->w - splitter_node->child->w) * ((float32)(1 - ratio));
     splitter_node->child->w = 10;
     first_container->child->h = widget->h;
     second_container->child->h = widget->h;
@@ -290,8 +292,9 @@ static result_void default_pre_internal_relayout_hook(const base_widget* widget)
     first_container->child->w = widget->w;
     second_container->child->w = widget->w;
     splitter_node->child->w = widget->w;
-    first_container->child->h = (widget->h - splitter_node->child->h)*ratio;
-    second_container->child->h = (widget->h - splitter_node->child->h)*((float32)(1-ratio));
+    first_container->child->h = (widget->h - splitter_node->child->h) * ratio;
+    second_container->child->h =
+      (widget->h - splitter_node->child->h) * ((float32)(1 - ratio));
     splitter_node->child->h = 10;
   }
 
@@ -473,15 +476,18 @@ static bool split_mouse_move_callback(base_widget* widget,
   if(type == SPLIT_VERTICAL)
   {
     int16 delta = v->private_data->last_clicked.x - event.x;
-    first_child->w += delta;
-    second_child->w -= delta;
+    first_child->w -= delta;
+    second_child->w += delta;
+    v->private_data->ratio = (float32)first_child->w / second_child->w;
   }
   else
   {
     int16 delta = v->private_data->last_clicked.y - event.y;
-    first_child->h += delta;
-    second_child->h -= delta;
+    first_child->h -= delta;
+    second_child->h += delta;
   }
+
+  v->private_data->last_clicked = (point){event.x, event.y};
 
   parent->internal_relayout(parent);
 
