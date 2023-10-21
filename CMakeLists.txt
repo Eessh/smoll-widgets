@@ -7,9 +7,11 @@ set(CMAKE_C_STANDARD 99)
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_SOURCE_DIR}/include/widgets
+  ${PROJECT_SOURCE_DIR}/log-boii
 )
 
 add_library(smoll-widgets STATIC
+  ${PROJECT_SOURCE_DIR}/log-boii/log_boii.c
   ${PROJECT_SOURCE_DIR}/src/base_widget.c
   ${PROJECT_SOURCE_DIR}/src/command_buffer.c
   ${PROJECT_SOURCE_DIR}/src/internal_context.c
