@@ -5,16 +5,18 @@
 #include "../../include/widgets/checkbox.h"
 #include "../../include/widgets/flex_view.h"
 #include "../../include/widgets/progress_bar.h"
+#include "../../include/widgets/split_view.h"
 #include "../../include/widgets/toggle.h"
 #include "win32_cairo_backend.h"
 
 // Static because these are needed by
 // WinMain to intialize these
 // WndProc to process events
-static smoll_context* sctx = NULL;
-static render_backend* backend = NULL;
+smoll_context* sctx = NULL;
+render_backend* backend = NULL;
 
-static progress_bar* bar = NULL;
+progress_bar* bar = NULL;
+checkbox* cbox = NULL;
 
 // Callbacks function prototypes
 void mouse_button_down_callback(button* btn, mouse_button_event event);
@@ -136,10 +138,25 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   // root widget has to be fixed size
   smoll_context_set_root_widget(sctx, bx->base);
 
+  // creating split view
+  split_view* split = NULL;
+  {
+    result_split_view_ptr _ = split_view_new(bx->base, SPLIT_VERTICAL);
+    if(!_.ok)
+    {
+      printf("Error while creating split-view: %s", _.error);
+    }
+    split = _.value;
+    split->base->flexbox_data.container.flex_grow = 1;
+    split->base->flexbox_data.container.cross_axis_sizing =
+      CROSS_AXIS_SIZING_EXPAND;
+  }
+
   // Creating flex-row view
   flex_view* row_view = NULL;
   {
-    result_flex_view_ptr _ = flex_view_new(bx->base, FLEX_DIRECTION_ROW);
+    result_flex_view_ptr _ =
+      flex_view_new_with_debug_name(NULL, FLEX_DIRECTION_ROW, "left-pane");
     if(!_.ok)
     {
       printf("Error while creating flex-row view: %s", _.error);
@@ -148,12 +165,34 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     row_view->base->flexbox_data.container.flex_grow = 1;
     row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
     row_view->base->flexbox_data.container.justify_content =
-      JUSTIFY_CONTENT_CENTER;
+      JUSTIFY_CONTENT_START;
     row_view->base->flexbox_data.container.cross_axis_sizing =
       CROSS_AXIS_SIZING_EXPAND;
     row_view->base->flexbox_data.container.gap = 10;
     row_view->background = (color){128, 128, 128, 255};
   }
+
+  // Creating another flex view
+  flex_view* col_view = NULL;
+  {
+    result_flex_view_ptr _ =
+      flex_view_new_with_debug_name(NULL, FLEX_DIRECTION_COLUMN, "right-pane");
+    if(!_.ok)
+    {
+      printf("Error while creating flex-column view: %s", _.error);
+    }
+    col_view = _.value;
+    col_view->base->flexbox_data.container.flex_grow = 1;
+    col_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_START;
+    col_view->base->flexbox_data.container.justify_content =
+      JUSTIFY_CONTENT_START;
+    col_view->base->flexbox_data.container.cross_axis_sizing =
+      CROSS_AXIS_SIZING_EXPAND;
+    col_view->background = (color){33, 66, 99, 255};
+  }
+
+  // attaching flex row view to split view
+  split_view_connect_children(split, row_view->base, col_view->base);
 
   // Creating button widget
   button* btn = NULL;
@@ -205,6 +244,25 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     button_set_mouse_leave_callback(btn1, mouse_leave_callback);
   }
 
+  // Creating another button widget
+  button* btn2 = NULL;
+  {
+    result_button_ptr _ = button_new(col_view->base, "Hello there!");
+    if(!_.ok)
+    {
+      printf("Error while creating button: %s", _.error);
+    }
+    btn2 = _.value;
+    btn2->padding_x = 6;
+    btn2->padding_y = 4;
+    btn2->foreground = (color){255, 255, 255, 255};
+    btn2->background = (color){16, 16, 16, 255};
+    btn2->hover_foreground = (color){0, 255, 0, 255};
+    btn2->hover_background = (color){64, 64, 64, 255};
+    btn2->click_foreground = (color){255, 0, 0, 255};
+    btn2->click_background = (color){128, 128, 128, 255};
+  }
+
   // Creating toggle widget
   toggle* t = NULL;
   {
@@ -216,6 +274,7 @@ INT WINAPI WinMain(HINSTANCE hInstance,
     t = _.value;
     t->base->w = 50;
     t->base->h = 20;
+    //    t->base->flexbox_data.item.cross_axis_sizing = CROSS_AXIS_SIZING_EXPAND;
     t->handle_width_fraction = 0.4;
     t->padding_x = 2;
     t->padding_y = 2;
@@ -239,7 +298,6 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   }
 
   // Creating checkbox
-  checkbox* cbox = NULL;
   {
     result_checkbox_ptr _ =
       checkbox_new(row_view->base, (color){255, 255, 255, 255});
@@ -251,7 +309,6 @@ INT WINAPI WinMain(HINSTANCE hInstance,
   }
 
   // Calling initial layouting, rendering functions
-  // smoll_context_initial_fit_layout(sctx);
   smoll_context_initialize_layout(sctx);
   smoll_context_initial_render(sctx);
 

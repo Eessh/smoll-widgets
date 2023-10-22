@@ -95,6 +95,11 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   }
   box* first_container = __.value;
   first_container->base->flexbox_data.container.is_fluid = false;
+  first_container->base->flexbox_data.container.direction =
+    FLEX_DIRECTION_COLUMN;
+  first_container->base->flexbox_data.container.justify_content =
+    JUSTIFY_CONTENT_START;
+  first_container->base->flexbox_data.container.align_items = ALIGN_ITEMS_START;
   first_container->background = (color){255, 0, 0, 255};
 
   // creating splitter

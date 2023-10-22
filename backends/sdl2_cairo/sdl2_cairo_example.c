@@ -109,7 +109,7 @@ int main()
     row_view->base->flexbox_data.container.flex_grow = 1;
     row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
     row_view->base->flexbox_data.container.justify_content =
-      JUSTIFY_CONTENT_CENTER;
+      JUSTIFY_CONTENT_START;
     row_view->base->flexbox_data.container.cross_axis_sizing =
       CROSS_AXIS_SIZING_EXPAND;
     row_view->base->flexbox_data.container.gap = 10;
@@ -134,18 +134,6 @@ int main()
       CROSS_AXIS_SIZING_EXPAND;
     col_view->background = (color){33, 66, 99, 255};
   }
-
-  // creating splitter
-  // split* splitter = NULL;
-  // {
-  //   result_split_ptr _ = split_new(
-  //     bx->base, SPLIT_DIRECTION_VERTICAL, row_view->base, col_view->base);
-  //   if(!_.ok)
-  //   {
-  //     printf("Error while creating splitter: %s", _.error);
-  //   }
-  //   splitter = _.value;
-  // }
 
   // attaching flex row view to split view
   split_view_connect_children(split, row_view->base, col_view->base);
