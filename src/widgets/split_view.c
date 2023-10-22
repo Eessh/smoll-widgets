@@ -374,6 +374,12 @@ static bool split_mouse_button_down_callback(base_widget* widget,
   v->private_data->state = HANDLE_CLICKED;
   v->private_data->last_clicked = (point){event.x, event.y};
 
+  result_bool _ = widget->internal_render_callback(widget);
+  if(!_.ok)
+  {
+    return false;
+  }
+
   return true;
 }
 
