@@ -94,7 +94,6 @@ int main()
     split->base->flexbox_data.container.flex_grow = 1;
     split->base->flexbox_data.container.cross_axis_sizing =
       CROSS_AXIS_SIZING_EXPAND;
-    split->handle_size = 10;
   }
 
   // Creating flex-row view

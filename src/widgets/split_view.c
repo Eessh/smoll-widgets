@@ -122,21 +122,6 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   second_container->base->flexbox_data.container.is_fluid = false;
   second_container->background = (color){0, 0, 255, 255};
 
-  // creating splitter
-  // struct split* splitter = split_new();
-  // if(!splitter)
-  // {
-  //   free(v);
-  //   base_widget_free(_.value);
-  //   return error(result_split_view_ptr,
-  //                "Unable to allocate memory for splitter of split view!");
-  // }
-
-  // adding containers and split
-  // base_widget_add_child(v->base, first_container->base);
-  // base_widget_add_child(v->base, splitter->base);
-  // base_widget_add_child(v->base, second_container->base);
-
   v->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   v->base->pre_internal_relayout_hook = default_pre_internal_relayout_hook;
   v->base->internal_render_callback = default_internal_render_callback;
@@ -149,7 +134,7 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   splitter->base->mouse_leave_callback = split_mouse_leave_callback;
   splitter->base->mouse_move_callback = split_mouse_move_callback;
 
-  v->handle_size = 2;
+  v->handle_size = 3;
   v->handle_color = (color){255, 0, 0, 255};
   v->handle_hover_color = (color){0, 255, 0, 255};
   v->handle_click_color = (color){0, 0, 255, 255};
@@ -168,11 +153,11 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   if(type == SPLIT_HORIZONTAL)
   {
     splitter->base->w = v->base->w;
-    splitter->base->h = 10;
+    splitter->base->h = v->handle_size;
   }
   else
   {
-    splitter->base->w = 10;
+    splitter->base->w = v->handle_size;
     splitter->base->h = v->base->h;
   }
 
@@ -245,20 +230,28 @@ static void split_internal_derived_free_callback(base_widget* widget)
 
 static result_bool split_internal_render_callback(const base_widget* widget)
 {
+  split* s = (split*)widget->derived;
+  split_view* parent = (split_view*)widget->parent->derived;
+  color bg = s->private_data->state == HANDLE_NORMAL ? parent->handle_color
+             : s->private_data->state == HANDLE_HOVERED
+               ? parent->handle_hover_color
+               : parent->handle_click_color;
+
   info("SplitView(): split.internal-render-callback(), (x, y, w, h): (%d, %d, "
        "%d, %d), color: (%d, %d, %d, %d)",
        widget->x,
        widget->y,
        widget->w,
        widget->h,
-       0,
-       255,
-       0,
-       255);
+       bg.r,
+       bg.g,
+       bg.b,
+       bg.a);
+
   result_void _ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer,
     (rect){widget->x, widget->y, widget->w, widget->h},
-    (color){0, 255, 0, 255});
+    bg);
   if(!_.ok)
   {
     return error(result_bool, _.error);
@@ -282,7 +275,6 @@ static result_void default_pre_internal_relayout_hook(const base_widget* widget)
     first_container->child->w = (widget->w - splitter_node->child->w) * ratio;
     second_container->child->w =
       (widget->w - splitter_node->child->w) * ((float32)(1 - ratio));
-    splitter_node->child->w = 10;
     first_container->child->h = widget->h;
     second_container->child->h = widget->h;
     splitter_node->child->h = widget->h;
@@ -295,7 +287,6 @@ static result_void default_pre_internal_relayout_hook(const base_widget* widget)
     first_container->child->h = (widget->h - splitter_node->child->h) * ratio;
     second_container->child->h =
       (widget->h - splitter_node->child->h) * ((float32)(1 - ratio));
-    splitter_node->child->h = 10;
   }
 
   return ok_void();
