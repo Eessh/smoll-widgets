@@ -163,8 +163,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   }
 
   // popping clip-rect
-  _ =
-    command_buffer_add_pop_clip_rect_command(widget->context->cmd_buffer);
+  _ = command_buffer_add_pop_clip_rect_command(widget->context->cmd_buffer);
   if(!_.ok)
   {
     return error(result_bool, _.error);
