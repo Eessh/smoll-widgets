@@ -87,7 +87,7 @@ result_command_ptr command_new_render_text(const char* text,
 
   cmd->type = RENDER_TEXT;
   cmd->data.render_text =
-    (render_text_data){.text = _strdup(text),
+    (render_text_data){.text = strdup(text),
                        .text_color = text_color,
                        .text_coordinates = text_coordinates};
 

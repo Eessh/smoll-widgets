@@ -173,7 +173,7 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   btn->private_data->state = BUTTON_NORMAL;
 
   btn->private_data->text = NULL;
-  btn->private_data->text = _strdup(text);
+  btn->private_data->text = strdup(text);
   if(!btn->private_data->text)
   {
     base_widget_free(btn->base);
@@ -221,7 +221,7 @@ result_void button_set_text(button* btn, const char* text)
   }
 
   char* temp = NULL;
-  temp = _strdup(text);
+  temp = strdup(text);
   if(!text)
   {
     return error(result_void, "Unable to copy text into button widget!");

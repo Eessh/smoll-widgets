@@ -70,7 +70,7 @@ result_void smoll_context_set_default_font(smoll_context* context,
                  "Cannot set NULL pointing font to smoll context!");
   }
 
-  char* font_copy = _strdup(font);
+  char* font_copy = strdup(font);
   if(!font_copy)
   {
     return error(result_void, "Unable to make a copy of font!");
