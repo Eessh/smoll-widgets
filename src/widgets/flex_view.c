@@ -140,19 +140,18 @@ static result_bool default_internal_render_callback(const base_widget* widget)
        bg.g,
        bg.a);
 
+  rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
+
   result_void _ = command_buffer_add_render_rect_command(
-    widget->context->cmd_buffer,
-    widget->internal_get_bounding_rect_callback(widget),
-    bg);
+    widget->context->cmd_buffer, bounding_rect, bg);
   if(!_.ok)
   {
     return error(result_bool, _.error);
   }
 
   // pushing clip-rect
-  _ = command_buffer_add_push_clip_rect_command(
-    widget->context->cmd_buffer,
-    widget->internal_get_bounding_rect_callback(widget));
+  _ = command_buffer_add_push_clip_rect_command(widget->context->cmd_buffer,
+                                                bounding_rect);
   if(!_.ok)
   {
     return error(result_bool, _.error);
