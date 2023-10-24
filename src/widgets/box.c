@@ -145,11 +145,29 @@ static result_bool default_internal_render_callback(const base_widget* widget)
     return error(result_bool, _.error);
   }
 
+  // pushing clip-rect
+  _ = command_buffer_add_push_clip_rect_command(
+    widget->context->cmd_buffer,
+    widget->internal_get_bounding_rect_callback(widget));
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
+  // rendering children
   base_widget_child_node* node = widget->children_head;
   while(node)
   {
     node->child->internal_render_callback(node->child);
     node = node->next;
+  }
+
+  // popping clip-rect
+  _ =
+    command_buffer_add_pop_clip_rect_command(widget->context->cmd_buffer);
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
   }
 
   return ok(result_bool, true);
