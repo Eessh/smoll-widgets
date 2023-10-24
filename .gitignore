@@ -61,4 +61,5 @@ build
 *.txt.user
 *.make
 Makefile
-
+bin/Debug/sdl2-cairo-example
+bin/Release/sdl2-cairo-example
