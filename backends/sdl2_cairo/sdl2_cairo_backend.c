@@ -150,8 +150,9 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
     return error(result_void, "Cannot process command pointing to NULL!");
   }
 
-  if(cmd->type == RENDER_RECT)
+  switch(cmd->type)
   {
+  case RENDER_RECT: {
     const rect bounding_rect = cmd->data.render_rect.bounding_rect;
     const color rect_color = cmd->data.render_rect.rect_color;
     cairo_rectangle(cairo,
@@ -165,9 +166,9 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
                           (float32)(rect_color.b) / 255.0f,
                           (float32)(rect_color.a) / 255.0f);
     cairo_fill(cairo);
+    break;
   }
-  else if(cmd->type == RENDER_RECT_OUTLINED)
-  {
+  case RENDER_RECT_OUTLINED: {
     const rect bounding_rect = cmd->data.render_rect.bounding_rect;
     const color rect_color = cmd->data.render_rect.rect_color;
     cairo_rectangle(cairo,
@@ -181,9 +182,9 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
                           (float32)(rect_color.b) / 255.0f,
                           (float32)(rect_color.a) / 255.0f);
     cairo_stroke(cairo);
+    break;
   }
-  else if(cmd->type == RENDER_TEXT)
-  {
+  case RENDER_TEXT: {
     const char* text = cmd->data.render_text.text;
     const color text_color = cmd->data.render_text.text_color;
     const point text_coordinates = cmd->data.render_text.text_coordinates;
@@ -199,69 +200,73 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
                   text_coordinates.y + font_extents.height -
                     font_extents.descent);
     cairo_show_text(cairo, text);
+    break;
   }
-  else if(cmd->type == PUSH_CLIP_RECT)
-  {
+  case PUSH_CLIP_RECT: {
     rect clip_rect = cmd->data.clip_rect;
     cairo_rectangle(cairo, clip_rect.x, clip_rect.y, clip_rect.w, clip_rect.h);
     cairo_clip(cairo);
+    break;
   }
-  else if(cmd->type == POP_CLIP_RECT)
-  {
+  case POP_CLIP_RECT: {
     cairo_reset_clip(cairo);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_ARROW)
-  {
+  case SET_CURSOR_ARROW: {
     SDL_SetCursor(arrow);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_IBEAM)
-  {
+  case SET_CURSOR_IBEAM: {
     SDL_SetCursor(ibeam);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_MOVE)
-  {
+  case SET_CURSOR_MOVE: {
     SDL_SetCursor(move);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_CROSSHAIR)
-  {
+  case SET_CURSOR_CROSSHAIR: {
     SDL_SetCursor(crosshair);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_HAND)
-  {
+  case SET_CURSOR_HAND: {
     SDL_SetCursor(hand);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_LOADING)
-  {
+  case SET_CURSOR_LOADING: {
     SDL_SetCursor(loading);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_PROCESSING)
-  {
+  case SET_CURSOR_PROCESSING: {
     SDL_SetCursor(processing);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_PROHIBITED)
-  {
+  case SET_CURSOR_PROHIBITED: {
     SDL_SetCursor(prohibited);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_RESIZE_LEFT_RIGHT)
-  {
+  case SET_CURSOR_RESIZE_LEFT_RIGHT: {
     SDL_SetCursor(resize_left_right);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_RESIZE_TOP_BOTTOM)
-  {
+  case SET_CURSOR_RESIZE_TOP_BOTTOM: {
     SDL_SetCursor(resize_top_bottom);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_RESIZE_TOP_LEFT__BOTTOM_RIGHT)
-  {
+  case SET_CURSOR_RESIZE_TOP_LEFT__BOTTOM_RIGHT: {
     SDL_SetCursor(resize_top_left__bottom_right);
+    break;
   }
-  else if(cmd->type == SET_CURSOR_RESIZE_TOP_RIGHT__BOTTOM_LEFT)
-  {
+  case SET_CURSOR_RESIZE_TOP_RIGHT__BOTTOM_LEFT: {
     SDL_SetCursor(resize_top_right__bottom_left);
+    break;
   }
-  else if(cmd->type == CLEAR_WINDOW)
-  {
+  case CLEAR_WINDOW: {
     cairo_set_source_rgb(cairo, 0.0f, 0.0f, 0.0f);
     cairo_fill(cairo);
+    break;
+  }
+  default:
+    break;
   }
 
   return ok_void();
