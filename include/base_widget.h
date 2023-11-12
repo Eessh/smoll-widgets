@@ -222,9 +222,9 @@ struct base_widget
    * TODO: Remove this function from base widget in favour of
    * common internal functions.
    */
-  result_base_widget_ptr (*internal_mark_need_resizing)(base_widget*,
-                                                        int16,
-                                                        int16);
+  // result_base_widget_ptr (*internal_mark_need_resizing)(base_widget*,
+  //                                                       int16,
+  //                                                       int16);
 
   /**
    * Internal callback for calculating minimum size needed for the widget.

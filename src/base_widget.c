@@ -14,8 +14,8 @@
  *
  * @return     Base widget pointer result.
  */
-static result_base_widget_ptr default_internal_mark_need_resizing(
-  base_widget* widget, int16 delta_x, int16 delta_y);
+// static result_base_widget_ptr default_internal_mark_need_resizing(
+//   base_widget* widget, int16 delta_x, int16 delta_y);
 
 /**
  * @brief      Default callback function for internal calculate size
@@ -151,7 +151,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
 
   widget->context = NULL;
 
-  widget->internal_mark_need_resizing = default_internal_mark_need_resizing;
+  // widget->internal_mark_need_resizing = default_internal_mark_need_resizing;
   // widget->internal_calculate_size = default_internal_calculate_size_callback;
   widget->internal_relayout = default_internal_relayout_callback;
   widget->pre_internal_relayout_hook = NULL;
@@ -528,190 +528,190 @@ widget_set_cross_axis_sizing(base_widget* widget,
   return ok_void();
 }
 
-static result_base_widget_ptr default_internal_mark_need_resizing(
-  base_widget* widget, int16 delta_x, int16 delta_y)
-{
-  if(widget->type == FLEX_ITEM)
-  {
-    widget->need_resizing = false;
-    if(widget->parent)
-    {
-      return widget->parent->internal_mark_need_resizing(
-        widget->parent, delta_x, delta_y);
-    }
-    return ok(result_base_widget_ptr, widget);
-  }
+// static result_base_widget_ptr default_internal_mark_need_resizing(
+//   base_widget* widget, int16 delta_x, int16 delta_y)
+// {
+//   if(widget->type == FLEX_ITEM)
+//   {
+//     widget->need_resizing = false;
+//     if(widget->parent)
+//     {
+//       return widget->parent->internal_mark_need_resizing(
+//         widget->parent, delta_x, delta_y);
+//     }
+//     return ok(result_base_widget_ptr, widget);
+//   }
 
-  if(!widget->flexbox_data.container.is_fluid)
-  {
-    // widget is not fluid, doesn't resize
-    debug("Encountered non-fluid widget.");
-    return ok(result_base_widget_ptr, widget);
-  }
+//   if(!widget->flexbox_data.container.is_fluid)
+//   {
+//     // widget is not fluid, doesn't resize
+//     debug("Encountered non-fluid widget.");
+//     return ok(result_base_widget_ptr, widget);
+//   }
 
-  if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
-  {
-    // consume delta_x from main axis, delta_y from cross axis
-    uint16 main_axis_length = widget->w, cross_axis_length = widget->h;
-    uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
-    base_widget_child_node* node = widget->children_head;
-    while(node)
-    {
-      needed_main_axis_length +=
-        node->child->w + widget->flexbox_data.container.gap;
-      needed_cross_axis_length = max(needed_cross_axis_length, node->child->h);
-      node = node->next;
-    }
-    needed_main_axis_length -= widget->flexbox_data.container.gap;
-    int16 remaining_main_axis_length =
-      main_axis_length - needed_main_axis_length;
-    if(remaining_main_axis_length > 0)
-    {
-      // main axis size needs to be decreased
-      if(remaining_main_axis_length >= -delta_x)
-      {
-        if(!widget->flexbox_data.container.is_fluid)
-        {
-          delta_x = 0;
-        }
-      }
-      else
-      {
-        delta_x += remaining_main_axis_length;
-      }
-    }
-    else if(remaining_main_axis_length < 0)
-    {
-      // main axis size needs to be increased
-      if(remaining_main_axis_length >= delta_x)
-      {
-        delta_x = 0;
-      }
-      else
-      {
-        delta_x -= remaining_main_axis_length;
-      }
-    }
-    int16 remaining_cross_axis_length =
-      cross_axis_length - needed_cross_axis_length;
-    if(remaining_cross_axis_length > 0)
-    {
-      // main axis size needs to be decreased
-      if(remaining_cross_axis_length >= -delta_y)
-      {
-        if(!widget->flexbox_data.container.is_fluid)
-        {
-          delta_y = 0;
-        }
-      }
-      else
-      {
-        delta_y += remaining_cross_axis_length;
-      }
-    }
-    else if(remaining_cross_axis_length < 0)
-    {
-      // main axis size needs to be increased
-      if(remaining_cross_axis_length >= delta_y)
-      {
-        delta_y = 0;
-      }
-      else
-      {
-        delta_y -= remaining_cross_axis_length;
-      }
-    }
-  }
-  else
-  {
-    // consume delta_y from main axis, delta_x from cross axis
-    uint16 main_axis_length = widget->h, cross_axis_length = widget->w;
-    uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
-    base_widget_child_node* node = widget->children_head;
-    while(node)
-    {
-      needed_main_axis_length +=
-        node->child->h + widget->flexbox_data.container.gap;
-      needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
-      node = node->next;
-    }
-    needed_main_axis_length -= widget->flexbox_data.container.gap;
-    int16 remaining_main_axis_length =
-      main_axis_length - needed_main_axis_length;
-    if(remaining_main_axis_length > 0)
-    {
-      // main axis should be shrinked
-      if(remaining_main_axis_length > -delta_y)
-      {
-        if(!widget->flexbox_data.container.is_fluid)
-        {
-          delta_y = 0;
-        }
-      }
-      else
-      {
-        delta_y += remaining_main_axis_length;
-      }
-    }
-    else if(remaining_main_axis_length < 0)
-    {
-      // main axis should be increased
-      if(remaining_main_axis_length > delta_y)
-      {
-        delta_y = 0;
-      }
-      else
-      {
-        delta_y -= remaining_main_axis_length;
-      }
-    }
-    int16 remaining_cross_axis_length =
-      cross_axis_length - needed_cross_axis_length;
-    if(remaining_cross_axis_length > 0)
-    {
-      // cross axis should be shrinked
-      if(remaining_cross_axis_length > -delta_x)
-      {
-        if(!widget->flexbox_data.container.is_fluid)
-        {
-          delta_x = 0;
-        }
-      }
-      else
-      {
-        delta_x += remaining_cross_axis_length;
-      }
-    }
-    else if(remaining_cross_axis_length < 0)
-    {
-      // cross axis should be increased
-      if(remaining_cross_axis_length > delta_x)
-      {
-        if(!widget->flexbox_data.container.is_fluid)
-        {
-          delta_x = 0;
-        }
-      }
-      else
-      {
-        delta_x -= remaining_cross_axis_length;
-      }
-    }
-  }
+//   if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+//   {
+//     // consume delta_x from main axis, delta_y from cross axis
+//     uint16 main_axis_length = widget->w, cross_axis_length = widget->h;
+//     uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+//     base_widget_child_node* node = widget->children_head;
+//     while(node)
+//     {
+//       needed_main_axis_length +=
+//         node->child->w + widget->flexbox_data.container.gap;
+//       needed_cross_axis_length = max(needed_cross_axis_length, node->child->h);
+//       node = node->next;
+//     }
+//     needed_main_axis_length -= widget->flexbox_data.container.gap;
+//     int16 remaining_main_axis_length =
+//       main_axis_length - needed_main_axis_length;
+//     if(remaining_main_axis_length > 0)
+//     {
+//       // main axis size needs to be decreased
+//       if(remaining_main_axis_length >= -delta_x)
+//       {
+//         if(!widget->flexbox_data.container.is_fluid)
+//         {
+//           delta_x = 0;
+//         }
+//       }
+//       else
+//       {
+//         delta_x += remaining_main_axis_length;
+//       }
+//     }
+//     else if(remaining_main_axis_length < 0)
+//     {
+//       // main axis size needs to be increased
+//       if(remaining_main_axis_length >= delta_x)
+//       {
+//         delta_x = 0;
+//       }
+//       else
+//       {
+//         delta_x -= remaining_main_axis_length;
+//       }
+//     }
+//     int16 remaining_cross_axis_length =
+//       cross_axis_length - needed_cross_axis_length;
+//     if(remaining_cross_axis_length > 0)
+//     {
+//       // main axis size needs to be decreased
+//       if(remaining_cross_axis_length >= -delta_y)
+//       {
+//         if(!widget->flexbox_data.container.is_fluid)
+//         {
+//           delta_y = 0;
+//         }
+//       }
+//       else
+//       {
+//         delta_y += remaining_cross_axis_length;
+//       }
+//     }
+//     else if(remaining_cross_axis_length < 0)
+//     {
+//       // main axis size needs to be increased
+//       if(remaining_cross_axis_length >= delta_y)
+//       {
+//         delta_y = 0;
+//       }
+//       else
+//       {
+//         delta_y -= remaining_cross_axis_length;
+//       }
+//     }
+//   }
+//   else
+//   {
+//     // consume delta_y from main axis, delta_x from cross axis
+//     uint16 main_axis_length = widget->h, cross_axis_length = widget->w;
+//     uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+//     base_widget_child_node* node = widget->children_head;
+//     while(node)
+//     {
+//       needed_main_axis_length +=
+//         node->child->h + widget->flexbox_data.container.gap;
+//       needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
+//       node = node->next;
+//     }
+//     needed_main_axis_length -= widget->flexbox_data.container.gap;
+//     int16 remaining_main_axis_length =
+//       main_axis_length - needed_main_axis_length;
+//     if(remaining_main_axis_length > 0)
+//     {
+//       // main axis should be shrinked
+//       if(remaining_main_axis_length > -delta_y)
+//       {
+//         if(!widget->flexbox_data.container.is_fluid)
+//         {
+//           delta_y = 0;
+//         }
+//       }
+//       else
+//       {
+//         delta_y += remaining_main_axis_length;
+//       }
+//     }
+//     else if(remaining_main_axis_length < 0)
+//     {
+//       // main axis should be increased
+//       if(remaining_main_axis_length > delta_y)
+//       {
+//         delta_y = 0;
+//       }
+//       else
+//       {
+//         delta_y -= remaining_main_axis_length;
+//       }
+//     }
+//     int16 remaining_cross_axis_length =
+//       cross_axis_length - needed_cross_axis_length;
+//     if(remaining_cross_axis_length > 0)
+//     {
+//       // cross axis should be shrinked
+//       if(remaining_cross_axis_length > -delta_x)
+//       {
+//         if(!widget->flexbox_data.container.is_fluid)
+//         {
+//           delta_x = 0;
+//         }
+//       }
+//       else
+//       {
+//         delta_x += remaining_cross_axis_length;
+//       }
+//     }
+//     else if(remaining_cross_axis_length < 0)
+//     {
+//       // cross axis should be increased
+//       if(remaining_cross_axis_length > delta_x)
+//       {
+//         if(!widget->flexbox_data.container.is_fluid)
+//         {
+//           delta_x = 0;
+//         }
+//       }
+//       else
+//       {
+//         delta_x -= remaining_cross_axis_length;
+//       }
+//     }
+//   }
 
-  if(delta_x == 0 && delta_y == 0)
-  {
-    return ok(result_base_widget_ptr, widget);
-  }
+//   if(delta_x == 0 && delta_y == 0)
+//   {
+//     return ok(result_base_widget_ptr, widget);
+//   }
 
-  if(widget->parent)
-  {
-    return widget->parent->internal_mark_need_resizing(
-      widget->parent, delta_x, delta_y);
-  }
+//   if(widget->parent)
+//   {
+//     return widget->parent->internal_mark_need_resizing(
+//       widget->parent, delta_x, delta_y);
+//   }
 
-  return ok(result_base_widget_ptr, widget);
-}
+//   return ok(result_base_widget_ptr, widget);
+// }
 
 // result_void default_internal_calculate_size_callback(base_widget* widget)
 // {
@@ -1111,7 +1111,7 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   }
 
   result_base_widget_ptr __ =
-    widget->internal_mark_need_resizing(widget, _.value.x, _.value.y);
+    common_internal_mark_need_resizing(widget, _.value.x, _.value.y);
   if(!__.ok)
   {
     return error(result_bool, __.error);
@@ -1553,4 +1553,189 @@ result_bool common_internal_mouse_motion(base_widget* widget, internal_mouse_mot
 
   return common_internal_mouse_motion(widget->parent,
                                                         internal_event);
+}
+
+result_base_widget_ptr common_internal_mark_need_resizing(base_widget* widget,
+                                                          int16 delta_x,
+                                                          int16 delta_y) {
+  if(widget->type == FLEX_ITEM)
+  {
+    widget->need_resizing = false;
+    if(widget->parent)
+    {
+      return common_internal_mark_need_resizing(
+        widget->parent, delta_x, delta_y);
+    }
+    return ok(result_base_widget_ptr, widget);
+  }
+
+  if(!widget->flexbox_data.container.is_fluid)
+  {
+    // widget is not fluid, doesn't resize
+    debug("Encountered non-fluid widget.");
+    return ok(result_base_widget_ptr, widget);
+  }
+
+  if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+  {
+    // consume delta_x from main axis, delta_y from cross axis
+    uint16 main_axis_length = widget->w, cross_axis_length = widget->h;
+    uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+    base_widget_child_node* node = widget->children_head;
+    while(node)
+    {
+      needed_main_axis_length +=
+        node->child->w + widget->flexbox_data.container.gap;
+      needed_cross_axis_length = max(needed_cross_axis_length, node->child->h);
+      node = node->next;
+    }
+    needed_main_axis_length -= widget->flexbox_data.container.gap;
+    int16 remaining_main_axis_length =
+      main_axis_length - needed_main_axis_length;
+    if(remaining_main_axis_length > 0)
+    {
+      // main axis size needs to be decreased
+      if(remaining_main_axis_length >= -delta_x)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          delta_x = 0;
+        }
+      }
+      else
+      {
+        delta_x += remaining_main_axis_length;
+      }
+    }
+    else if(remaining_main_axis_length < 0)
+    {
+      // main axis size needs to be increased
+      if(remaining_main_axis_length >= delta_x)
+      {
+        delta_x = 0;
+      }
+      else
+      {
+        delta_x -= remaining_main_axis_length;
+      }
+    }
+    int16 remaining_cross_axis_length =
+      cross_axis_length - needed_cross_axis_length;
+    if(remaining_cross_axis_length > 0)
+    {
+      // main axis size needs to be decreased
+      if(remaining_cross_axis_length >= -delta_y)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          delta_y = 0;
+        }
+      }
+      else
+      {
+        delta_y += remaining_cross_axis_length;
+      }
+    }
+    else if(remaining_cross_axis_length < 0)
+    {
+      // main axis size needs to be increased
+      if(remaining_cross_axis_length >= delta_y)
+      {
+        delta_y = 0;
+      }
+      else
+      {
+        delta_y -= remaining_cross_axis_length;
+      }
+    }
+  }
+  else
+  {
+    // consume delta_y from main axis, delta_x from cross axis
+    uint16 main_axis_length = widget->h, cross_axis_length = widget->w;
+    uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+    base_widget_child_node* node = widget->children_head;
+    while(node)
+    {
+      needed_main_axis_length +=
+        node->child->h + widget->flexbox_data.container.gap;
+      needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
+      node = node->next;
+    }
+    needed_main_axis_length -= widget->flexbox_data.container.gap;
+    int16 remaining_main_axis_length =
+      main_axis_length - needed_main_axis_length;
+    if(remaining_main_axis_length > 0)
+    {
+      // main axis should be shrinked
+      if(remaining_main_axis_length > -delta_y)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          delta_y = 0;
+        }
+      }
+      else
+      {
+        delta_y += remaining_main_axis_length;
+      }
+    }
+    else if(remaining_main_axis_length < 0)
+    {
+      // main axis should be increased
+      if(remaining_main_axis_length > delta_y)
+      {
+        delta_y = 0;
+      }
+      else
+      {
+        delta_y -= remaining_main_axis_length;
+      }
+    }
+    int16 remaining_cross_axis_length =
+      cross_axis_length - needed_cross_axis_length;
+    if(remaining_cross_axis_length > 0)
+    {
+      // cross axis should be shrinked
+      if(remaining_cross_axis_length > -delta_x)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          delta_x = 0;
+        }
+      }
+      else
+      {
+        delta_x += remaining_cross_axis_length;
+      }
+    }
+    else if(remaining_cross_axis_length < 0)
+    {
+      // cross axis should be increased
+      if(remaining_cross_axis_length > delta_x)
+      {
+        if(!widget->flexbox_data.container.is_fluid)
+        {
+          delta_x = 0;
+        }
+      }
+      else
+      {
+        delta_x -= remaining_cross_axis_length;
+      }
+    }
+  }
+
+  if(delta_x == 0 && delta_y == 0)
+  {
+    return ok(result_base_widget_ptr, widget);
+  }
+
+  if(widget->parent)
+  {
+    return common_internal_mark_need_resizing(
+      widget->parent, delta_x, delta_y);
+  }
+
+  return ok(result_base_widget_ptr, widget);
 }
