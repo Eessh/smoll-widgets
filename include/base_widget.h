@@ -282,7 +282,7 @@ struct base_widget
   ///
   ///        TODO: Remove this function from base widget in favour of
   ///        common internal functions.
-  result_bool (*internal_adjust_layout_callback)(base_widget*);
+  // result_bool (*internal_adjust_layout_callback)(base_widget*);
 
   /// @brief Internal callback for re-assigning positions to all children.
   result_bool (*internal_assign_positions)(base_widget*);

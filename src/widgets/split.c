@@ -148,7 +148,7 @@ result_void split_set_size(split* split_widget, uint8 size)
   }
 
   // triggering re-layout on parent widget
-  result_bool _ = split_widget->base->parent->internal_adjust_layout_callback(
+  result_bool _ = common_internal_adjust_layout(
     split_widget->base->parent);
   if(!_.ok)
   {
@@ -291,14 +291,14 @@ static bool default_mouse_move_callback(base_widget* widget,
   }
 
   // triggering re-layout on first and second widgets
-  s->private_data->first_widget->internal_adjust_layout_callback(
+  common_internal_adjust_layout(
     s->private_data->first_widget);
-  s->private_data->second_widget->internal_adjust_layout_callback(
+  common_internal_adjust_layout(
     s->private_data->second_widget);
 
   // triggering re-layout on parent widget
   result_bool _ =
-    widget->parent->internal_adjust_layout_callback(widget->parent);
+    common_internal_adjust_layout(widget->parent);
   if(!_.ok)
   {
     return false;

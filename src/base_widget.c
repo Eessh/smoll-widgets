@@ -44,7 +44,7 @@
 // static rect
 // default_internal_get_bounding_rect_callback(const base_widget* widget);
 
-static result_bool default_internal_adjust_layout_callback(base_widget* widget);
+// static result_bool default_internal_adjust_layout_callback(base_widget* widget);
 
 /// @brief Default callback function for internal free callback.
 /// @param widget pointer to base widget.
@@ -159,8 +159,8 @@ result_base_widget_ptr base_widget_new(widget_type type)
   //   default_internal_get_bounding_rect_callback;
   widget->internal_get_background_callback = NULL;
   widget->internal_fit_layout_callback = NULL;
-  widget->internal_adjust_layout_callback =
-    default_internal_adjust_layout_callback;
+  // widget->internal_adjust_layout_callback =
+  //   default_internal_adjust_layout_callback;
   widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
 
@@ -371,7 +371,7 @@ result_bool widget_set_visibility(base_widget* widget, bool visible)
     return ok(result_bool, true);
   }
 
-  return widget->parent->internal_adjust_layout_callback(widget->parent);
+  return common_internal_adjust_layout(widget->parent);
 }
 
 result_bool widget_set_flex_direction(base_widget* widget,
@@ -391,7 +391,7 @@ result_bool widget_set_flex_direction(base_widget* widget,
   widget->flexbox_data.container.direction = direction;
 
   // triggering re-adjust layout on this widget
-  widget->internal_adjust_layout_callback(widget);
+  common_internal_adjust_layout(widget);
 
   return ok(result_bool, true);
 }
@@ -413,7 +413,7 @@ result_bool widget_set_justify_content(base_widget* widget,
   widget->flexbox_data.container.justify_content = justify_content;
 
   // triggering re-adjust layout on this widget
-  widget->internal_adjust_layout_callback(widget);
+  common_internal_adjust_layout(widget);
 
   return ok(result_bool, true);
 }
@@ -434,7 +434,7 @@ result_bool widget_set_align_items(base_widget* widget,
   widget->flexbox_data.container.align_items = align_items;
 
   // triggering re-adjust layout on this widget
-  widget->internal_adjust_layout_callback(widget);
+  common_internal_adjust_layout(widget);
 
   return ok(result_bool, true);
 }
@@ -454,7 +454,7 @@ result_bool widget_set_gap(base_widget* widget, uint8 gap)
   widget->flexbox_data.container.gap = gap;
 
   // triggering re-adjust layout on this widget
-  widget->internal_adjust_layout_callback(widget);
+  common_internal_adjust_layout(widget);
 
   return ok(result_bool, true);
 }
@@ -471,7 +471,7 @@ result_void widget_set_flex_grow(base_widget* widget, uint8 flex_grow)
     widget->flexbox_data.container.flex_grow = flex_grow;
 
     // triggering re-adjust layout on this widget
-    widget->internal_adjust_layout_callback(widget);
+    common_internal_adjust_layout(widget);
   }
   else
   {
@@ -493,7 +493,7 @@ result_void widget_set_flex_shrink(base_widget* widget, uint8 flex_shrink)
     widget->flexbox_data.container.flex_shrink = flex_shrink;
 
     // triggering re-adjust layout on this widget
-    widget->internal_adjust_layout_callback(widget);
+    common_internal_adjust_layout(widget);
   }
   else
   {
@@ -518,7 +518,7 @@ widget_set_cross_axis_sizing(base_widget* widget,
     widget->flexbox_data.container.cross_axis_sizing = cross_axis_sizing;
 
     // triggering re-adjust layout on this widget
-    widget->internal_adjust_layout_callback(widget);
+    common_internal_adjust_layout(widget);
   }
   else
   {
@@ -1072,64 +1072,64 @@ rect default_internal_get_bounding_rect_callback(const base_widget* widget)
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
 }
 
-static result_bool default_internal_adjust_layout_callback(base_widget* widget)
-{
-  if(!widget->visible)
-  {
-    // escalate this call to its parent
-    if(!widget->parent)
-    {
-      /// TODO: What to do when root widget is invisible?
-      /// And internal adjust layout callback is called.
-      return ok(result_bool, true);
-    }
+// static result_bool default_internal_adjust_layout_callback(base_widget* widget)
+// {
+//   if(!widget->visible)
+//   {
+//     // escalate this call to its parent
+//     if(!widget->parent)
+//     {
+//       /// TODO: What to do when root widget is invisible?
+//       /// And internal adjust layout callback is called.
+//       return ok(result_bool, true);
+//     }
 
-    return widget->parent->internal_adjust_layout_callback(widget->parent);
-  }
+//     return widget->parent->internal_adjust_layout_callback(widget->parent);
+//   }
 
-  if(!widget->internal_fit_layout_callback)
-  {
-    return ok(result_bool, false);
-  }
+//   if(!widget->internal_fit_layout_callback)
+//   {
+//     return ok(result_bool, false);
+//   }
 
-  // call fit layout on this widget, that should return the delta_x, delta_y
-  // using these deltas, mark need resizing from this widget, that should
-  // return the lowest ancestor which satisfies these deltas
-  // now call calculate sizing on this ancestor
-  // then call relayout on this ancestor
-  // then call internal render on this ancestor.
-  result_sizing_delta _ = widget->internal_fit_layout_callback(widget, false);
-  if(!_.ok)
-  {
-    return error(result_bool, _.error);
-  }
+//   // call fit layout on this widget, that should return the delta_x, delta_y
+//   // using these deltas, mark need resizing from this widget, that should
+//   // return the lowest ancestor which satisfies these deltas
+//   // now call calculate sizing on this ancestor
+//   // then call relayout on this ancestor
+//   // then call internal render on this ancestor.
+//   result_sizing_delta _ = widget->internal_fit_layout_callback(widget, false);
+//   if(!_.ok)
+//   {
+//     return error(result_bool, _.error);
+//   }
 
-  if(_.value.x == 0 && _.value.y == 0)
-  {
-    // deltas are 0
-    return ok(result_bool, true);
-  }
+//   if(_.value.x == 0 && _.value.y == 0)
+//   {
+//     // deltas are 0
+//     return ok(result_bool, true);
+//   }
 
-  result_base_widget_ptr __ =
-    common_internal_mark_need_resizing(widget, _.value.x, _.value.y);
-  if(!__.ok)
-  {
-    return error(result_bool, __.error);
-  }
+//   result_base_widget_ptr __ =
+//     common_internal_mark_need_resizing(widget, _.value.x, _.value.y);
+//   if(!__.ok)
+//   {
+//     return error(result_bool, __.error);
+//   }
 
-  base_widget* ancestor = __.value;
-  debug("Ancestor parent: %s", ancestor->parent ? "EXISTS" : "(NULL)");
-  // ancestor->internal_calculate_size(ancestor);
-  common_internal_calculate_size(ancestor);
-  if(ancestor->pre_internal_relayout_hook)
-  {
-    ancestor->pre_internal_relayout_hook(ancestor);
-  }
-  common_internal_relayout(ancestor);
-  ancestor->internal_render_callback(ancestor);
+//   base_widget* ancestor = __.value;
+//   debug("Ancestor parent: %s", ancestor->parent ? "EXISTS" : "(NULL)");
+//   // ancestor->internal_calculate_size(ancestor);
+//   common_internal_calculate_size(ancestor);
+//   if(ancestor->pre_internal_relayout_hook)
+//   {
+//     ancestor->pre_internal_relayout_hook(ancestor);
+//   }
+//   common_internal_relayout(ancestor);
+//   ancestor->internal_render_callback(ancestor);
 
-  return ok(result_bool, true);
-}
+//   return ok(result_bool, true);
+// }
 
 // static void default_internal_free_callback(base_widget* widget)
 // {
@@ -2111,5 +2111,59 @@ result_void common_internal_relayout(const base_widget* widget) {
 }
 
 result_bool common_internal_adjust_layout(base_widget* widget) {
+  if(!widget->visible)
+  {
+    // escalate this call to its parent
+    if(!widget->parent)
+    {
+      /// TODO: What to do when root widget is invisible?
+      /// And internal adjust layout callback is called.
+      return ok(result_bool, true);
+    }
 
+    return common_internal_adjust_layout(widget->parent);
+  }
+
+  if(!widget->internal_fit_layout_callback)
+  {
+    return ok(result_bool, false);
+  }
+
+  // call fit layout on this widget, that should return the delta_x, delta_y
+  // using these deltas, mark need resizing from this widget, that should
+  // return the lowest ancestor which satisfies these deltas
+  // now call calculate sizing on this ancestor
+  // then call relayout on this ancestor
+  // then call internal render on this ancestor.
+  result_sizing_delta _ = widget->internal_fit_layout_callback(widget, false);
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
+  if(_.value.x == 0 && _.value.y == 0)
+  {
+    // deltas are 0
+    return ok(result_bool, true);
+  }
+
+  result_base_widget_ptr __ =
+    common_internal_mark_need_resizing(widget, _.value.x, _.value.y);
+  if(!__.ok)
+  {
+    return error(result_bool, __.error);
+  }
+
+  base_widget* ancestor = __.value;
+  debug("Ancestor parent: %s", ancestor->parent ? "EXISTS" : "(NULL)");
+  // ancestor->internal_calculate_size(ancestor);
+  common_internal_calculate_size(ancestor);
+  if(ancestor->pre_internal_relayout_hook)
+  {
+    ancestor->pre_internal_relayout_hook(ancestor);
+  }
+  common_internal_relayout(ancestor);
+  ancestor->internal_render_callback(ancestor);
+
+  return ok(result_bool, true);
 }

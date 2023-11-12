@@ -232,7 +232,7 @@ result_void button_set_text(button* btn, const char* text)
 
   // btn->base->internal_fit_layout_callback(btn->base, false);
   // btn->base->internal_render_callback(btn->base);
-  btn->base->internal_adjust_layout_callback(btn->base);
+  common_internal_adjust_layout(btn->base);
 
   return ok_void();
 }
