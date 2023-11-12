@@ -123,7 +123,8 @@ result_bool widget_encloses_point(base_widget* widget, uint16 x, uint16 y)
                                   "a NULL pointing widget!"};
   }
 
-  rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
+  // rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
+  rect bounding_rect = common_internal_get_bounding_rect(widget);
 
   return (result_bool){
     .ok = true,

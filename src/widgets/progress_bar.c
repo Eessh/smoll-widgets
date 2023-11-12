@@ -143,8 +143,10 @@ result_void progress_bar_set_foreground(progress_bar* bar, color foreground)
   }
 
   bar->private_data->foreground = foreground;
+  // rect bounding_rect =
+  //   bar->base->internal_get_bounding_rect_callback(bar->base);
   rect bounding_rect =
-    bar->base->internal_get_bounding_rect_callback(bar->base);
+    common_internal_get_bounding_rect(bar->base);
   bounding_rect.w *= (float32)(bar->private_data->percent / 100.0f);
 
   result_void _ = command_buffer_add_render_rect_command(
@@ -191,8 +193,10 @@ static result_bool default_internal_render_callback(const base_widget* widget)
        fg.b,
        fg.a);
 
+  // rect bounding_rect =
+  //   bar->base->internal_get_bounding_rect_callback(bar->base);
   rect bounding_rect =
-    bar->base->internal_get_bounding_rect_callback(bar->base);
+    common_internal_get_bounding_rect(bar->base);
 
   result_void _ = command_buffer_add_render_rect_command(
     bar->base->context->cmd_buffer, bounding_rect, bg);

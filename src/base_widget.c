@@ -155,8 +155,8 @@ result_base_widget_ptr base_widget_new(widget_type type)
   widget->internal_calculate_size = default_internal_calculate_size_callback;
   widget->internal_relayout = default_internal_relayout_callback;
   widget->pre_internal_relayout_hook = NULL;
-  widget->internal_get_bounding_rect_callback =
-    default_internal_get_bounding_rect_callback;
+  // widget->internal_get_bounding_rect_callback =
+  //   default_internal_get_bounding_rect_callback;
   widget->internal_get_background_callback = NULL;
   widget->internal_fit_layout_callback = NULL;
   widget->internal_adjust_layout_callback =
@@ -1345,4 +1345,13 @@ result_bool default_internal_mouse_scroll_callback(
   }
 
   return ok(result_bool, false);
+}
+
+//////////////////////////////////////////////////////////
+/// Common functions implementation
+//////////////////////////////////////////////////////////
+
+rect common_internal_get_bounding_rect(const base_widget* widget)
+{
+  return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
 }

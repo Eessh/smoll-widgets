@@ -261,7 +261,7 @@ struct base_widget
   ///
   ///        TODO: Remove this function from base widget in favour of
   ///        common internal functions.
-  rect (*internal_get_bounding_rect_callback)(const base_widget*);
+  // rect (*internal_get_bounding_rect_callback)(const base_widget*);
 
   /**
    * @brief Internal callback for getting active background of this widget.

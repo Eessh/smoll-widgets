@@ -237,11 +237,10 @@ static result_bool split_internal_render_callback(const base_widget* widget)
 {
   split* s = (split*)widget->derived;
   split_view* parent = (split_view*)widget->parent->derived;
-  color bg = s->private_data->state == HANDLE_NORMAL
-               ? parent->handle_color
-               : s->private_data->state == HANDLE_HOVERED
-                   ? parent->handle_hover_color
-                   : parent->handle_click_color;
+  color bg = s->private_data->state == HANDLE_NORMAL ? parent->handle_color
+             : s->private_data->state == HANDLE_HOVERED
+               ? parent->handle_hover_color
+               : parent->handle_click_color;
 
   info("SplitView(): split.internal-render-callback(), (x, y, w, h): (%d, %d, "
        "%d, %d), color: (%d, %d, %d, %d)",
