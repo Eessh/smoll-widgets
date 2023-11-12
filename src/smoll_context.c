@@ -134,7 +134,8 @@ smoll_context_process_viewport_resize_event(smoll_context* context,
   root->w = event.w;
   root->h = event.h;
 
-  root->internal_calculate_size(root);
+  // root->internal_calculate_size(root);
+  common_internal_calculate_size(root);
   root->internal_relayout(root);
   root->internal_render_callback(root);
 
@@ -391,7 +392,8 @@ result_void smoll_context_initialize_layout(smoll_context* context)
 
   base_widget* root = context->internal_ctx->root;
 
-  result_void _ = root->internal_calculate_size(root);
+  // result_void _ = root->internal_calculate_size(root);
+  result_void _ = common_internal_calculate_size(root);
   if(!_.ok)
   {
     return _;

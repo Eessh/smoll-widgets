@@ -238,7 +238,7 @@ struct base_widget
    * TODO: Remove this function from base widget in favour of
    * common internal functions.
    */
-  result_void (*internal_calculate_size)(base_widget*);
+  // result_void (*internal_calculate_size)(base_widget*);
 
   /**
    * Internal callback for re-calculating layout for the widget.

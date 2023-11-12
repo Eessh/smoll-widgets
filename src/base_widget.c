@@ -25,8 +25,8 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
  *
  * @return     Void result.
  */
-static result_void
-default_internal_calculate_size_callback(base_widget* widget);
+// static result_void
+// default_internal_calculate_size_callback(base_widget* widget);
 
 /**
  * @brief      Default callback function for internal relayout callback.
@@ -41,8 +41,8 @@ default_internal_relayout_callback(const base_widget* widget);
 /// @brief Default callback function for internal bounding rect callback.
 /// @param widget constant pointer to base widget.
 /// @return Returns rect struct.
-static rect
-default_internal_get_bounding_rect_callback(const base_widget* widget);
+// static rect
+// default_internal_get_bounding_rect_callback(const base_widget* widget);
 
 static result_bool default_internal_adjust_layout_callback(base_widget* widget);
 
@@ -152,7 +152,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
   widget->context = NULL;
 
   widget->internal_mark_need_resizing = default_internal_mark_need_resizing;
-  widget->internal_calculate_size = default_internal_calculate_size_callback;
+  // widget->internal_calculate_size = default_internal_calculate_size_callback;
   widget->internal_relayout = default_internal_relayout_callback;
   widget->pre_internal_relayout_hook = NULL;
   // widget->internal_get_bounding_rect_callback =
@@ -713,91 +713,93 @@ static result_base_widget_ptr default_internal_mark_need_resizing(
   return ok(result_base_widget_ptr, widget);
 }
 
-result_void default_internal_calculate_size_callback(base_widget* widget)
-{
-  if(!widget->visible)
-  {
-    // avoiding calculations when widget is not visible
-    return ok_void();
-  }
+// result_void default_internal_calculate_size_callback(base_widget* widget)
+// {
+//   if(!widget->visible)
+//   {
+//     // avoiding calculations when widget is not visible
+//     return ok_void();
+//   }
 
-  if(widget->type == FLEX_ITEM)
-  {
-    if(widget->need_resizing)
-    {
-      if(widget->internal_fit_layout_callback)
-      {
-        widget->internal_fit_layout_callback(widget, false);
-      }
-      widget->need_resizing = false;
-    }
-    return ok_void();
-  }
+//   if(widget->type == FLEX_ITEM)
+//   {
+//     if(widget->need_resizing)
+//     {
+//       if(widget->internal_fit_layout_callback)
+//       {
+//         widget->internal_fit_layout_callback(widget, false);
+//       }
+//       widget->need_resizing = false;
+//     }
+//     return ok_void();
+//   }
 
-  if(!widget->flexbox_data.container.is_fluid)
-  {
-    // skip this widget but call calculate sizing on children widgets
-    base_widget_child_node* node = widget->children_head;
-    while(node)
-    {
-      if(node->child->visible)
-      {
-        result_void _ = node->child->internal_calculate_size(node->child);
-        if(!_.ok)
-        {
-          return _;
-        }
-      }
-      node = node->next;
-    }
+//   if(!widget->flexbox_data.container.is_fluid)
+//   {
+//     // skip this widget but call calculate sizing on children widgets
+//     base_widget_child_node* node = widget->children_head;
+//     while(node)
+//     {
+//       if(node->child->visible)
+//       {
+//         // result_void _ = node->child->internal_calculate_size(node->child);
+//         result_void _ = common_internal_calculate_size(node->child);
+//         if(!_.ok)
+//         {
+//           return _;
+//         }
+//       }
+//       node = node->next;
+//     }
 
-    return ok_void();
-  }
+//     return ok_void();
+//   }
 
-  uint16 main_axis_length = 0, cross_axis_length = 0;
-  base_widget_child_node* node = widget->children_head;
-  while(node)
-  {
-    // skipping invisible nodes
-    if(!node->child->visible)
-    {
-      node = node->next;
-      continue;
-    }
+//   uint16 main_axis_length = 0, cross_axis_length = 0;
+//   base_widget_child_node* node = widget->children_head;
+//   while(node)
+//   {
+//     // skipping invisible nodes
+//     if(!node->child->visible)
+//     {
+//       node = node->next;
+//       continue;
+//     }
 
-    if(node->child->need_resizing)
-    {
-      node->child->internal_calculate_size(node->child);
-    }
-    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
-    {
-      main_axis_length += node->child->w;
-      cross_axis_length = max(cross_axis_length, node->child->h);
-    }
-    else
-    {
-      main_axis_length += node->child->h;
-      cross_axis_length = max(cross_axis_length, node->child->w);
-    }
-    main_axis_length += widget->flexbox_data.container.gap;
-    node = node->next;
-  }
-  main_axis_length -= widget->flexbox_data.container.gap;
+//     if(node->child->need_resizing)
+//     {
+//       // node->child->internal_calculate_size(node->child);
+//       common_internal_calculate_size(node->child);
+//     }
+//     if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+//     {
+//       main_axis_length += node->child->w;
+//       cross_axis_length = max(cross_axis_length, node->child->h);
+//     }
+//     else
+//     {
+//       main_axis_length += node->child->h;
+//       cross_axis_length = max(cross_axis_length, node->child->w);
+//     }
+//     main_axis_length += widget->flexbox_data.container.gap;
+//     node = node->next;
+//   }
+//   main_axis_length -= widget->flexbox_data.container.gap;
 
-  // assigning calculated axes lengths to widget's dimensions.
-  if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
-  {
-    widget->w = main_axis_length;
-    widget->h = cross_axis_length;
-  }
-  else
-  {
-    widget->w = cross_axis_length;
-    widget->h = main_axis_length;
-  }
+//   // assigning calculated axes lengths to widget's dimensions.
+//   if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+//   {
+//     widget->w = main_axis_length;
+//     widget->h = cross_axis_length;
+//   }
+//   else
+//   {
+//     widget->w = cross_axis_length;
+//     widget->h = main_axis_length;
+//   }
 
-  return ok_void();
-}
+//   return ok_void();
+// }
 
 result_void default_internal_relayout_callback(const base_widget* widget)
 {
@@ -1117,7 +1119,8 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
 
   base_widget* ancestor = __.value;
   debug("Ancestor parent: %s", ancestor->parent ? "EXISTS" : "(NULL)");
-  ancestor->internal_calculate_size(ancestor);
+  // ancestor->internal_calculate_size(ancestor);
+  common_internal_calculate_size(ancestor);
   if(ancestor->pre_internal_relayout_hook)
   {
     ancestor->pre_internal_relayout_hook(ancestor);
@@ -1354,4 +1357,90 @@ result_bool default_internal_mouse_scroll_callback(
 rect common_internal_get_bounding_rect(const base_widget* widget)
 {
   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
+}
+
+result_void common_internal_calculate_size(base_widget* widget) {
+  if(!widget->visible)
+  {
+    // avoiding calculations when widget is not visible
+    return ok_void();
+  }
+
+  if(widget->type == FLEX_ITEM)
+  {
+    if(widget->need_resizing)
+    {
+      if(widget->internal_fit_layout_callback)
+      {
+        widget->internal_fit_layout_callback(widget, false);
+      }
+      widget->need_resizing = false;
+    }
+    return ok_void();
+  }
+
+  if(!widget->flexbox_data.container.is_fluid)
+  {
+    // skip this widget but call calculate sizing on children widgets
+    base_widget_child_node* node = widget->children_head;
+    while(node)
+    {
+      if(node->child->visible)
+      {
+        // result_void _ = node->child->internal_calculate_size(node->child);
+        result_void _ = common_internal_calculate_size(node->child);
+        if(!_.ok)
+        {
+          return _;
+        }
+      }
+      node = node->next;
+    }
+
+    return ok_void();
+  }
+
+  uint16 main_axis_length = 0, cross_axis_length = 0;
+  base_widget_child_node* node = widget->children_head;
+  while(node)
+  {
+    // skipping invisible nodes
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
+    if(node->child->need_resizing)
+    {
+      common_internal_calculate_size(node->child);
+    }
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      main_axis_length += node->child->w;
+      cross_axis_length = max(cross_axis_length, node->child->h);
+    }
+    else
+    {
+      main_axis_length += node->child->h;
+      cross_axis_length = max(cross_axis_length, node->child->w);
+    }
+    main_axis_length += widget->flexbox_data.container.gap;
+    node = node->next;
+  }
+  main_axis_length -= widget->flexbox_data.container.gap;
+
+  // assigning calculated axes lengths to widget's dimensions.
+  if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+  {
+    widget->w = main_axis_length;
+    widget->h = cross_axis_length;
+  }
+  else
+  {
+    widget->w = cross_axis_length;
+    widget->h = main_axis_length;
+  }
+
+  return ok_void();
 }
