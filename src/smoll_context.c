@@ -136,7 +136,7 @@ smoll_context_process_viewport_resize_event(smoll_context* context,
 
   // root->internal_calculate_size(root);
   common_internal_calculate_size(root);
-  root->internal_relayout(root);
+  common_internal_relayout(root);
   root->internal_render_callback(root);
 
   return ok_void();
@@ -399,7 +399,7 @@ result_void smoll_context_initialize_layout(smoll_context* context)
     return _;
   }
 
-  return root->internal_relayout(root);
+  return common_internal_relayout(root);
 }
 
 result_void smoll_context_render(smoll_context* context)

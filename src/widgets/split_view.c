@@ -437,7 +437,7 @@ static bool split_mouse_enter_callback(base_widget* widget,
     widget->h += 3;
   }
 
-  widget->parent->internal_relayout(widget->parent);
+  common_internal_relayout(widget->parent);
   widget->parent->internal_render_callback(widget->parent);
 
   // result_bool _ = widget->internal_render_callback(widget);
@@ -465,7 +465,7 @@ static bool split_mouse_leave_callback(base_widget* widget,
     widget->h -= 3;
   }
 
-  widget->parent->internal_relayout(widget->parent);
+  common_internal_relayout(widget->parent);
   widget->parent->internal_render_callback(widget->parent);
 
   command_buffer_add_set_cursor_command(widget->context->cmd_buffer,
@@ -510,7 +510,7 @@ static bool split_mouse_move_callback(base_widget* widget,
 
   v->private_data->last_clicked = (point){event.x, event.y};
 
-  parent->internal_relayout(parent);
+  common_internal_relayout(parent);
 
   parent->internal_render_callback(parent);
 

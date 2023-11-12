@@ -252,7 +252,7 @@ struct base_widget
    * TODO: Remove this function from base widget in favour of
    * common internal functions.
    */
-  result_void (*internal_relayout)(const base_widget*);
+  // result_void (*internal_relayout)(const base_widget*);
 
   result_void (*pre_internal_relayout_hook)(const base_widget*);
 
