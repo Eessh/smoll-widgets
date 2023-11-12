@@ -424,7 +424,7 @@ internal_context_process_mouse_button_event(internal_context* context,
                  "internal context!");
   }
 
-  event->target->internal_mouse_button_callback(event->target, event);
+  common_internal_mouse_button(event->target, event);
 
   return ok_void();
 }
@@ -440,7 +440,7 @@ internal_context_process_mouse_scroll_event(internal_context* context,
                  "internal context!");
   }
 
-  event->target->internal_mouse_scroll_callback(event->target, event);
+  common_internal_mouse_scroll(event->target, event);
 
   return ok_void();
 }

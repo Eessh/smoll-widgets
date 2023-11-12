@@ -62,15 +62,15 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget);
 /// @param widget pointer to base widget.
 /// @param internal_event pointer to internal mouse button event.
 /// @return Bool result.
-static result_bool default_internal_mouse_button_callback(
-  base_widget* widget, internal_mouse_button_event* internal_event);
+// static result_bool default_internal_mouse_button_callback(
+//   base_widget* widget, internal_mouse_button_event* internal_event);
 
 /// @brief Default callback function for internal mouse scroll callback.
 /// @param widget pointer to base widget.
 /// @param internal_event pointer to internal mouse scroll event.
 /// @return Bool result.
-static result_bool default_internal_mouse_scroll_callback(
-  base_widget* widget, internal_mouse_scroll_event* internal_event);
+// static result_bool default_internal_mouse_scroll_callback(
+//   base_widget* widget, internal_mouse_scroll_event* internal_event);
 
 result_base_widget_child_node_ptr base_widget_child_node_new(base_widget* child)
 {
@@ -169,10 +169,10 @@ result_base_widget_ptr base_widget_new(widget_type type)
 
   // widget->internal_mouse_motion_callback =
   //   default_internal_mouse_motion_callback;
-  widget->internal_mouse_button_callback =
-    default_internal_mouse_button_callback;
-  widget->internal_mouse_scroll_callback =
-    default_internal_mouse_scroll_callback;
+  // widget->internal_mouse_button_callback =
+  //   default_internal_mouse_button_callback;
+  // widget->internal_mouse_scroll_callback =
+  //   default_internal_mouse_scroll_callback;
 
   widget->mouse_button_down_callback = NULL;
   widget->mouse_button_up_callback = NULL;
@@ -1244,111 +1244,111 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
 //                                                         internal_event);
 // }
 
-result_bool default_internal_mouse_button_callback(
-  base_widget* widget, internal_mouse_button_event* internal_event)
-{
-  if(!widget)
-  {
-    return error(result_bool,
-                 "Cannot process internal mouse button callback, with widget "
-                 "pointing to NULL!");
-  }
+// result_bool default_internal_mouse_button_callback(
+//   base_widget* widget, internal_mouse_button_event* internal_event)
+// {
+//   if(!widget)
+//   {
+//     return error(result_bool,
+//                  "Cannot process internal mouse button callback, with widget "
+//                  "pointing to NULL!");
+//   }
 
-  if(internal_event->state == BUBBLING_UP)
-  {
-    // call callbacks if present
-    if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
-    {
-      if(widget->mouse_button_down_callback)
-      {
-        widget->mouse_button_down_callback(widget, internal_event->event);
-      }
-    }
-    else
-    {
-      if(widget->mouse_button_up_callback)
-      {
-        widget->mouse_button_up_callback(widget, internal_event->event);
-      }
-    }
+//   if(internal_event->state == BUBBLING_UP)
+//   {
+//     // call callbacks if present
+//     if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
+//     {
+//       if(widget->mouse_button_down_callback)
+//       {
+//         widget->mouse_button_down_callback(widget, internal_event->event);
+//       }
+//     }
+//     else
+//     {
+//       if(widget->mouse_button_up_callback)
+//       {
+//         widget->mouse_button_up_callback(widget, internal_event->event);
+//       }
+//     }
 
-    // return if parent doesn't exist (root element)
-    if(!widget->parent)
-    {
-      return ok(result_bool, true);
-    }
+//     // return if parent doesn't exist (root element)
+//     if(!widget->parent)
+//     {
+//       return ok(result_bool, true);
+//     }
 
-    // still bubble up if parent exists
-    return widget->parent->internal_mouse_button_callback(widget->parent,
-                                                          internal_event);
-  }
+//     // still bubble up if parent exists
+//     return widget->parent->internal_mouse_button_callback(widget->parent,
+//                                                           internal_event);
+//   }
 
-  // this widget is target
-  if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
-  {
-    if(widget->mouse_button_down_callback)
-    {
-      widget->mouse_button_down_callback(widget, internal_event->event);
-    }
-  }
-  else
-  {
-    if(widget->mouse_button_up_callback)
-    {
-      widget->mouse_button_up_callback(widget, internal_event->event);
-    }
-  }
+//   // this widget is target
+//   if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
+//   {
+//     if(widget->mouse_button_down_callback)
+//     {
+//       widget->mouse_button_down_callback(widget, internal_event->event);
+//     }
+//   }
+//   else
+//   {
+//     if(widget->mouse_button_up_callback)
+//     {
+//       widget->mouse_button_up_callback(widget, internal_event->event);
+//     }
+//   }
 
-  if(widget->context->active_draggable_widget &&
-     widget->context->active_draggable_widget == widget)
-  {
-    // this widget is the scrollbar widget
-    // consuming mouse button events
-    // no use of bubbling up these events
-    return ok(result_bool, true);
-  }
+//   if(widget->context->active_draggable_widget &&
+//      widget->context->active_draggable_widget == widget)
+//   {
+//     // this widget is the scrollbar widget
+//     // consuming mouse button events
+//     // no use of bubbling up these events
+//     return ok(result_bool, true);
+//   }
 
-  if(widget->context->overlay_widget &&
-     widget->context->overlay_widget == widget)
-  {
-    // this widget is the overlay widget
-    // no use of bubbling up these events
-    return ok(result_bool, true);
-  }
+//   if(widget->context->overlay_widget &&
+//      widget->context->overlay_widget == widget)
+//   {
+//     // this widget is the overlay widget
+//     // no use of bubbling up these events
+//     return ok(result_bool, true);
+//   }
 
-  if(!widget->parent)
-  {
-    return ok(result_bool, true);
-  }
+//   if(!widget->parent)
+//   {
+//     return ok(result_bool, true);
+//   }
 
-  // bubbling up
-  internal_event->state = BUBBLING_UP;
+//   // bubbling up
+//   internal_event->state = BUBBLING_UP;
 
-  return widget->parent->internal_mouse_button_callback(widget->parent,
-                                                        internal_event);
-}
+//   return widget->parent->internal_mouse_button_callback(widget->parent,
+//                                                         internal_event);
+// }
 
-result_bool default_internal_mouse_scroll_callback(
-  base_widget* widget, internal_mouse_scroll_event* internal_event)
-{
-  if(!widget)
-  {
-    return error(result_bool,
-                 "Cannot process internal mouse scroll callback, with widget "
-                 "pointing to NULL!");
-  }
+// result_bool default_internal_mouse_scroll_callback(
+//   base_widget* widget, internal_mouse_scroll_event* internal_event)
+// {
+//   if(!widget)
+//   {
+//     return error(result_bool,
+//                  "Cannot process internal mouse scroll callback, with widget "
+//                  "pointing to NULL!");
+//   }
 
-  // mouse scroll event has no bubbling phase
-  // so direclty call the callback if present on this widget
+//   // mouse scroll event has no bubbling phase
+//   // so direclty call the callback if present on this widget
 
-  if(widget->mouse_scroll_callback)
-  {
-    return ok(result_bool,
-              widget->mouse_scroll_callback(widget, internal_event->event));
-  }
+//   if(widget->mouse_scroll_callback)
+//   {
+//     return ok(result_bool,
+//               widget->mouse_scroll_callback(widget, internal_event->event));
+//   }
 
-  return ok(result_bool, false);
-}
+//   return ok(result_bool, false);
+// }
 
 //////////////////////////////////////////////////////////
 /// Common functions implementation
@@ -1738,4 +1738,378 @@ result_base_widget_ptr common_internal_mark_need_resizing(base_widget* widget,
   }
 
   return ok(result_base_widget_ptr, widget);
+}
+
+result_bool
+common_internal_mouse_button(base_widget* widget,
+                             internal_mouse_button_event* internal_event) {
+  if(!widget)
+  {
+    return error(result_bool,
+                 "Cannot process internal mouse button callback, with widget "
+                 "pointing to NULL!");
+  }
+
+  if(internal_event->state == BUBBLING_UP)
+  {
+    // call callbacks if present
+    if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
+    {
+      if(widget->mouse_button_down_callback)
+      {
+        widget->mouse_button_down_callback(widget, internal_event->event);
+      }
+    }
+    else
+    {
+      if(widget->mouse_button_up_callback)
+      {
+        widget->mouse_button_up_callback(widget, internal_event->event);
+      }
+    }
+
+    // return if parent doesn't exist (root element)
+    if(!widget->parent)
+    {
+      return ok(result_bool, true);
+    }
+
+    // still bubble up if parent exists
+    return common_internal_mouse_button(widget->parent,
+                                                          internal_event);
+  }
+
+  // this widget is target
+  if(internal_event->event.button_state == MOUSE_BUTTON_DOWN)
+  {
+    if(widget->mouse_button_down_callback)
+    {
+      widget->mouse_button_down_callback(widget, internal_event->event);
+    }
+  }
+  else
+  {
+    if(widget->mouse_button_up_callback)
+    {
+      widget->mouse_button_up_callback(widget, internal_event->event);
+    }
+  }
+
+  if(widget->context->active_draggable_widget &&
+     widget->context->active_draggable_widget == widget)
+  {
+    // this widget is the scrollbar widget
+    // consuming mouse button events
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(widget->context->overlay_widget &&
+     widget->context->overlay_widget == widget)
+  {
+    // this widget is the overlay widget
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(!widget->parent)
+  {
+    return ok(result_bool, true);
+  }
+
+  // bubbling up
+  internal_event->state = BUBBLING_UP;
+
+  return common_internal_mouse_button(widget->parent,
+                                                        internal_event);
+}
+result_bool
+common_internal_mouse_scroll(base_widget* widget,
+                             internal_mouse_scroll_event* internal_event) {
+  if(!widget)
+  {
+    return error(result_bool,
+                 "Cannot process internal mouse scroll callback, with widget "
+                 "pointing to NULL!");
+  }
+
+  // mouse scroll event has no bubbling phase
+  // so direclty call the callback if present on this widget
+
+  if(widget->mouse_scroll_callback)
+  {
+    return ok(result_bool,
+              widget->mouse_scroll_callback(widget, internal_event->event));
+  }
+
+  return ok(result_bool, false);
+}
+
+result_void common_internal_relayout(const base_widget* widget) {
+  if(!widget->visible)
+  {
+    // avoiding calculations when widget is not visible
+    return ok_void();
+  }
+
+  if(widget->type == FLEX_ITEM)
+  {
+    return error(
+      result_void,
+      "Should not call internal relayout callback on FLEX_ITEM widget!");
+  }
+
+  uint16 main_axis_length =
+    widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW ? widget->w
+                                                                   : widget->h;
+  uint16 cross_axis_length =
+    widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW ? widget->h
+                                                                   : widget->w;
+
+  uint16 needed_main_axis_length = 0, needed_cross_axis_length = 0;
+  uint16 total_flex_grow = 0, total_flex_shrink = 0;
+
+  base_widget_child_node* node = widget->children_head;
+  while(node)
+  {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      needed_main_axis_length += node->child->w;
+      needed_cross_axis_length = max(needed_cross_axis_length, node->child->h);
+    }
+    else
+    {
+      needed_main_axis_length += node->child->h;
+      needed_cross_axis_length = max(needed_cross_axis_length, node->child->w);
+    }
+    needed_main_axis_length += widget->flexbox_data.container.gap;
+    total_flex_grow += node->child->type == FLEX_CONTAINER
+                         ? node->child->flexbox_data.container.flex_grow
+                         : node->child->flexbox_data.item.flex_grow;
+    total_flex_shrink += node->child->type == FLEX_CONTAINER
+                           ? node->child->flexbox_data.container.flex_shrink
+                           : node->child->flexbox_data.item.flex_shrink;
+    node = node->next;
+  }
+  needed_main_axis_length -= widget->flexbox_data.container.gap;
+
+  debug("Needed main, cross axes lengths: %d, %d",
+        needed_main_axis_length,
+        needed_cross_axis_length);
+
+  // adjusting sizing in main axis
+  int16 remaining_main_axis_length = main_axis_length - needed_main_axis_length;
+  if(remaining_main_axis_length > 0 && total_flex_grow > 0)
+  {
+    // share remaining space according to flex-grow of each child.
+    node = widget->children_head;
+    while(node)
+    {
+      // avoiding invisible children in layout tree
+      if(!node->child->visible)
+      {
+        node = node->next;
+        continue;
+      }
+
+      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      {
+        node->child->w += ((node->child->type == FLEX_CONTAINER
+                              ? node->child->flexbox_data.container.flex_grow
+                              : node->child->flexbox_data.item.flex_grow) /
+                           total_flex_grow) *
+                          remaining_main_axis_length;
+      }
+      else
+      {
+        node->child->h += ((node->child->type == FLEX_CONTAINER
+                              ? node->child->flexbox_data.container.flex_grow
+                              : node->child->flexbox_data.item.flex_grow) /
+                           total_flex_grow) *
+                          remaining_main_axis_length;
+      }
+      node = node->next;
+    }
+  }
+  else if(remaining_main_axis_length < 0 && total_flex_shrink > 0)
+  {
+    // acquire needed space by shrinking children according
+    // to their flex-shrink
+    node = widget->children_head;
+    while(node)
+    {
+      // avoiding invisible children in layout tree
+      if(!node->child->visible)
+      {
+        node = node->next;
+        continue;
+      }
+
+      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      {
+        node->child->w += ((node->child->type == FLEX_CONTAINER
+                              ? node->child->flexbox_data.container.flex_shrink
+                              : node->child->flexbox_data.item.flex_shrink) /
+                           total_flex_shrink) *
+                          remaining_main_axis_length;
+      }
+      else
+      {
+        node->child->h += ((node->child->type == FLEX_CONTAINER
+                              ? node->child->flexbox_data.container.flex_shrink
+                              : node->child->flexbox_data.item.flex_shrink) /
+                           total_flex_shrink) *
+                          remaining_main_axis_length;
+      }
+      node = node->next;
+    }
+  }
+
+  // adjusting sizing in cross axis
+  node = widget->children_head;
+  while(node)
+  {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
+    flex_cross_axis_sizing cross_axis_sizing =
+      node->child->type == FLEX_CONTAINER
+        ? node->child->flexbox_data.container.cross_axis_sizing
+        : node->child->flexbox_data.item.cross_axis_sizing;
+
+    if(cross_axis_sizing == CROSS_AXIS_SIZING_FIT_CONTENT)
+    {
+      node = node->next;
+      continue;
+    }
+
+    // expand child widget's width or height to cross-axis length
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      debug("Height expanded!");
+      node->child->h = cross_axis_length;
+    }
+    else
+    {
+      debug("Width expanded!");
+      node->child->w = cross_axis_length;
+    }
+
+    node = node->next;
+  }
+
+  // assigning positions
+  int16 x = widget->x, y = widget->y;
+
+  // justify-content flex-align
+  switch(widget->flexbox_data.container.justify_content)
+  {
+  case JUSTIFY_CONTENT_START: {
+    // do nothing
+    break;
+  }
+  case JUSTIFY_CONTENT_CENTER: {
+    x += remaining_main_axis_length / 2;
+    break;
+  }
+  case JUSTIFY_CONTENT_END: {
+    x += remaining_main_axis_length;
+    break;
+  }
+  case JUSTIFY_CONTENT_SPACE_BETWEEN: {
+    return error(result_void, "flex-align: space-between not implemented yet!");
+  }
+  case JUSTIFY_CONTENT_SPACE_AROUND: {
+    return error(result_void, "flex-align: space-around not implemented yet!");
+  }
+  case JUSTIFY_CONTENT_SPACE_EVENLY: {
+    return error(result_void, "flex-align: space-evenly not implemented yet!");
+  }
+  default:
+    break;
+  }
+
+  node = widget->children_head;
+  while(node)
+  {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
+    debug("assigning positions x, y: %d, %d", x, y);
+    node->child->x = x;
+
+    // flex-align in cross-axis
+    switch(widget->flexbox_data.container.align_items)
+    {
+    case ALIGN_ITEMS_START: {
+      node->child->y = y;
+      break;
+    }
+    case ALIGN_ITEMS_CENTER: {
+      uint16 remaining_space = cross_axis_length - node->child->h;
+      node->child->y = y + (remaining_space / 2);
+      break;
+    }
+    case ALIGN_ITEMS_END: {
+      uint16 remaining_space = cross_axis_length - node->child->h;
+      node->child->y = y + remaining_space;
+      break;
+    }
+    default:
+      break;
+    }
+
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      x += node->child->w + widget->flexbox_data.container.gap;
+    }
+    else
+    {
+      y += node->child->h + widget->flexbox_data.container.gap;
+    }
+    node = node->next;
+  }
+
+  // calling re-layout on children which are container widgets
+  node = widget->children_head;
+  while(node)
+  {
+    // avoiding invisible children in layout tree
+    if(!node->child->visible)
+    {
+      node = node->next;
+      continue;
+    }
+
+    if(node->child->type == FLEX_CONTAINER)
+    {
+      if(node->child->pre_internal_relayout_hook)
+      {
+        node->child->pre_internal_relayout_hook(node->child);
+      }
+      common_internal_relayout(node->child);
+    }
+    node = node->next;
+  }
+
+  return ok_void();
+}
+
+result_bool common_internal_adjust_layout(base_widget* widget) {
+
 }

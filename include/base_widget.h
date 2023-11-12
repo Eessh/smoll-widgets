@@ -313,16 +313,16 @@ struct base_widget
   ///
   ///        TODO: Remove this function from base widget in favour of
   ///        common internal functions.
-  result_bool (*internal_mouse_button_callback)(base_widget*,
-                                                internal_mouse_button_event*);
+  // result_bool (*internal_mouse_button_callback)(base_widget*,
+  //                                               internal_mouse_button_event*);
 
   /// @brief Internal callback for processing internal mouse scroll event.
   ///        These internal callbacks are internally handled by base widget.
   ///
   ///        TODO: Remove this function from base widget in favour of
   ///        common internal functions.
-  result_bool (*internal_mouse_scroll_callback)(base_widget*,
-                                                internal_mouse_scroll_event*);
+  // result_bool (*internal_mouse_scroll_callback)(base_widget*,
+  //                                               internal_mouse_scroll_event*);
 
   /// @brief Derived widget's callback for mouse button down callback.
   ///        It's the derived widget's responsibility for using these
