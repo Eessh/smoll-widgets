@@ -102,7 +102,7 @@ result_void internal_context_destroy(internal_context* context)
 
   // ignoring errors while freeing UI tree
   // result_void _ = recursively_free_ui_tree(context->root);
-  context->root->internal_free_callback(context->root);
+  common_internal_free(context->root);
 
   free(context->font);
 
@@ -408,7 +408,7 @@ internal_context_process_mouse_motion_event(internal_context* context,
                  "internal context!");
   }
 
-  event->target->internal_mouse_motion_callback(event->target, event);
+  common_internal_mouse_motion(event->target, event);
 
   return ok_void();
 }

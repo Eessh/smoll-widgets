@@ -294,7 +294,7 @@ struct base_widget
   ///
   ///        TODO: Remove this function from base widget in favour of
   ///        common internal functions.
-  void (*internal_free_callback)(base_widget* widget);
+  // void (*internal_free_callback)(base_widget* widget);
 
   /// @brief Internal callback for freeing derived widget (if exists) specific
   ///        fields. This should be implemented by all derived widgets.
@@ -305,8 +305,8 @@ struct base_widget
   ///
   ///        TODO: Remove this function from base widget in favour of
   ///        common internal functions.
-  result_bool (*internal_mouse_motion_callback)(base_widget*,
-                                                internal_mouse_motion_event*);
+  // result_bool (*internal_mouse_motion_callback)(base_widget*,
+  //                                               internal_mouse_motion_event*);
 
   /// @brief Internal callback for processing internal mouse button event.
   ///        These internal callbacks are internally handled by base widget.

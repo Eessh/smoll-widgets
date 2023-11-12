@@ -49,14 +49,14 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget);
 /// @brief Default callback function for internal free callback.
 /// @param widget pointer to base widget.
 /// @return Void.
-static void default_internal_free_callback(base_widget* widget);
+// static void default_internal_free_callback(base_widget* widget);
 
 /// @brief Default callback function for internal mouse motion callback.
 /// @param widget pointer to base widget.
 /// @param internal_event pointer to internal mouse motion event.
 /// @return Bool result.
-static result_bool default_internal_mouse_motion_callback(
-  base_widget* widget, internal_mouse_motion_event* internal_event);
+// static result_bool default_internal_mouse_motion_callback(
+//   base_widget* widget, internal_mouse_motion_event* internal_event);
 
 /// @brief Default callback function for internal mouse button callback.
 /// @param widget pointer to base widget.
@@ -164,11 +164,11 @@ result_base_widget_ptr base_widget_new(widget_type type)
   widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
 
-  widget->internal_free_callback = default_internal_free_callback;
+  // widget->internal_free_callback = default_internal_free_callback;
   widget->internal_derived_free_callback = NULL;
 
-  widget->internal_mouse_motion_callback =
-    default_internal_mouse_motion_callback;
+  // widget->internal_mouse_motion_callback =
+  //   default_internal_mouse_motion_callback;
   widget->internal_mouse_button_callback =
     default_internal_mouse_button_callback;
   widget->internal_mouse_scroll_callback =
@@ -1131,118 +1131,118 @@ static result_bool default_internal_adjust_layout_callback(base_widget* widget)
   return ok(result_bool, true);
 }
 
-static void default_internal_free_callback(base_widget* widget)
-{
-  if(!widget)
-  {
-    return;
-  }
+// static void default_internal_free_callback(base_widget* widget)
+// {
+//   if(!widget)
+//   {
+//     return;
+//   }
 
-  // freeing children widgets (not children nodes, node will be free later
-  // in base_widget_free)
-  base_widget_child_node* node = widget->children_head;
-  while(node)
-  {
-    node->child->internal_free_callback(node->child);
-    node = node->next;
-  }
+//   // freeing children widgets (not children nodes, node will be free later
+//   // in base_widget_free)
+//   base_widget_child_node* node = widget->children_head;
+//   while(node)
+//   {
+//     node->child->internal_free_callback(node->child);
+//     node = node->next;
+//   }
 
-  // freeing derived widget fields
-  if(widget->derived && widget->internal_derived_free_callback)
-  {
-    widget->internal_derived_free_callback(widget);
-  }
+//   // freeing derived widget fields
+//   if(widget->derived && widget->internal_derived_free_callback)
+//   {
+//     widget->internal_derived_free_callback(widget);
+//   }
 
-  base_widget_free(widget);
-}
+//   base_widget_free(widget);
+// }
 
-result_bool default_internal_mouse_motion_callback(
-  base_widget* widget, internal_mouse_motion_event* internal_event)
-{
-  if(!widget)
-  {
-    return error(result_bool,
-                 "Cannot process internal mouse motion callback on NULL "
-                 "pointed base widget!");
-  }
+// result_bool default_internal_mouse_motion_callback(
+//   base_widget* widget, internal_mouse_motion_event* internal_event)
+// {
+//   if(!widget)
+//   {
+//     return error(result_bool,
+//                  "Cannot process internal mouse motion callback on NULL "
+//                  "pointed base widget!");
+//   }
 
-  if(internal_event->state == BUBBLING_UP)
-  {
-    // call callbacks if present
-    // setting context's mouse focused widget has already been done by
-    // some child widget down somewhere and set state to BUBBLING_UP.
-    if(widget->mouse_enter_callback)
-    {
-      widget->mouse_enter_callback(widget, internal_event->event);
-    }
+//   if(internal_event->state == BUBBLING_UP)
+//   {
+//     // call callbacks if present
+//     // setting context's mouse focused widget has already been done by
+//     // some child widget down somewhere and set state to BUBBLING_UP.
+//     if(widget->mouse_enter_callback)
+//     {
+//       widget->mouse_enter_callback(widget, internal_event->event);
+//     }
 
-    // return if parent doesn't exist (root element)
-    if(!widget->parent)
-    {
-      return ok(result_bool, true);
-    }
+//     // return if parent doesn't exist (root element)
+//     if(!widget->parent)
+//     {
+//       return ok(result_bool, true);
+//     }
 
-    // still bubble up if parent exists
-    return widget->parent->internal_mouse_motion_callback(widget->parent,
-                                                          internal_event);
-  }
+//     // still bubble up if parent exists
+//     return widget->parent->internal_mouse_motion_callback(widget->parent,
+//                                                           internal_event);
+//   }
 
-  // this widget is target
-  // setting context's mouse focused widget and calling mouse enter callback
-  if(widget->context->mouse_focused_widget != widget)
-  {
-    // should call mouse leave on previously mouse focused widget
-    if(widget->context->mouse_focused_widget &&
-       widget->context->mouse_focused_widget->mouse_leave_callback)
-    {
-      widget->context->mouse_focused_widget->mouse_leave_callback(
-        widget->context->mouse_focused_widget, internal_event->event);
-    }
+//   // this widget is target
+//   // setting context's mouse focused widget and calling mouse enter callback
+//   if(widget->context->mouse_focused_widget != widget)
+//   {
+//     // should call mouse leave on previously mouse focused widget
+//     if(widget->context->mouse_focused_widget &&
+//        widget->context->mouse_focused_widget->mouse_leave_callback)
+//     {
+//       widget->context->mouse_focused_widget->mouse_leave_callback(
+//         widget->context->mouse_focused_widget, internal_event->event);
+//     }
 
-    widget->context->mouse_focused_widget = widget;
-    // should call mouse enter on this widget
-    if(widget->mouse_enter_callback)
-    {
-      widget->mouse_enter_callback(widget, internal_event->event);
-    }
-  }
-  else
-  {
-    // call target widget's mouse motion callback if present
-    if(widget->mouse_move_callback)
-    {
-      widget->mouse_move_callback(widget, internal_event->event);
-    }
-  }
+//     widget->context->mouse_focused_widget = widget;
+//     // should call mouse enter on this widget
+//     if(widget->mouse_enter_callback)
+//     {
+//       widget->mouse_enter_callback(widget, internal_event->event);
+//     }
+//   }
+//   else
+//   {
+//     // call target widget's mouse motion callback if present
+//     if(widget->mouse_move_callback)
+//     {
+//       widget->mouse_move_callback(widget, internal_event->event);
+//     }
+//   }
 
-  if(widget->context->active_draggable_widget &&
-     widget->context->active_draggable_widget == widget)
-  {
-    // this widget is the scrollbar widget
-    // consuming mouse motion events
-    // no use of bubbling up these events
-    return ok(result_bool, true);
-  }
+//   if(widget->context->active_draggable_widget &&
+//      widget->context->active_draggable_widget == widget)
+//   {
+//     // this widget is the scrollbar widget
+//     // consuming mouse motion events
+//     // no use of bubbling up these events
+//     return ok(result_bool, true);
+//   }
 
-  if(widget->context->overlay_widget &&
-     widget->context->overlay_widget == widget)
-  {
-    // this widget is the overlay widget
-    // no use of bubbling up these events
-    return ok(result_bool, true);
-  }
+//   if(widget->context->overlay_widget &&
+//      widget->context->overlay_widget == widget)
+//   {
+//     // this widget is the overlay widget
+//     // no use of bubbling up these events
+//     return ok(result_bool, true);
+//   }
 
-  if(!widget->parent)
-  {
-    return ok(result_bool, true);
-  }
+//   if(!widget->parent)
+//   {
+//     return ok(result_bool, true);
+//   }
 
-  // bubbling up
-  internal_event->state = BUBBLING_UP;
+//   // bubbling up
+//   internal_event->state = BUBBLING_UP;
 
-  return widget->parent->internal_mouse_motion_callback(widget->parent,
-                                                        internal_event);
-}
+//   return widget->parent->internal_mouse_motion_callback(widget->parent,
+//                                                         internal_event);
+// }
 
 result_bool default_internal_mouse_button_callback(
   base_widget* widget, internal_mouse_button_event* internal_event)
@@ -1443,4 +1443,114 @@ result_void common_internal_calculate_size(base_widget* widget) {
   }
 
   return ok_void();
+}
+
+void common_internal_free(base_widget* widget) {
+  if(!widget)
+  {
+    return;
+  }
+
+  // freeing children widgets (not children nodes, node will be free later
+  // in base_widget_free)
+  base_widget_child_node* node = widget->children_head;
+  while(node)
+  {
+    common_internal_free(node->child);
+    node = node->next;
+  }
+
+  // freeing derived widget fields
+  if(widget->derived && widget->internal_derived_free_callback)
+  {
+    widget->internal_derived_free_callback(widget);
+  }
+
+  base_widget_free(widget);
+}
+
+result_bool common_internal_mouse_motion(base_widget* widget, internal_mouse_motion_event* internal_event) {
+  if(!widget)
+  {
+    return error(result_bool,
+                 "Cannot process internal mouse motion callback on NULL "
+                 "pointed base widget!");
+  }
+
+  if(internal_event->state == BUBBLING_UP)
+  {
+    // call callbacks if present
+    // setting context's mouse focused widget has already been done by
+    // some child widget down somewhere and set state to BUBBLING_UP.
+    if(widget->mouse_enter_callback)
+    {
+      widget->mouse_enter_callback(widget, internal_event->event);
+    }
+
+    // return if parent doesn't exist (root element)
+    if(!widget->parent)
+    {
+      return ok(result_bool, true);
+    }
+
+    // still bubble up if parent exists
+    return common_internal_mouse_motion(widget->parent,
+                                                          internal_event);
+  }
+
+  // this widget is target
+  // setting context's mouse focused widget and calling mouse enter callback
+  if(widget->context->mouse_focused_widget != widget)
+  {
+    // should call mouse leave on previously mouse focused widget
+    if(widget->context->mouse_focused_widget &&
+       widget->context->mouse_focused_widget->mouse_leave_callback)
+    {
+      widget->context->mouse_focused_widget->mouse_leave_callback(
+        widget->context->mouse_focused_widget, internal_event->event);
+    }
+
+    widget->context->mouse_focused_widget = widget;
+    // should call mouse enter on this widget
+    if(widget->mouse_enter_callback)
+    {
+      widget->mouse_enter_callback(widget, internal_event->event);
+    }
+  }
+  else
+  {
+    // call target widget's mouse motion callback if present
+    if(widget->mouse_move_callback)
+    {
+      widget->mouse_move_callback(widget, internal_event->event);
+    }
+  }
+
+  if(widget->context->active_draggable_widget &&
+     widget->context->active_draggable_widget == widget)
+  {
+    // this widget is the scrollbar widget
+    // consuming mouse motion events
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(widget->context->overlay_widget &&
+     widget->context->overlay_widget == widget)
+  {
+    // this widget is the overlay widget
+    // no use of bubbling up these events
+    return ok(result_bool, true);
+  }
+
+  if(!widget->parent)
+  {
+    return ok(result_bool, true);
+  }
+
+  // bubbling up
+  internal_event->state = BUBBLING_UP;
+
+  return common_internal_mouse_motion(widget->parent,
+                                                        internal_event);
 }
