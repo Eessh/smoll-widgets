@@ -508,6 +508,7 @@ result_command_ptr command_buffer_get_next_command(command_buffer* buffer)
   }
 
   command_node* cmd_node = buffer->head;
+  command* cmd = cmd_node->cmd;
   buffer->head = cmd_node->next;
   buffer->length -= 1;
 
@@ -515,7 +516,7 @@ result_command_ptr command_buffer_get_next_command(command_buffer* buffer)
   command_node_shallow_free(cmd_node);
 
   // need to free cmd externally
-  return ok(result_command_ptr, cmd_node->cmd);
+  return ok(result_command_ptr, cmd);
 }
 
 result_void command_buffer_clear_commands(command_buffer* buffer)
