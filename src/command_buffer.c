@@ -202,6 +202,19 @@ result_void command_node_free(command_node* node)
   return ok_void();
 }
 
+result_void command_node_shallow_free(command_node* node)
+{
+  if(!node)
+  {
+    return error(result_void,
+                 "Attempt to shallow-free a NULL pointing command node!");
+  }
+
+  free(node);
+
+  return ok_void();
+}
+
 result_command_buffer_ptr command_buffer_new()
 {
   command_buffer* buffer = (command_buffer*)calloc(1, sizeof(command_buffer));
@@ -494,12 +507,15 @@ result_command_ptr command_buffer_get_next_command(command_buffer* buffer)
                  "Command buffer is empty, cannot get next command!");
   }
 
-  command* cmd = buffer->head->cmd;
-  buffer->head = buffer->head->next;
+  command_node* cmd_node = buffer->head;
+  buffer->head = cmd_node->next;
   buffer->length -= 1;
 
+  // shallow freeing command node
+  command_node_shallow_free(cmd_node);
+
   // need to free cmd externally
-  return ok(result_command_ptr, cmd);
+  return ok(result_command_ptr, cmd_node->cmd);
 }
 
 result_void command_buffer_clear_commands(command_buffer* buffer)
@@ -542,6 +558,7 @@ result_void command_buffer_clear_commands(command_buffer* buffer)
 
   buffer->head = NULL;
   buffer->tail = NULL;
+  buffer->length = 0;
 
   return ok_void();
 }
