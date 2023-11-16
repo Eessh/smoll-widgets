@@ -42,4 +42,9 @@ typedef struct mouse_scroll_event
   float32 delta_x, delta_y;
 } mouse_scroll_event;
 
+typedef struct clock_tick_event
+{
+  uint64 clock_ticks;
+} clock_tick_event;
+
 #endif
