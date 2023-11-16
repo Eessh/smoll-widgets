@@ -210,58 +210,9 @@ struct base_widget
   internal_context* context;
 
   /**
-   * Internal callback for marking a widget's `need_resizing` flag to `true`
-   * if it can't expand to the given deltas.
-   * 
-   * Should be called by the widget in which the change of size has occurred,
-   * it will go on marking the parent widgets until it met the constraints.
-   * 
-   * This is an internal callback, override this with your own implementation
-   * only if you know what you are doing!
-   *
-   * TODO: Remove this function from base widget in favour of
-   * common internal functions.
+   * Hook function, will be called before `internal_relayout()` is called.
    */
-  // result_base_widget_ptr (*internal_mark_need_resizing)(base_widget*,
-  //                                                       int16,
-  //                                                       int16);
-
-  /**
-   * Internal callback for calculating minimum size needed for the widget.
-   * 
-   * Should be called by the widget in which the change of size has occurred
-   * (after `internal_mark_need_resizing` pass).
-   * 
-   * This is an internal callback, override this with your own implementation
-   * only if you know what you are doing!
-   *
-   * TODO: Remove this function from base widget in favour of
-   * common internal functions.
-   */
-  // result_void (*internal_calculate_size)(base_widget*);
-
-  /**
-   * Internal callback for re-calculating layout for the widget.
-   * 
-   * Should be called by the widget in which the change of size has occurred
-   * (after `internal_mark_need_resizing` and `internal_calculate_size` pass)
-   * 
-   * This is an internal callback, override this with your own implementation
-   * only if you know what you are doing!
-   *
-   * TODO: Remove this function from base widget in favour of
-   * common internal functions.
-   */
-  // result_void (*internal_relayout)(const base_widget*);
-
   result_void (*pre_internal_relayout_hook)(const base_widget*);
-
-  /// @brief Internal callback for getting bounding rectangle of widget.
-  ///        Will be handy when layouting.
-  ///
-  ///        TODO: Remove this function from base widget in favour of
-  ///        common internal functions.
-  // rect (*internal_get_bounding_rect_callback)(const base_widget*);
 
   /**
    * @brief Internal callback for getting active background of this widget.
@@ -276,53 +227,15 @@ struct base_widget
   /// @brief Internal callback for adjusting layout of this widget.
   result_sizing_delta (*internal_fit_layout_callback)(base_widget*, bool);
 
-  /// @brief Internal callback for adjusting layout and sizing of this widget,
-  ///        and automatically calling this callback on parent widgets
-  ///        if needs resizing.
-  ///
-  ///        TODO: Remove this function from base widget in favour of
-  ///        common internal functions.
-  // result_bool (*internal_adjust_layout_callback)(base_widget*);
-
   /// @brief Internal callback for re-assigning positions to all children.
   result_bool (*internal_assign_positions)(base_widget*);
 
   /// @brief Internal callback for rendering this widget.
   result_bool (*internal_render_callback)(const base_widget*);
 
-  /// @brief Internal callback for freeing UI tree recursively.
-  ///
-  ///        TODO: Remove this function from base widget in favour of
-  ///        common internal functions.
-  // void (*internal_free_callback)(base_widget* widget);
-
   /// @brief Internal callback for freeing derived widget (if exists) specific
   ///        fields. This should be implemented by all derived widgets.
   void (*internal_derived_free_callback)(base_widget* widget);
-
-  /// @brief Internal callback for processing internal mouse motion event.
-  ///        These internal callbacks are internally handled by base widget.
-  ///
-  ///        TODO: Remove this function from base widget in favour of
-  ///        common internal functions.
-  // result_bool (*internal_mouse_motion_callback)(base_widget*,
-  //                                               internal_mouse_motion_event*);
-
-  /// @brief Internal callback for processing internal mouse button event.
-  ///        These internal callbacks are internally handled by base widget.
-  ///
-  ///        TODO: Remove this function from base widget in favour of
-  ///        common internal functions.
-  // result_bool (*internal_mouse_button_callback)(base_widget*,
-  //                                               internal_mouse_button_event*);
-
-  /// @brief Internal callback for processing internal mouse scroll event.
-  ///        These internal callbacks are internally handled by base widget.
-  ///
-  ///        TODO: Remove this function from base widget in favour of
-  ///        common internal functions.
-  // result_bool (*internal_mouse_scroll_callback)(base_widget*,
-  //                                               internal_mouse_scroll_event*);
 
   /// @brief Derived widget's callback for mouse button down callback.
   ///        It's the derived widget's responsibility for using these
@@ -339,6 +252,9 @@ struct base_widget
   ///        callbacks appropriately.
   bool (*mouse_enter_callback)(base_widget*, const mouse_motion_event);
 
+  /// @brief Derived widget's callback for mouse move callback.
+  ///        It's the derived widget's responsibility for using these
+  ///        callbacks appropriately.
   bool (*mouse_move_callback)(base_widget* widget, const mouse_motion_event);
 
   /// @brief Derived widget's callback for mouse leave callback.
@@ -362,22 +278,77 @@ struct base_widget_child_node
   base_widget_child_node* next;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// * Common Functions
 /// Common functions used by widgets
 /// moved from base_widget to here, as they take up memory for every widget.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Internal callback for marking a widget's `need_resizing` flag to `true`
+ * if it can't expand to the given deltas.
+ *
+ * Should be called by the widget in which the change of size has occurred,
+ * it will go on marking the parent widgets until it met the constraints.
+ */
 result_base_widget_ptr common_internal_mark_need_resizing(base_widget* widget,
                                                           int16 delta_x,
                                                           int16 delta_y);
+
+/**
+ * Internal callback for calculating minimum size needed for the widget.
+ *
+ * Should be called by the widget in which the change of size has occurred
+ * (after `internal_mark_need_resizing` pass).
+ */
 result_void common_internal_calculate_size(base_widget* widget);
+
+/**
+ * Internal callback for re-calculating layout for the widget.
+ *
+ * Should be called by the widget in which the change of size has occurred
+ * (after `internal_mark_need_resizing` and `internal_calculate_size` pass)
+ */
 result_void common_internal_relayout(const base_widget* widget);
+
+/**
+ * Internal callback for getting bounding rectangle of widget.
+ * Will be handy when layouting.
+ */
 rect common_internal_get_bounding_rect(const base_widget* widget);
+
+/**
+ * Internal callback for adjusting layout and sizing of this widget,
+ * and automatically calling this callback on parent widgets
+ * if needs resizing.
+ */
 result_bool common_internal_adjust_layout(base_widget* widget);
+
+/**
+ * Internal callback for freeing UI tree recursively.
+ */
 void common_internal_free(base_widget* widget);
+
+/**
+ * Internal callback for processing internal mouse motion event.
+ * These internal callbacks are internally handled by base widget.
+ */
 result_bool
 common_internal_mouse_motion(base_widget* widget,
                              internal_mouse_motion_event* internal_event);
+
+/**
+ * Internal callback for processing internal mouse button event.
+ * These internal callbacks are internally handled by base widget.
+ */
 result_bool
 common_internal_mouse_button(base_widget* widget,
                              internal_mouse_button_event* internal_event);
+
+/**
+ * Internal callback for processing internal mouse scroll event.
+ * These internal callbacks are internally handled by base widget.
+ */
 result_bool
 common_internal_mouse_scroll(base_widget* widget,
                              internal_mouse_scroll_event* internal_event);
@@ -463,7 +434,8 @@ result_void base_widget_remove_child(base_widget* base, base_widget* child);
 result_void base_widget_free(base_widget* widget);
 
 ///////////////////////////////////////////////////////////////////////////////
-/// * Helper functions for setting widget's properties
+/// * Helper Functions
+/// For setting widget's properties.
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @brief Sets visibility of widget.
