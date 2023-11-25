@@ -343,7 +343,10 @@ result_base_widget_ptr recursive_deepest_widget_with_point_and_event_callbacks(
       {
         return __;
       }
+      if(__.value)
+      {
       return ok(result_base_widget_ptr, __.value);
+      }
     }
     node = node->next;
   }
