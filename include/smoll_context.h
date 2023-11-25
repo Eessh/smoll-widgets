@@ -109,7 +109,7 @@ result_void smoll_context_initial_render(smoll_context* context);
 /// @code smoll_context_initial_render() @endcode
 /// @param context pointer to smoll context.
 /// @return Void result.
-result_void smoll_context_initial_fit_layout(smoll_context* context);
+// result_void smoll_context_initial_fit_layout(smoll_context* context);
 
 result_void smoll_context_initialize_layout(smoll_context* context);
 

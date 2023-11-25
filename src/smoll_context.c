@@ -151,6 +151,10 @@ result_void smoll_context_process_mouse_motion_event(smoll_context* context,
                  "Cannot process mouse motion event on NULL pointed context!");
   }
 
+  // tracking mouse coords
+  context->internal_ctx->mouse_x = event.x;
+  context->internal_ctx->mouse_y = event.y;
+
   // if internal context has active scrollbar widget
   // forward all mouse motion & mouse button events to that widget
   if(context->internal_ctx->active_draggable_widget)
@@ -358,29 +362,29 @@ result_void smoll_context_initial_render(smoll_context* context)
   return smoll_context_render(context);
 }
 
-result_void smoll_context_initial_fit_layout(smoll_context* context)
-{
-  if(!context)
-  {
-    return error(
-      result_void,
-      "Cannot perform initial UI layouting of context pointing to NULL!");
-  }
+// result_void smoll_context_initial_fit_layout(smoll_context* context)
+// {
+//   if(!context)
+//   {
+//     return error(
+//       result_void,
+//       "Cannot perform initial UI layouting of context pointing to NULL!");
+//   }
 
-  base_widget* root = context->internal_ctx->root;
+//   base_widget* root = context->internal_ctx->root;
 
-  if(root->internal_fit_layout_callback)
-  {
-    root->internal_fit_layout_callback(root, true);
-  }
+//   if(root->internal_fit_layout_callback)
+//   {
+//     root->internal_fit_layout_callback(root, true);
+//   }
 
-  if(root->internal_assign_positions)
-  {
-    root->internal_assign_positions(root);
-  }
+//   if(root->internal_assign_positions)
+//   {
+//     root->internal_assign_positions(root);
+//   }
 
-  return ok_void();
-}
+//   return ok_void();
+// }
 
 result_void smoll_context_initialize_layout(smoll_context* context)
 {
