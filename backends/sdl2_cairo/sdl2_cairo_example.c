@@ -4,6 +4,7 @@
 #include "../../include/widgets/button.h"
 #include "../../include/widgets/checkbox.h"
 #include "../../include/widgets/flex_view.h"
+#include "../../include/widgets/list_view.h"
 #include "../../include/widgets/progress_bar.h"
 // #include "../../include/widgets/split.h"
 #include "../../include/widgets/split_view.h"
@@ -97,23 +98,38 @@ int main()
   }
 
   // Creating flex-row view
-  flex_view* row_view = NULL;
+  // flex_view* row_view = NULL;
+  // {
+  //   result_flex_view_ptr _ =
+  //     flex_view_new_with_debug_name(NULL, FLEX_DIRECTION_ROW, "left-pane");
+  //   if(!_.ok)
+  //   {
+  //     printf("Error while creating flex-row view: %s", _.error);
+  //   }
+  //   row_view = _.value;
+  //   row_view->base->flexbox_data.container.flex_grow = 1;
+  //   row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
+  //   row_view->base->flexbox_data.container.justify_content =
+  //     JUSTIFY_CONTENT_START;
+  //   row_view->base->flexbox_data.container.cross_axis_sizing =
+  //     CROSS_AXIS_SIZING_EXPAND;
+  //   row_view->base->flexbox_data.container.gap = 10;
+  //   row_view->background = (color){128, 128, 128, 255};
+  // }
+
+  list_view* row_view = NULL;
   {
-    result_flex_view_ptr _ =
-      flex_view_new_with_debug_name(NULL, FLEX_DIRECTION_ROW, "left-pane");
+    result_list_view_ptr _ =
+      list_view_new_with_debug_name(NULL, "left-list-view");
     if(!_.ok)
     {
-      printf("Error while creating flex-row view: %s", _.error);
+      printf("Error while creating list-view: %s", _.error);
     }
     row_view = _.value;
-    row_view->base->flexbox_data.container.flex_grow = 1;
-    row_view->base->flexbox_data.container.align_items = ALIGN_ITEMS_CENTER;
-    row_view->base->flexbox_data.container.justify_content =
-      JUSTIFY_CONTENT_START;
     row_view->base->flexbox_data.container.cross_axis_sizing =
       CROSS_AXIS_SIZING_EXPAND;
+    row_view->base->flexbox_data.container.flex_grow = 1;
     row_view->base->flexbox_data.container.gap = 10;
-    row_view->background = (color){128, 128, 128, 255};
   }
 
   // Creating another flex view
@@ -239,6 +255,7 @@ int main()
     bar = _.value;
     bar->base->w = 200;
     bar->base->h = 20;
+    bar->base->debug_name = "progress-bar";
   }
 
   // Creating checkbox
