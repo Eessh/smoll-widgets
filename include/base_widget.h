@@ -215,6 +215,11 @@ struct base_widget
   result_void (*pre_internal_relayout_hook)(const base_widget*);
 
   /**
+   * Hook function, will be called after `internal_relayout()` is called.
+   */
+  result_void (*post_internal_relayout_hook)(const base_widget*);
+
+  /**
    * @brief Internal callback for getting active background of this widget.
    * @param widget pointer to widget's base.
    * @return Color struct.
@@ -228,7 +233,7 @@ struct base_widget
   result_sizing_delta (*internal_fit_layout_callback)(base_widget*, bool);
 
   /// @brief Internal callback for re-assigning positions to all children.
-  result_bool (*internal_assign_positions)(base_widget*);
+  // result_bool (*internal_assign_positions)(base_widget*);
 
   /// @brief Internal callback for rendering this widget.
   result_bool (*internal_render_callback)(const base_widget*);
