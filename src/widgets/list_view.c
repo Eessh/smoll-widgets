@@ -1,4 +1,5 @@
 #include "../../include/widgets/list_view.h"
+#include <math.h>
 #include <stdlib.h>
 #include "../../include/macros.h"
 
@@ -175,11 +176,11 @@ defualt_internal_post_relayout_hook(const base_widget* widget)
   list_view* view = (list_view*)widget->derived;
   float32 scroll_offset = view->private_data->scroll_offset;
 
-  if(abs(scroll_offset) < 1.0f)
+  if(fabsf(scroll_offset) < 1.0f)
   {
     trace("List-View(%s): scroll-offset < 1.0f, avoiding scrolling.",
           widget->debug_name);
-    scroll_offset = 0.0f;
+    view->private_data->scroll_offset = 0.0f;
     return ok_void();
   }
 
