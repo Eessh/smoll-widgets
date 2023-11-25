@@ -103,8 +103,9 @@ result_list_view_ptr list_view_new_with_debug_name(base_widget* parent_base,
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
+  trace("List-View(%s): internal-derived-free()", widget->debug_name);
+
   list_view* view = (list_view*)widget->derived;
-  info("List-View(%s): internal-derived-free()", view->base->debug_name);
 
   // freeing private data
   free(view->private_data);
@@ -131,8 +132,7 @@ static color default_internal_get_background_callback(const base_widget* widget)
 static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
-  list_view* view = (list_view*)widget->derived;
-  info("Flex-View(%s): internal-fit-layout()", view->base->debug_name);
+  trace("Flex-View(%s): internal-fit-layout()", widget->debug_name);
 
   if(call_on_children)
   {
