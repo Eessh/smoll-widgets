@@ -86,7 +86,7 @@ result_base_widget_ptr base_widget_new(widget_type type)
   widget->pre_internal_relayout_hook = NULL;
   widget->internal_get_background_callback = NULL;
   widget->internal_fit_layout_callback = NULL;
-  widget->internal_assign_positions = NULL;
+  // widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
 
   widget->internal_derived_free_callback = NULL;
@@ -1124,11 +1124,25 @@ result_void common_internal_relayout(const base_widget* widget)
     break;
   }
   case JUSTIFY_CONTENT_CENTER: {
-    x += remaining_main_axis_length / 2;
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      x += remaining_main_axis_length / 2;
+    }
+    else
+    {
+      y += remaining_main_axis_length / 2;
+    }
     break;
   }
   case JUSTIFY_CONTENT_END: {
-    x += remaining_main_axis_length;
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      x += remaining_main_axis_length;
+    }
+    else
+    {
+      y += remaining_main_axis_length;
+    }
     break;
   }
   case JUSTIFY_CONTENT_SPACE_BETWEEN: {
@@ -1155,23 +1169,53 @@ result_void common_internal_relayout(const base_widget* widget)
     }
 
     debug("assigning positions x, y: %d, %d", x, y);
-    node->child->x = x;
+    if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+    {
+      node->child->x = x;
+    }
+    else
+    {
+      node->child->y = y;
+    }
 
     // flex-align in cross-axis
     switch(widget->flexbox_data.container.align_items)
     {
     case ALIGN_ITEMS_START: {
-      node->child->y = y;
+      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      {
+        node->child->y = y;
+      }
+      else
+      {
+        node->child->x = x;
+      }
       break;
     }
     case ALIGN_ITEMS_CENTER: {
-      uint16 remaining_space = cross_axis_length - node->child->h;
-      node->child->y = y + (remaining_space / 2);
+      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      {
+        uint16 remaining_space = cross_axis_length - node->child->h;
+        node->child->y = y + (remaining_space / 2);
+      }
+      else
+      {
+        uint16 remaining_space = cross_axis_length - node->child->w;
+        node->child->x = x + (remaining_space / 2);
+      }
       break;
     }
     case ALIGN_ITEMS_END: {
-      uint16 remaining_space = cross_axis_length - node->child->h;
-      node->child->y = y + remaining_space;
+      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      {
+        uint16 remaining_space = cross_axis_length - node->child->h;
+        node->child->y = y + remaining_space;
+      }
+      else
+      {
+        uint16 remaining_space = cross_axis_length - node->child->w;
+        node->child->x = x + remaining_space;
+      }
       break;
     }
     default:
@@ -1207,6 +1251,10 @@ result_void common_internal_relayout(const base_widget* widget)
         node->child->pre_internal_relayout_hook(node->child);
       }
       common_internal_relayout(node->child);
+      if(node->child->post_internal_relayout_hook)
+      {
+        node->child->post_internal_relayout_hook(node->child);
+      }
     }
     node = node->next;
   }
@@ -1269,6 +1317,10 @@ result_bool common_internal_adjust_layout(base_widget* widget)
   }
   common_internal_relayout(ancestor);
   ancestor->internal_render_callback(ancestor);
+  if(ancestor->post_internal_relayout_hook)
+  {
+    ancestor->post_internal_relayout_hook(ancestor);
+  }
 
   return ok(result_bool, true);
 }
