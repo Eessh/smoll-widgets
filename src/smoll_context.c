@@ -361,30 +361,6 @@ result_void smoll_context_initial_render(smoll_context* context)
   return smoll_context_render(context);
 }
 
-// result_void smoll_context_initial_fit_layout(smoll_context* context)
-// {
-//   if(!context)
-//   {
-//     return error(
-//       result_void,
-//       "Cannot perform initial UI layouting of context pointing to NULL!");
-//   }
-
-//   base_widget* root = context->internal_ctx->root;
-
-//   if(root->internal_fit_layout_callback)
-//   {
-//     root->internal_fit_layout_callback(root, true);
-//   }
-
-//   if(root->internal_assign_positions)
-//   {
-//     root->internal_assign_positions(root);
-//   }
-
-//   return ok_void();
-// }
-
 result_void smoll_context_initialize_layout(smoll_context* context)
 {
   if(!context)
