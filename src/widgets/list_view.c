@@ -80,7 +80,7 @@ result_list_view_ptr list_view_new(base_widget* parent_base)
 
   view->background = (color){0, 0, 0, 255};
   view->private_data->scroll_offset = 0.0f;
-  view->private_data->scroll_acceleration = 50;
+  view->private_data->scroll_acceleration = 100;
 
   return ok(result_list_view_ptr, view);
 }
@@ -275,8 +275,6 @@ static bool default_mouse_scroll_callback(base_widget* widget,
     node->child->y += (int16)delta_y;
     node = node->next;
   }
-
-  // widget->post_internal_relayout_hook(widget);
 
   result_bool _ = widget->internal_render_callback(widget);
   if(!_.ok)

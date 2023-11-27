@@ -61,7 +61,6 @@ result_flex_view_ptr flex_view_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  // _.value->debug_name = strdup(debug_name);
   _.value->debug_name = debug_name;
 
   trace("Flex-View: created with debug-name: %s", debug_name);
@@ -140,7 +139,6 @@ static result_bool default_internal_render_callback(const base_widget* widget)
        bg.g,
        bg.a);
 
-  // rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
   result_void _ = command_buffer_add_render_rect_command(

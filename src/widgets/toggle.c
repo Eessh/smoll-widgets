@@ -17,13 +17,6 @@ struct toggle_private
   void (*user_off_callback)(toggle*);
 };
 
-// static rect
-// default_internal_get_bounding_rect_callback(const base_widget* widget);
-
-// static result_sizing_delta
-// default_internal_fit_layout_callback(base_widget* widget,
-//                                      bool call_on_children);
-
 static result_bool default_internal_render_callback(const base_widget* widget);
 
 static void default_internal_derived_free_callback(base_widget* widget);
@@ -71,9 +64,6 @@ result_toggle_ptr toggle_new(base_widget* parent_base)
     t->base->context = parent_base->context;
   }
 
-  // t->base->internal_get_bounding_rect_callback =
-  //   default_internal_get_bounding_rect_callback;
-  // t->base->internal_fit_layout_callback = default_internal_fit_layout_callback;
   t->base->internal_render_callback = default_internal_render_callback;
   t->base->internal_derived_free_callback =
     default_internal_derived_free_callback;
@@ -158,22 +148,6 @@ result_void toggle_set_off_callback(toggle* t, void (*callback)(toggle*))
   return ok_void();
 }
 
-// static rect
-// default_internal_get_bounding_rect_callback(const base_widget* widget)
-// {
-//   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
-// }
-
-// static result_sizing_delta
-// default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
-// {
-//   // skip does nothing
-
-//   sizing_delta deltas = {.x = 0, .y = 0};
-
-//   return ok(result_sizing_delta, deltas);
-// }
-
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
   toggle* t = (toggle*)widget->derived;
@@ -200,7 +174,6 @@ static result_bool default_internal_render_callback(const base_widget* widget)
        handle_color.b,
        handle_color.a);
 
-  // rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
   {

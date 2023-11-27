@@ -86,7 +86,6 @@ result_base_widget_ptr base_widget_new(widget_type type)
   widget->pre_internal_relayout_hook = NULL;
   widget->internal_get_background_callback = NULL;
   widget->internal_fit_layout_callback = NULL;
-  // widget->internal_assign_positions = NULL;
   widget->internal_render_callback = NULL;
 
   widget->internal_derived_free_callback = NULL;
@@ -488,7 +487,6 @@ result_void common_internal_calculate_size(base_widget* widget)
     {
       if(node->child->visible)
       {
-        // result_void _ = node->child->internal_calculate_size(node->child);
         result_void _ = common_internal_calculate_size(node->child);
         if(!_.ok)
         {

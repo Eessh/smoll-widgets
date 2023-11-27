@@ -264,16 +264,6 @@ static bool default_mouse_move_callback(base_widget* widget,
     return false;
   }
 
-  // marking first, second widgets as non-fluid, if they are containers
-  //  if(s->private_data->first_widget->type == FLEX_CONTAINER)
-  //  {
-  //    s->private_data->first_widget->flexbox_data.container.is_fluid = false;
-  //  }
-  //  if(s->private_data->second_widget->type == FLEX_CONTAINER)
-  //  {
-  //    s->private_data->second_widget->flexbox_data.container.is_fluid = false;
-  //  }
-
   if(s->direction == SPLIT_DIRECTION_VERTICAL)
   {
     // measure delta along x-axis

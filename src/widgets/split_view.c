@@ -440,12 +440,6 @@ static bool split_mouse_enter_callback(base_widget* widget,
   common_internal_relayout(widget->parent);
   widget->parent->internal_render_callback(widget->parent);
 
-  // result_bool _ = widget->internal_render_callback(widget);
-  // if(!_.ok)
-  // {
-  //   return false;
-  // }
-
   return true;
 }
 
@@ -470,12 +464,6 @@ static bool split_mouse_leave_callback(base_widget* widget,
 
   command_buffer_add_set_cursor_command(widget->context->cmd_buffer,
                                         SET_CURSOR_ARROW);
-
-  // result_bool _ = widget->internal_render_callback(widget);
-  // if(!_.ok)
-  // {
-  //   return false;
-  // }
 
   return true;
 }

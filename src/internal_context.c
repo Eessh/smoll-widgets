@@ -101,7 +101,6 @@ result_void internal_context_destroy(internal_context* context)
   }
 
   // ignoring errors while freeing UI tree
-  // result_void _ = recursively_free_ui_tree(context->root);
   common_internal_free(context->root);
 
   free(context->font);

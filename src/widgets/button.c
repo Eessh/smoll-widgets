@@ -46,12 +46,6 @@ struct button_private
   void (*user_mouse_leave_callback)(button* btn, mouse_motion_event event);
 };
 
-/// @brief Default callback function for internal bounding rect callback.
-/// @param widget constant pointer to base widget.
-/// @return Returns rect struct.
-// static rect
-// default_internal_get_bounding_rect_callback(const base_widget* widget);
-
 /// @brief Default callback function for internal derived free callback.
 /// @param widget pointer to base widget.
 /// @return Void.
@@ -147,8 +141,6 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
     btn->base->context = parent_base->context;
   }
 
-  // btn->base->internal_get_bounding_rect_callback =
-  //   default_internal_get_bounding_rect_callback;
   btn->base->internal_fit_layout_callback =
     default_internal_fit_layout_callback;
   btn->base->internal_render_callback = default_internal_render_callback;
@@ -329,12 +321,6 @@ button_set_mouse_leave_callback(button* btn,
   return ok_void();
 }
 
-// static rect
-// default_internal_get_bounding_rect_callback(const base_widget* widget)
-// {
-//   return (rect){.x = widget->x, .y = widget->y, .w = widget->w, .h = widget->h};
-// }
-
 static void default_internal_derived_free_callback(base_widget* widget)
 {
   button* btn = (button*)widget->derived;
@@ -421,7 +407,6 @@ static result_bool default_internal_render_callback(const base_widget* widget)
        foreground.b,
        foreground.a);
 
-  // rect bounding_rect = widget->internal_get_bounding_rect_callback(widget);
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
   result_void __ = command_buffer_add_render_rect_command(

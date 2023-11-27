@@ -134,7 +134,6 @@ smoll_context_process_viewport_resize_event(smoll_context* context,
   root->w = event.w;
   root->h = event.h;
 
-  // root->internal_calculate_size(root);
   common_internal_calculate_size(root);
   common_internal_relayout(root);
   root->internal_render_callback(root);
