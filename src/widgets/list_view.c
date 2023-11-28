@@ -264,12 +264,33 @@ static bool default_mouse_scroll_callback(base_widget* widget,
         widget->debug_name,
         event.delta_y);
 
+  uint32 required_view_height = 0;
+  base_widget_child_node* node = widget->children_head;
+  while(node)
+  {
+    required_view_height += node->child->h + widget->flexbox_data.container.gap;
+    node = node->next;
+  }
+  required_view_height -= widget->flexbox_data.container.gap;
+
+  if(required_view_height < widget->h)
+  {
+    return false;
+  }
+
   list_view* view = (list_view*)widget->derived;
 
   float32 delta_y = event.delta_y * view->private_data->scroll_acceleration;
   view->private_data->scroll_offset += (int16)delta_y;
 
-  base_widget_child_node* node = widget->children_head;
+  /// TODO: Fix dis shit!
+  if(view->private_data->scroll_offset > 0.0f)
+  {
+    view->private_data->scroll_offset = 0.0f;
+    return false;
+  }
+
+  node = widget->children_head;
   while(node)
   {
     node->child->y += (int16)delta_y;

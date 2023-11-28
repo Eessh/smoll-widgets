@@ -179,6 +179,101 @@ int main()
     button_set_mouse_leave_callback(btn, mouse_leave_callback);
   }
 
+  {
+    result_button_ptr _ = button_new(row_view->base, "Cola!");
+    if(!_.ok)
+    {
+      printf("Error while creating button: %s", _.error);
+    }
+    button* b = _.value;
+    b->foreground = (color){255, 255, 255, 255};
+    b->background = (color){16, 16, 16, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){16, 16, 16, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){26, 26, 26, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){36, 36, 36, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){46, 46, 46, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){56, 56, 56, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){66, 66, 66, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){76, 76, 76, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){86, 86, 86, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){96, 96, 96, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){106, 106, 106, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){116, 116, 116, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){126, 126, 126, 126};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){136, 136, 136, 136};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){146, 146, 146, 146};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){156, 156, 156, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){166, 166, 166, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){176, 176, 176, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){186, 186, 186, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){196, 196, 196, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){206, 206, 206, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){216, 216, 216, 255};
+  }
+
   // Creating another button widget
   button* btn1 = NULL;
   {
