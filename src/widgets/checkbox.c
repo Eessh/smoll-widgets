@@ -94,7 +94,7 @@ result_checkbox_ptr checkbox_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  _.value->debug_name = debug_name;
+  _.value->base->debug_name = debug_name;
 
   trace("Checkbox: created with debug-name: %s", debug_name);
 
@@ -163,17 +163,17 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   checkbox* box = (checkbox*)widget->derived;
   color fg = box->private_data->foreground;
 
-  info("Checkbox(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
-       "foreground: (%d, %d, %d, %d)",
-       box->debug_name,
-       widget->x,
-       widget->y,
-       widget->w,
-       widget->h,
-       fg.r,
-       fg.g,
-       fg.b,
-       fg.a);
+  trace("Checkbox(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
+        "foreground: (%d, %d, %d, %d)",
+        widget->debug_name,
+        widget->x,
+        widget->y,
+        widget->w,
+        widget->h,
+        fg.r,
+        fg.g,
+        fg.b,
+        fg.a);
 
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
@@ -215,8 +215,9 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
+  trace("Checkbox(%s): internal-derived-free()", widget->debug_name);
+
   checkbox* box = (checkbox*)widget->derived;
-  info("Checkbox(%s): internal-derived-free()", box->debug_name);
 
   // freeing checkbox private struct
   free(box->private_data);

@@ -7,7 +7,6 @@ typedef struct checkbox_private checkbox_private;
 
 typedef struct checkbox
 {
-  const char* debug_name;
   base_widget* base;
 
   checkbox_private* private_data;
