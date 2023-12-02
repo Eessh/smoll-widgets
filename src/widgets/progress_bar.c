@@ -75,7 +75,7 @@ progress_bar_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  _.value->debug_name = debug_name;
+  _.value->base->debug_name = debug_name;
 
   trace("Progress-Bar: created with debug-name: %s", debug_name);
 
@@ -174,21 +174,21 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 {
   progress_bar* bar = (progress_bar*)widget->derived;
   color bg = bar->private_data->background, fg = bar->private_data->foreground;
-  info("Progress-Bar(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
-       "background: (%d, %d, %d, %d), foreground: (%d, %d, %d, %d)",
-       bar->debug_name,
-       widget->x,
-       widget->y,
-       widget->w,
-       widget->h,
-       bg.r,
-       bg.g,
-       bg.b,
-       bg.a,
-       fg.r,
-       fg.g,
-       fg.b,
-       fg.a);
+  trace("Progress-Bar(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
+        "background: (%d, %d, %d, %d), foreground: (%d, %d, %d, %d)",
+        widget->debug_name,
+        widget->x,
+        widget->y,
+        widget->w,
+        widget->h,
+        bg.r,
+        bg.g,
+        bg.b,
+        bg.a,
+        fg.r,
+        fg.g,
+        fg.b,
+        fg.a);
 
   rect bounding_rect = common_internal_get_bounding_rect(bar->base);
 

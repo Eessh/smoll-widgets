@@ -7,8 +7,6 @@ typedef struct progress_bar_private progress_bar_private;
 
 typedef struct progress_bar
 {
-  const char* debug_name;
-
   base_widget* base;
 
   progress_bar_private* private_data;
