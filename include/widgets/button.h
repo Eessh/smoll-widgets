@@ -12,8 +12,6 @@ typedef struct button_private button_private;
 ///        This should not be root widget.
 typedef struct button
 {
-  const char* debug_name;
-
   /// @brief X-axis padding. This will be the value for both padding-left
   ///        and padding-right.
   uint16 padding_x;

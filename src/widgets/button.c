@@ -186,7 +186,7 @@ result_button_ptr button_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  _.value->debug_name = debug_name;
+  _.value->base->debug_name = debug_name;
 
   trace("Button: created with debug-name: %s", debug_name);
 
@@ -323,12 +323,11 @@ button_set_mouse_leave_callback(button* btn,
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
-  button* btn = (button*)widget->derived;
-  info("Button(%s): internal-derived-free()", btn->debug_name);
+  trace("Button(%s): internal-derived-free()", widget->debug_name);
 
+  button* btn = (button*)widget->derived;
   // freeing button text
   free(btn->private_data->text);
-
   // freeing button private struct
   free(btn->private_data);
 
@@ -340,8 +339,9 @@ static void default_internal_derived_free_callback(base_widget* widget)
 static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
+  trace("Button(%s): internal-fit-layout()", widget->debug_name);
+
   button* btn = (button*)widget->derived;
-  info("Button(%s): internal-fit-layout()", btn->debug_name);
 
   result_text_dimensions ___ = widget->context->backend->get_text_dimensions(
     btn->private_data->text, widget->context->font, widget->context->font_size);
@@ -390,22 +390,22 @@ static result_bool default_internal_render_callback(const base_widget* widget)
       : (btn->private_data->state == BUTTON_HOVERED ? btn->hover_background
                                                     : btn->click_background);
 
-  info("Button(%s): internal-render(), text: \"%s\", (x, y, w, h): (%d, %d, "
-       "%d, %d), background: (%d, %d, %d, %d), foreground: (%d, %d, %d, %d)",
-       btn->debug_name,
-       btn->private_data->text,
-       widget->x,
-       widget->y,
-       widget->w,
-       widget->h,
-       background.r,
-       background.g,
-       background.b,
-       background.a,
-       foreground.r,
-       foreground.g,
-       foreground.b,
-       foreground.a);
+  trace("Button(%s): internal-render(), text: \"%s\", (x, y, w, h): (%d, %d, "
+        "%d, %d), background: (%d, %d, %d, %d), foreground: (%d, %d, %d, %d)",
+        widget->debug_name,
+        btn->private_data->text,
+        widget->x,
+        widget->y,
+        widget->w,
+        widget->h,
+        background.r,
+        background.g,
+        background.b,
+        background.a,
+        foreground.r,
+        foreground.g,
+        foreground.b,
+        foreground.a);
 
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
