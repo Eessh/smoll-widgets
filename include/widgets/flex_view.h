@@ -5,8 +5,6 @@
 
 typedef struct flex_view
 {
-  const char* debug_name;
-
   color background;
 
   base_widget* base;

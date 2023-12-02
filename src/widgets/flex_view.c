@@ -61,7 +61,7 @@ result_flex_view_ptr flex_view_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  _.value->debug_name = debug_name;
+  _.value->base->debug_name = debug_name;
 
   trace("Flex-View: created with debug-name: %s", debug_name);
 
@@ -73,12 +73,13 @@ static color default_internal_get_background_callback(const base_widget* widget)
   flex_view* view = (flex_view*)widget->derived;
   color bg = view->background;
 
-  info("Flex-View(%s): internal-get-background(), background: (%d, %d, %d, %d)",
-       view->debug_name,
-       bg.r,
-       bg.b,
-       bg.g,
-       bg.a);
+  trace(
+    "Flex-View(%s): internal-get-background(), background: (%d, %d, %d, %d)",
+    widget->debug_name,
+    bg.r,
+    bg.b,
+    bg.g,
+    bg.a);
 
   return bg;
 }
@@ -86,8 +87,9 @@ static color default_internal_get_background_callback(const base_widget* widget)
 static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
+  trace("Flex-View(%s): internal-fit-layout()", widget->debug_name);
+
   flex_view* view = (flex_view*)widget->derived;
-  info("Flex-View(%s): internal-fit-layout()", view->debug_name);
 
   if(call_on_children)
   {
@@ -127,17 +129,17 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 {
   flex_view* view = (flex_view*)widget->derived;
   color bg = view->background;
-  info("Flex-View(%s): internal-render-callback(), (x, y, w, h): (%d, %d, %d, "
-       "%d), background: (%d, %d, %d, %d)",
-       view->debug_name,
-       widget->x,
-       widget->y,
-       widget->w,
-       widget->h,
-       bg.r,
-       bg.b,
-       bg.g,
-       bg.a);
+  trace("Flex-View(%s): internal-render-callback(), (x, y, w, h): (%d, %d, %d, "
+        "%d), background: (%d, %d, %d, %d)",
+        widget->debug_name,
+        widget->x,
+        widget->y,
+        widget->w,
+        widget->h,
+        bg.r,
+        bg.b,
+        bg.g,
+        bg.a);
 
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
