@@ -12,8 +12,6 @@ typedef struct toggle_private toggle_private;
 ///        This should not be root widget.
 typedef struct toggle
 {
-  const char* debug_name;
-
   /// @brief The fractional amount handle width should be of toggle
   ///        widget width.
   ///        Default value: 0.5.

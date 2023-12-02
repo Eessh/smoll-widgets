@@ -101,7 +101,7 @@ result_toggle_ptr toggle_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  _.value->debug_name = debug_name;
+  _.value->base->debug_name = debug_name;
 
   trace("Toggle: created with debug-name: %s", debug_name);
 
@@ -158,9 +158,9 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   color background =
     t->private_data->state == TOGGLE_ON ? t->on_background : t->off_background;
 
-  info("Toggle(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
+  trace("Toggle(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
        "background: (%d, %d, %d, %d), handle-color: (%d, %d, %d, %d)",
-       t->debug_name,
+       widget->debug_name,
        widget->x,
        widget->y,
        widget->w,
@@ -211,8 +211,9 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
 static void default_internal_derived_free_callback(base_widget* widget)
 {
+  trace("Toggle(%s): internal-derived-free()", widget->debug_name);
+
   toggle* t = (toggle*)widget->derived;
-  info("Toggle(%s): internal-derived-free()", t->debug_name);
 
   // freeing toggle private struct
   free(t->private_data);
