@@ -10,8 +10,6 @@
 ///        Preferably use this box widget as root widget.
 typedef struct box
 {
-  const char* debug_name;
-
   /// @brief X-axis padding. This will be the value for both padding-left
   ///        and padding-right.
   uint16 padding_x;

@@ -51,7 +51,7 @@ result_box_ptr box_new(base_widget* parent_base, flex_direction direction)
 
   b->base->flexbox_data.container.direction = direction;
 
-  b->debug_name = "Box";
+  b->base->debug_name = "Box";
   b->padding_x = 0;
   b->padding_y = 0;
   b->background = (color){255, 255, 255, 255};
@@ -69,7 +69,7 @@ result_box_ptr box_new_with_debug_name(base_widget* parent_base,
     return _;
   }
 
-  _.value->debug_name = debug_name;
+  _.value->base->debug_name = debug_name;
 
   trace("Box: created with debug-name: %s", debug_name);
 
@@ -82,7 +82,7 @@ static color default_internal_get_background_callback(const base_widget* widget)
   color bg = b->background;
 
   trace("Box(%s): internal-get-background(), background-color: %d, %d, %d, %d",
-        b->debug_name,
+        widget->debug_name,
         bg.r,
         bg.b,
         bg.g,
@@ -94,8 +94,10 @@ static color default_internal_get_background_callback(const base_widget* widget)
 static result_sizing_delta
 default_internal_fit_layout_callback(base_widget* widget, bool call_on_children)
 {
+  trace("Box(%s): internal-fit-layout(), sizing-deltas: 0, 0",
+        widget->debug_name);
+
   box* b = (box*)widget->derived;
-  trace("Box(%s): internal-fit-layout(), sizing-deltas: 0, 0", b->debug_name);
 
   // Box is just a static container, does nothing
   // box widget doesn't resize according to children
@@ -126,7 +128,7 @@ static result_bool default_internal_render_callback(const base_widget* widget)
   trace(
     "Box(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), background: "
     "(%d, %d, %d, %d)",
-    b->debug_name,
+    widget->debug_name,
     widget->x,
     widget->y,
     widget->w,
