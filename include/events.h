@@ -39,6 +39,8 @@ typedef struct mouse_button_event
 
 typedef struct mouse_scroll_event
 {
+  /// Positive value of delta_x implies
+  /// Negative value of delta_y implies scrolling up
   float32 delta_x, delta_y;
 } mouse_scroll_event;
 

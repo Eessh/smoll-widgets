@@ -283,10 +283,22 @@ static bool default_mouse_scroll_callback(base_widget* widget,
   float32 delta_y = event.delta_y * view->private_data->scroll_acceleration;
   view->private_data->scroll_offset += (int16)delta_y;
 
-  /// TODO: Fix dis shit!
   if(view->private_data->scroll_offset > 0.0f)
   {
     view->private_data->scroll_offset = 0.0f;
+    node = widget->children_head;
+    if(node && node->child->y == widget->y)
+    {
+      return false;
+    }
+    int16 y = widget->y;
+    while(node)
+    {
+      node->child->y = y;
+      y += node->child->h + widget->flexbox_data.container.gap;
+      node = node->next;
+    }
+    widget->internal_render_callback(widget);
     return false;
   }
 
