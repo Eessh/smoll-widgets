@@ -355,6 +355,14 @@ container_internal_fit_layout_callback(base_widget* widget,
 
 static result_bool default_internal_render_callback(const base_widget* widget)
 {
+  // pushing clip-rect
+  result_void _ = command_buffer_add_push_clip_rect_command(
+    widget->context->cmd_buffer, common_internal_get_bounding_rect(widget));
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
   base_widget_child_node* temp = widget->children_head;
   while(temp)
   {
@@ -363,6 +371,13 @@ static result_bool default_internal_render_callback(const base_widget* widget)
       temp->child->internal_render_callback(temp->child);
     }
     temp = temp->next;
+  }
+
+  // popping clip-rect
+  _ = command_buffer_add_pop_clip_rect_command(widget->context->cmd_buffer);
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
   }
 
   return ok(result_bool, true);
