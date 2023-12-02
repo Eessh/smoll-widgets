@@ -226,6 +226,15 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
+  result_void _ = command_buffer_add_render_rect_command(
+    widget->context->cmd_buffer,
+    bounding_rect,
+    widget->parent->internal_get_background_callback(widget->parent));
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
   result_void ___ = command_buffer_add_render_text_command(
     widget->context->cmd_buffer,
     l->private_data->text,

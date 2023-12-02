@@ -159,20 +159,20 @@ static result_bool default_internal_render_callback(const base_widget* widget)
     t->private_data->state == TOGGLE_ON ? t->on_background : t->off_background;
 
   trace("Toggle(%s): internal-render(), (x, y, w, h): (%d, %d, %d, %d), "
-       "background: (%d, %d, %d, %d), handle-color: (%d, %d, %d, %d)",
-       widget->debug_name,
-       widget->x,
-       widget->y,
-       widget->w,
-       widget->h,
-       background.r,
-       background.g,
-       background.b,
-       background.a,
-       handle_color.r,
-       handle_color.g,
-       handle_color.b,
-       handle_color.a);
+        "background: (%d, %d, %d, %d), handle-color: (%d, %d, %d, %d)",
+        widget->debug_name,
+        widget->x,
+        widget->y,
+        widget->w,
+        widget->h,
+        background.r,
+        background.g,
+        background.b,
+        background.a,
+        handle_color.r,
+        handle_color.g,
+        handle_color.b,
+        handle_color.a);
 
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
