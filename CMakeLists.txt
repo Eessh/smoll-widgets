@@ -22,7 +22,6 @@ add_library(smoll-widgets STATIC
   ${PROJECT_SOURCE_DIR}/src/widgets/flex_view.c
   ${PROJECT_SOURCE_DIR}/src/widgets/list_view.c
   ${PROJECT_SOURCE_DIR}/src/widgets/progress_bar.c
-  ${PROJECT_SOURCE_DIR}/src/widgets/split.c
   ${PROJECT_SOURCE_DIR}/src/widgets/split_view.c
   ${PROJECT_SOURCE_DIR}/src/widgets/toggle.c
 )
