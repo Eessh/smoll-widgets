@@ -127,6 +127,8 @@ result_bool label_set_text(label* l, const char* text)
   free(l->private_data->text);
   l->private_data->text = duplicated_text;
 
+  common_internal_adjust_layout(l->base);
+
   return ok(result_bool, true);
 }
 
