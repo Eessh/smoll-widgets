@@ -77,6 +77,13 @@ result_list_view_ptr list_view_new(base_widget* parent_base)
 
   view->base->flexbox_data.container.direction = FLEX_DIRECTION_COLUMN;
   view->base->flexbox_data.container.align_items = ALIGN_ITEMS_START;
+  view->base->flexbox_data.container.cross_axis_sizing =
+    CROSS_AXIS_SIZING_EXPAND;
+
+  // list view will expand if there is space remaining in parent widget
+  view->base->flexbox_data.container.flex_grow = 1;
+  // list view will shrink if there is less space than needed for other widgets
+  view->base->flexbox_data.container.flex_shrink = 1;
 
   view->background = (color){0, 0, 0, 255};
   view->private_data->scroll_offset = 0.0f;
@@ -299,7 +306,31 @@ static bool default_mouse_scroll_callback(base_widget* widget,
       node = node->next;
     }
     widget->internal_render_callback(widget);
-    return false;
+    return true;
+  }
+
+  int16 extended_height = (int32)widget->h - (int32)required_view_height;
+  debug(
+    "widget-h: %d, required-height: %d, scroll-offset: %f, extended-height: %d",
+    widget->h,
+    required_view_height,
+    view->private_data->scroll_offset,
+    extended_height);
+
+  if(view->private_data->scroll_offset < extended_height)
+  {
+    view->private_data->scroll_offset =
+      (int16)widget->h - (int16)required_view_height;
+    int16 y = widget->y + view->private_data->scroll_offset;
+    node = widget->children_head;
+    while(node)
+    {
+      node->child->y = y;
+      y += node->child->h + widget->flexbox_data.container.gap;
+      node = node->next;
+    }
+    widget->internal_render_callback(widget);
+    return true;
   }
 
   node = widget->children_head;

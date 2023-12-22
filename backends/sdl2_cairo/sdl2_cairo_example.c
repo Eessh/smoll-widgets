@@ -272,6 +272,18 @@ int main()
     _ = button_new(row_view->base, "Cola!");
     _.value->foreground = (color){255, 255, 255, 255};
     _.value->background = (color){216, 216, 216, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){216, 216, 216, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){216, 216, 216, 255};
+
+    _ = button_new(row_view->base, "Cola!");
+    _.value->foreground = (color){255, 255, 255, 255};
+    _.value->background = (color){216, 216, 216, 255};
   }
 
   // Creating another button widget

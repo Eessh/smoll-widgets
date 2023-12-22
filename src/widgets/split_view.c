@@ -83,8 +83,11 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
     base_widget_add_child(parent_base, v->base);
   }
 
+  v->base->debug_name = "split-base";
+
   // creating first child's container
-  result_box_ptr __ = box_new(v->base, FLEX_DIRECTION_COLUMN);
+  result_box_ptr __ =
+    box_new_with_debug_name(v->base, FLEX_DIRECTION_COLUMN, "split-left-pane");
   if(!__.ok)
   {
     free(v);
@@ -114,7 +117,8 @@ result_split_view_ptr split_view_new(base_widget* parent_base, split_type type)
   base_widget_add_child(v->base, splitter->base);
 
   // creating second child's contaniner
-  __ = box_new(v->base, FLEX_DIRECTION_COLUMN);
+  __ =
+    box_new_with_debug_name(v->base, FLEX_DIRECTION_COLUMN, "split-right-pane");
   if(!__.ok)
   {
     free(v);
@@ -210,6 +214,7 @@ split* split_new()
   }
   s->base = _.value;
   s->base->derived = s;
+  s->base->debug_name = "splitter";
 
   s->private_data = (split_private*)calloc(1, sizeof(split_private));
   if(!s->private_data)

@@ -541,6 +541,8 @@ result_void common_internal_calculate_size(base_widget* widget)
     widget->h = main_axis_length;
   }
 
+  debug("Widget: (%s), w: %d, h: %d", widget->debug_name, widget->w, widget->h);
+
   return ok_void();
 }
 
@@ -948,6 +950,8 @@ common_internal_mouse_scroll(base_widget* widget,
 
 result_void common_internal_relayout(const base_widget* widget)
 {
+  trace("Widget(%s): w: %d, h: %d", widget->debug_name, widget->w, widget->h);
+
   if(!widget->visible)
   {
     // avoiding calculations when widget is not visible
@@ -1040,37 +1044,64 @@ result_void common_internal_relayout(const base_widget* widget)
       node = node->next;
     }
   }
-  else if(remaining_main_axis_length < 0 && total_flex_shrink > 0)
+  else if(remaining_main_axis_length < 0)
   {
-    // acquire needed space by shrinking children according
-    // to their flex-shrink
-    node = widget->children_head;
-    while(node)
+    if(total_flex_shrink == 0)
     {
-      // avoiding invisible children in layout tree
-      if(!node->child->visible)
-      {
-        node = node->next;
-        continue;
-      }
+      // node = widget->children_head;
+      // while(node)
+      // {
+      //   if(node->child->type == FLEX_ITEM)
+      //   {
+      //     node = node->next;
+      //     continue;
+      //   }
 
-      if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      //   if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+      //   {
+      //     node->child->w = widget->w;
+      //   }
+      //   else
+      //   {
+      //     node->child->h = widget->h;
+      //   }
+      //   node = node->next;
+      // }
+    }
+    else
+    {
+      // acquire needed space by shrinking children according
+      // to their flex-shrink
+      node = widget->children_head;
+      while(node)
       {
-        node->child->w += ((node->child->type == FLEX_CONTAINER
-                              ? node->child->flexbox_data.container.flex_shrink
-                              : node->child->flexbox_data.item.flex_shrink) /
-                           total_flex_shrink) *
-                          remaining_main_axis_length;
+        // avoiding invisible children in layout tree
+        if(!node->child->visible)
+        {
+          node = node->next;
+          continue;
+        }
+
+        if(widget->flexbox_data.container.direction == FLEX_DIRECTION_ROW)
+        {
+          node->child->w +=
+            ((node->child->type == FLEX_CONTAINER
+                ? node->child->flexbox_data.container.flex_shrink
+                : node->child->flexbox_data.item.flex_shrink) /
+             total_flex_shrink) *
+            remaining_main_axis_length;
+        }
+        else
+        {
+          node->child->h +=
+            ((node->child->type == FLEX_CONTAINER
+                ? node->child->flexbox_data.container.flex_shrink
+                : node->child->flexbox_data.item.flex_shrink) /
+             total_flex_shrink) *
+            remaining_main_axis_length;
+        }
+        node = node->next;
       }
-      else
-      {
-        node->child->h += ((node->child->type == FLEX_CONTAINER
-                              ? node->child->flexbox_data.container.flex_shrink
-                              : node->child->flexbox_data.item.flex_shrink) /
-                           total_flex_shrink) *
-                          remaining_main_axis_length;
-      }
-      node = node->next;
     }
   }
 
