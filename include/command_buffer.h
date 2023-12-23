@@ -18,6 +18,10 @@ typedef enum command_type
   /// Needed data: bounding rect, rect color.
   RENDER_RECT,
 
+  /// Command for rendering rounded rectangle (filled).
+  /// Needed data: bounding rect, border radius, rect color.
+  RENDER_ROUNDED_RECT,
+
   /// Command for rendering rectangle (outlined).
   /// Needed data: bounding rect, rect outline color.
   RENDER_RECT_OUTLINED,
@@ -53,6 +57,13 @@ typedef struct render_rect_data
   color rect_color;
 } render_rect_data;
 
+typedef struct render_rounded_rect_data
+{
+  rect bounding_rect;
+  uint8 border_radius;
+  color rect_color;
+} render_rounded_rect_data;
+
 /// Data for `RENDER_LINE` command.
 typedef struct render_line_data
 {
@@ -78,6 +89,8 @@ typedef struct command
   {
     /// Data of `RENDER_RECT` command.
     render_rect_data render_rect;
+
+    render_rounded_rect_data render_rounded_rect;
 
     /// Data of `RENDER_LINE` command.
     render_line_data render_line;
@@ -128,6 +141,10 @@ typedef struct result_command_buffer_ptr
  */
 result_command_ptr command_new_render_rect(const rect bounding_rect,
                                            const color rect_color);
+
+result_command_ptr command_new_render_rounded_rect(const rect bounding_rect,
+                                                   const uint8 border_radius,
+                                                   const color rect_color);
 
 /**
  * @brief      Creates a new `RENDER_RECT_OUTLINED` command.
@@ -224,6 +241,12 @@ result_void command_buffer_add_command(command_buffer* buffer, command* cmd);
 result_void command_buffer_add_render_rect_command(command_buffer* buffer,
                                                    const rect bounding_rect,
                                                    const color rect_color);
+
+result_void
+command_buffer_add_render_rounded_rect_command(command_buffer* buffer,
+                                               const rect bounding_rect,
+                                               const uint8 border_radius,
+                                               const color rect_color);
 
 /// Adds `RENDER_RECT_OUTLINED` command to the command buffer.
 ///

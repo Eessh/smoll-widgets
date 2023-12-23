@@ -37,6 +37,25 @@ result_command_ptr command_new_render_rect(const rect bounding_rect,
   return ok(result_command_ptr, cmd);
 }
 
+result_command_ptr command_new_render_rounded_rect(const rect bounding_rect,
+                                                   const uint8 border_radius,
+                                                   const color rect_color)
+{
+  command* cmd = (command*)calloc(1, sizeof(command));
+  if(!cmd)
+  {
+    return error(result_command_ptr, "Unable to allocate memory for command!");
+  }
+
+  cmd->type = RENDER_ROUNDED_RECT;
+  cmd->data.render_rounded_rect =
+    (render_rounded_rect_data){.bounding_rect = bounding_rect,
+                               .border_radius = border_radius,
+                               .rect_color = rect_color};
+
+  return ok(result_command_ptr, cmd);
+}
+
 result_command_ptr
 command_new_render_rect_outlined(const rect bounding_rect,
                                  const color rect_outline_color)
@@ -290,6 +309,35 @@ result_void command_buffer_add_render_rect_command(command_buffer* buffer,
   }
 
   result_command_ptr _ = command_new_render_rect(bounding_rect, rect_color);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  command* cmd = _.value;
+  result_void __ = command_buffer_add_command(buffer, cmd);
+  if(!__.ok)
+  {
+    return __;
+  }
+
+  return ok_void();
+}
+
+result_void
+command_buffer_add_render_rounded_rect_command(command_buffer* buffer,
+                                               const rect bounding_rect,
+                                               const uint8 border_radius,
+                                               const color rect_color)
+{
+  if(!buffer)
+  {
+    return error(result_void,
+                 "Cannot add command to NULL pointed command buffer!");
+  }
+
+  result_command_ptr _ =
+    command_new_render_rounded_rect(bounding_rect, border_radius, rect_color);
   if(!_.ok)
   {
     return error(result_void, _.error);

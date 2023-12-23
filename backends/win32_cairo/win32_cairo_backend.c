@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <winuser.h>
 #include "../../include/macros.h"
-#include "cairo-windows-1.17.2/include/cairo.h"
 #include "windowsx.h"
+
+#define M_PI 3.14159265358979323846264338327950288
 
 static cairo_t* cairo = NULL;
 
@@ -210,6 +211,43 @@ result_void win32_cairo_backend_process_command(const command* cmd)
                           (float32)(rect_color.g) / 255.0f,
                           (float32)(rect_color.b) / 255.0f,
                           (float32)(rect_color.a) / 255.0f);
+    cairo_fill(cairo);
+  }
+  else if (cmd->type == RENDER_ROUNDED_RECT) {
+    const rect bounding_rect = cmd->data.render_rounded_rect.bounding_rect;
+    const uint8 border_radius = cmd->data.render_rounded_rect.border_radius;
+    const color rect_color = cmd->data.render_rounded_rect.rect_color;
+    cairo_set_source_rgba(cairo,
+                          (float32)(rect_color.r) / 255.0f,
+                          (float32)(rect_color.g) / 255.0f,
+                          (float32)(rect_color.b) / 255.0f,
+                          (float32)(rect_color.a) / 255.0f);
+    cairo_new_sub_path(cairo);
+    cairo_arc(cairo,
+              bounding_rect.x + border_radius,
+              bounding_rect.y + border_radius,
+              border_radius,
+              M_PI,
+              3 * M_PI / 2);
+    cairo_arc(cairo,
+              bounding_rect.x + bounding_rect.w - border_radius,
+              bounding_rect.y + border_radius,
+              border_radius,
+              3 * M_PI / 2,
+              2 * M_PI);
+    cairo_arc(cairo,
+              bounding_rect.x + bounding_rect.w - border_radius,
+              bounding_rect.y + bounding_rect.h - border_radius,
+              border_radius,
+              0,
+              M_PI / 2);
+    cairo_arc(cairo,
+              bounding_rect.x + border_radius,
+              bounding_rect.y + bounding_rect.h - border_radius,
+              border_radius,
+              M_PI / 2,
+              M_PI);
+    cairo_close_path(cairo);
     cairo_fill(cairo);
   }
   else if(cmd->type == RENDER_RECT_OUTLINED)

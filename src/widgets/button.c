@@ -156,6 +156,8 @@ result_button_ptr button_new(base_widget* parent_base, const char* text)
   btn->padding_x = 0;
   btn->padding_y = 0;
 
+  btn->border_radius = 0;
+
   btn->hover_foreground = (color){255, 255, 255, 255};
   btn->hover_background = (color){0, 0, 0, 255};
 
@@ -409,11 +411,26 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   rect bounding_rect = common_internal_get_bounding_rect(widget);
 
-  result_void __ = command_buffer_add_render_rect_command(
-    widget->context->cmd_buffer, bounding_rect, background);
-  if(!__.ok)
+  if(btn->border_radius == 0)
   {
-    return error(result_bool, __.error);
+    result_void __ = command_buffer_add_render_rect_command(
+      widget->context->cmd_buffer, bounding_rect, background);
+    if(!__.ok)
+    {
+      return error(result_bool, __.error);
+    }
+  }
+  else
+  {
+    result_void __ = command_buffer_add_render_rounded_rect_command(
+      widget->context->cmd_buffer,
+      bounding_rect,
+      btn->border_radius,
+      background);
+    if(!__.ok)
+    {
+      return error(result_bool, __.error);
+    }
   }
 
   bounding_rect.x += (int16)(btn->padding_x);

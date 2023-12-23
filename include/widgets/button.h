@@ -20,6 +20,9 @@ typedef struct button
   ///        and padding-bottom.
   uint16 padding_y;
 
+  /// @brief Redius of the border on all four corners or button.
+  uint8 border_radius;
+
   /// @brief Foreground color of button, applies to text of button.
   color foreground;
 
