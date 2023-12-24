@@ -79,4 +79,7 @@
       log_fatal(__VA_ARGS__);                                                  \
   } while(0)
 
+#define rect_to_sdl_rect(rect)                                                 \
+  (SDL_Rect){.x = rect.x, .y = rect.y, .w = rect.w, .h = rect.h};
+
 #endif

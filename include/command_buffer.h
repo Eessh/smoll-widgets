@@ -112,6 +112,16 @@ typedef struct result_command_ptr
   };
 } result_command_ptr;
 
+typedef struct result_const_command_ptr
+{
+  bool ok;
+  union
+  {
+    const command* value;
+    const char* error;
+  };
+} result_const_command_ptr;
+
 typedef struct command_node command_node;
 
 typedef struct command_buffer command_buffer;
@@ -126,6 +136,30 @@ typedef struct result_command_buffer_ptr
     const char* error;
   };
 } result_command_buffer_ptr;
+
+typedef struct command_buffer_const_iterator_private_data
+  command_buffer_const_iterator_private_data;
+
+typedef struct command_buffer_const_iterator
+{
+  const command_buffer* cmd_buffer;
+  bool good;
+
+  result_const_command_ptr (*next_cmd)(
+    struct command_buffer_const_iterator* const_iterator);
+
+  command_buffer_const_iterator_private_data* private_data;
+} command_buffer_const_iterator;
+
+typedef struct result_command_buffer_const_iterator_ptr
+{
+  bool ok;
+  union
+  {
+    command_buffer_const_iterator* value;
+    const char* error;
+  };
+} result_command_buffer_const_iterator_ptr;
 
 ///////////////////////////////////////////////////////////////////////////////
 /// * Command functions.
@@ -228,7 +262,7 @@ result_command_buffer_ptr command_buffer_new();
 
 /// Gives length of command buffer.
 /// Returns `-1` if pointer to buffer is `NULL`.
-int16 command_buffer_length(command_buffer* buffer);
+int16 command_buffer_length(const command_buffer* buffer);
 
 /// Adds the given command to the command buffer.
 ///
@@ -305,5 +339,11 @@ result_void command_buffer_clear_commands(command_buffer* buffer);
 
 /// Frees the command buffer.
 result_void command_buffer_free(command_buffer* buffer);
+
+result_command_buffer_const_iterator_ptr
+command_buffer_const_iterator_new(const command_buffer* buffer);
+
+result_void
+command_buffer_const_iterator_free(command_buffer_const_iterator* iterator);
 
 #endif

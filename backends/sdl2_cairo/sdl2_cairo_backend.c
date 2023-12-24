@@ -1,6 +1,8 @@
 #include "sdl2_cairo_backend.h"
 #include <stdlib.h>
 #include "../../include/macros.h"
+#include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL_rect.h"
+#include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL_video.h"
 
 static SDL_Window* window = NULL;
 static cairo_t* cairo = NULL;
@@ -22,6 +24,8 @@ result_void sdl2_cairo_backend_load_font(const char* font, uint8 font_size);
 result_text_dimensions sdl2_cairo_backend_get_text_dimensions(
   const char* text, const char* font_name, uint8 font_size);
 result_void sdl2_cairo_backend_process_command(const command* cmd);
+result_void
+sdl2_cairo_backend_process_command_buffer(const command_buffer* cmd_buffer);
 
 result_render_backend_ptr sdl2_cairo_backend_create()
 {
@@ -309,12 +313,107 @@ result_void sdl2_cairo_backend_process_command(const command* cmd)
   return ok_void();
 }
 
+result_void
+sdl2_cairo_backend_process_command_buffer(const command_buffer* cmd_buffer)
+{
+  if(!cmd_buffer)
+  {
+    return error(result_void,
+                 "Cannot process command buffer pointing to NULL!");
+  }
+
+  int16 buffer_length = command_buffer_length(cmd_buffer);
+  if(buffer_length < 1)
+  {
+    return ok_void();
+  }
+
+  SDL_Rect rects_to_update[buffer_length];
+  int last_rect_index = 0;
+
+  result_command_buffer_const_iterator_ptr _ =
+    command_buffer_const_iterator_new(cmd_buffer);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  command_buffer_const_iterator* iterator = _.value;
+
+  for(int16 i = 0; i < buffer_length; i++)
+  {
+    if(!iterator->good)
+    {
+      break;
+    }
+
+    result_const_command_ptr __ = iterator->next_cmd(iterator);
+    if(!__.ok)
+    {
+      return error(result_void, __.error);
+    }
+
+    const command* cmd = __.value;
+    switch(cmd->type)
+    {
+    case RENDER_RECT: {
+      rects_to_update[i] =
+        rect_to_sdl_rect(cmd->data.render_rect.bounding_rect);
+      last_rect_index = i;
+      break;
+    }
+    case RENDER_ROUNDED_RECT: {
+      rects_to_update[i] =
+        rect_to_sdl_rect(cmd->data.render_rounded_rect.bounding_rect);
+      last_rect_index = i;
+      break;
+    }
+    case RENDER_RECT_OUTLINED: {
+      rects_to_update[i] =
+        rect_to_sdl_rect(cmd->data.render_rect.bounding_rect);
+      last_rect_index = i;
+      break;
+    }
+    case CLEAR_WINDOW: {
+      int window_width = 0, window_height = 0;
+      SDL_GetWindowSize(window, &window_width, &window_height);
+      rects_to_update[i] =
+        (SDL_Rect){.x = 0, .y = 0, .w = window_width, .h = window_height};
+      last_rect_index = i;
+      break;
+    }
+    default: {
+      break;
+    };
+    }
+
+    result_void ___ = sdl2_cairo_backend_process_command(cmd);
+    if(!___.ok)
+    {
+      return ___;
+    }
+  }
+
+  if(SDL_UpdateWindowSurfaceRects(
+       window, rects_to_update, last_rect_index + 1) != 0)
+  {
+    return error(result_void, "Unable to update window surface rects!");
+  }
+
+  return ok_void();
+}
+
 result_void init_sdl2()
 {
   if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0)
   {
     return error(result_void, "Error while initializing SDL2!");
   }
+
+  /// bypassing compositors in X11
+  SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
+  SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+  SDL_SetHint("SDL_MOUSE_DOUBLE_CLICK_RADIUS", "4");
 
   window = SDL_CreateWindow("SDL2 + Cairo Backend",
                             SDL_WINDOWPOS_CENTERED,

@@ -401,7 +401,14 @@ result_void smoll_context_render(smoll_context* context)
       "Registered backend doesn't contain process command callback function!");
   }
 
-  while(command_buffer_length(context->internal_ctx->cmd_buffer) > 0)
+  int16 buffer_length =
+    command_buffer_length(context->internal_ctx->cmd_buffer);
+  if(buffer_length < 1)
+  {
+    return ok_void();
+  }
+
+  while(buffer_length > 0)
   {
     command* cmd =
       command_buffer_get_next_command(context->internal_ctx->cmd_buffer).value;
@@ -411,7 +418,47 @@ result_void smoll_context_render(smoll_context* context)
 
     // freeing command after processing
     command_free(cmd);
+
+    --buffer_length;
   }
+
+  return ok_void();
+}
+
+result_void
+smoll_context_render_send_cmd_buffer_to_backend(smoll_context* context)
+{
+  if(!context)
+  {
+    return error(result_void, "Cannot render UI of context pointing to NULL!");
+  }
+
+  if(!context->internal_ctx->backend)
+  {
+    return error(result_void,
+                 "No backend is registered to process the command!");
+  }
+
+  if(!context->internal_ctx->backend->process_command)
+  {
+    return error(
+      result_void,
+      "Registered backend doesn't contain process command callback function!");
+  }
+
+  int16 buffer_length =
+    command_buffer_length(context->internal_ctx->cmd_buffer);
+  if(buffer_length < 1)
+  {
+    return ok_void();
+  }
+
+  /// forwarding whole command buffer to backend for processing
+  context->internal_ctx->backend->process_command_buffer(
+    context->internal_ctx->cmd_buffer);
+
+  /// clearing whole command buffer, including commands after processing
+  command_buffer_clear_commands(context->internal_ctx->cmd_buffer);
 
   return ok_void();
 }

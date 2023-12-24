@@ -38,7 +38,15 @@ typedef struct render_backend
                                                 const char* font_name,
                                                 uint8 font_size);
 
+  /// Process command.
+  /// Use this api to update UI from each command.
   result_void (*process_command)(const command* cmd);
+
+  /// Process command buffer.
+  /// Use this api to update UI from whole command buffer.
+  /// This function is useful for backend implementations, when they need to
+  /// make optimizations for rendering all update commands at once.
+  result_void (*process_command_buffer)(const command_buffer* cmd_buffer);
 } render_backend;
 
 typedef struct result_render_backend_ptr

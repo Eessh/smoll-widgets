@@ -110,4 +110,7 @@ result_void smoll_context_initialize_layout(smoll_context* context);
 /// @return Void result.
 result_void smoll_context_render(smoll_context* context);
 
+result_void
+smoll_context_render_send_cmd_buffer_to_backend(smoll_context* context);
+
 #endif

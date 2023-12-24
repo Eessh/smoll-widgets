@@ -21,6 +21,11 @@ struct command_buffer
   uint16 length;
 };
 
+struct command_buffer_const_iterator_private_data
+{
+  command_node* node;
+};
+
 result_command_ptr command_new_render_rect(const rect bounding_rect,
                                            const color rect_color)
 {
@@ -250,7 +255,7 @@ result_command_buffer_ptr command_buffer_new()
   return ok(result_command_buffer_ptr, buffer);
 }
 
-int16 command_buffer_length(command_buffer* buffer)
+int16 command_buffer_length(const command_buffer* buffer)
 {
   if(!buffer)
   {
@@ -642,6 +647,93 @@ result_void command_buffer_free(command_buffer* buffer)
   }
 
   free(buffer);
+
+  return ok_void();
+}
+
+static result_const_command_ptr
+const_iterator_next_command(command_buffer_const_iterator* iterator)
+{
+  if(!iterator)
+  {
+    return error(result_const_command_ptr,
+                 "Cannot get next command from NULL pointing const iterator of "
+                 "command buffer!");
+  }
+
+  if(!iterator->private_data->node)
+  {
+    return error(result_const_command_ptr,
+                 "Cannot get next command, as iterator is not good. Verify "
+                 "const_iterator->good before calling for next command!");
+  }
+
+  const command* next_cmd = iterator->private_data->node->cmd;
+
+  /// moving to next node
+  iterator->private_data->node = iterator->private_data->node->next;
+  if(!iterator->private_data->node)
+  {
+    iterator->good = false;
+  }
+
+  return ok(result_const_command_ptr, next_cmd);
+}
+
+result_command_buffer_const_iterator_ptr
+command_buffer_const_iterator_new(const command_buffer* buffer)
+{
+  if(!buffer)
+  {
+    return error(
+      result_command_buffer_const_iterator_ptr,
+      "Cannot create const iterator for NULL pointing command buffer!");
+  }
+
+  command_buffer_const_iterator* iterator =
+    (command_buffer_const_iterator*)calloc(
+      1, sizeof(command_buffer_const_iterator));
+  if(!iterator)
+  {
+    return error(
+      result_command_buffer_const_iterator_ptr,
+      "Unable to allocate memory for const iterator of command buffer!");
+  }
+
+  command_buffer_const_iterator_private_data* private_data =
+    (command_buffer_const_iterator_private_data*)calloc(
+      1, sizeof(command_buffer_const_iterator_private_data));
+  if(!private_data)
+  {
+    free(iterator);
+    return error(result_command_buffer_const_iterator_ptr,
+                 "Unable to allocate memory for private data of const iterator "
+                 "for command buffer!");
+  }
+
+  iterator->cmd_buffer = buffer;
+  iterator->next_cmd = const_iterator_next_command;
+  private_data->node = buffer->head;
+  iterator->private_data = private_data;
+  iterator->good = buffer->head ? true : false;
+
+  return ok(result_command_buffer_const_iterator_ptr, iterator);
+}
+
+result_void
+command_buffer_const_iterator_free(command_buffer_const_iterator* iterator)
+{
+  if(!iterator)
+  {
+    return error(
+      result_void,
+      "Attempt to free NULL pointing command buffer const iterator!");
+  }
+
+  /// freeing private data of iterator
+  free(iterator->private_data);
+
+  free(iterator);
 
   return ok_void();
 }
