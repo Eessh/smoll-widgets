@@ -504,13 +504,13 @@ int main()
     }
 
     // Rendering incremental updates
-    // smoll_context_render(sctx);
+    //     smoll_context_render(sctx);
 
     // Rendering all updates at once
     smoll_context_render_send_cmd_buffer_to_backend(sctx);
 
     // Updating window surface
-    // SDL_UpdateWindowSurface(sdl2_cairo_backend_get_window());
+    //     SDL_UpdateWindowSurface(sdl2_cairo_backend_get_window());
   }
 
 cleanup:

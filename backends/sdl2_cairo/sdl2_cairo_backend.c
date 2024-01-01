@@ -43,6 +43,7 @@ result_render_backend_ptr sdl2_cairo_backend_create()
   backend->load_font = sdl2_cairo_backend_load_font;
   backend->get_text_dimensions = sdl2_cairo_backend_get_text_dimensions;
   backend->process_command = sdl2_cairo_backend_process_command;
+  backend->process_command_buffer = sdl2_cairo_backend_process_command_buffer;
 
   init_sdl2();
   init_cairo();

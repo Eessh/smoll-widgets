@@ -213,7 +213,8 @@ result_void win32_cairo_backend_process_command(const command* cmd)
                           (float32)(rect_color.a) / 255.0f);
     cairo_fill(cairo);
   }
-  else if (cmd->type == RENDER_ROUNDED_RECT) {
+  else if(cmd->type == RENDER_ROUNDED_RECT)
+  {
     const rect bounding_rect = cmd->data.render_rounded_rect.bounding_rect;
     const uint8 border_radius = cmd->data.render_rounded_rect.border_radius;
     const color rect_color = cmd->data.render_rounded_rect.rect_color;
