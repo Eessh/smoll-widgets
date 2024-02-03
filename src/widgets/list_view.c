@@ -260,14 +260,14 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   // rendering floating scroll-bar
   float32 ratio = (float32)widget->h / children_height;
-  uint8 edge_padding = 2, scrollbar_width = 6,
+  uint8 edge_padding = 2, scrollbar_width = 7,
         scrollbar_height = ratio * widget->h;
   _ = command_buffer_add_render_rounded_rect_command(
     widget->context->cmd_buffer,
-    (rect){.x = widget->x + widget->w - (scrollbar_width + edge_padding + 1),
+    (rect){.x = widget->x + widget->w - (scrollbar_width + edge_padding),
            .y = widget->y + edge_padding -
                 view->private_data->scroll_offset * ratio,
-           .w = 7,
+           .w = scrollbar_width,
            .h = ratio * (widget->h - 2 * edge_padding)},
     3,
     (color){255, 255, 255, 128});
