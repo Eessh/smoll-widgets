@@ -1,8 +1,6 @@
 #include "sdl2_cairo_backend.h"
 #include <stdlib.h>
 #include "../../include/macros.h"
-#include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL_rect.h"
-#include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL_video.h"
 
 static SDL_Window* window = NULL;
 static cairo_t* cairo = NULL;

@@ -241,8 +241,11 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   // rendering children
   base_widget_child_node* node = widget->children_head;
+  uint32 children_height = 0;
   while(node)
   {
+    children_height += node->child->h + widget->flexbox_data.container.gap;
+
     int16 ycoord = node->child->y, height = node->child->h;
     if(ycoord + height < widget->y || ycoord > widget->y + (int16)widget->h)
     {
@@ -252,6 +255,25 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
     node->child->internal_render_callback(node->child);
     node = node->next;
+  }
+  children_height -= widget->flexbox_data.container.gap;
+
+  // rendering floating scroll-bar
+  float32 ratio = (float32)widget->h / children_height;
+  uint8 edge_padding = 2, scrollbar_width = 6,
+        scrollbar_height = ratio * widget->h;
+  _ = command_buffer_add_render_rounded_rect_command(
+    widget->context->cmd_buffer,
+    (rect){.x = widget->x + widget->w - (scrollbar_width + edge_padding + 1),
+           .y = widget->y + edge_padding -
+                view->private_data->scroll_offset * ratio,
+           .w = 7,
+           .h = ratio * (widget->h - 2 * edge_padding)},
+    3,
+    (color){255, 255, 255, 128});
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
   }
 
   // popping clip-rect
