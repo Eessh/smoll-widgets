@@ -402,6 +402,22 @@ int main()
     btn2->click_background = (color){128, 128, 128, 255};
   }
 
+  // for (uint32 i= 0; i < 50000; i++) {
+  //   result_button_ptr _ = button_new(row_view->base, "Auto generated");
+  //   if (!_.ok) {
+  //     printf("Error while creating button: %s", _.error);
+  //     break;
+  //   }
+  //   _.value->padding_x = 6;
+  //   _.value->padding_y = 4;
+  //   _.value->foreground = (color){255, 255, 255, 255};
+  //   _.value->background = (color){16, 16, 16, 255};
+  //   _.value->hover_foreground = (color){0, 255, 0, 255};
+  //   _.value->hover_background = (color){64, 64, 64, 255};
+  //   _.value->click_foreground = (color){255, 0, 0, 255};
+  //   _.value->click_background = (color){128, 128, 128, 255};
+  // }
+
   // Creating toggle widget
   toggle* t = NULL;
   {
