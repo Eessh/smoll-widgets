@@ -15,7 +15,7 @@ typedef struct split_private
 {
   handle_state state;
   point last_clicked;
-  float32 ratio;
+  int16 first_pane_length;
 } split_private;
 
 typedef struct split
@@ -225,7 +225,7 @@ split* split_new()
   }
   s->private_data->state = HANDLE_NORMAL;
   s->private_data->last_clicked = (point){0, 0};
-  s->private_data->ratio = 0.5f;
+  s->private_data->first_pane_length = s->base->w * 0.5f;
 
   return s;
 }
@@ -278,13 +278,13 @@ static result_void default_pre_internal_relayout_hook(const base_widget* widget)
   base_widget_child_node* second_container = splitter_node->next;
 
   split_view* s = (split_view*)widget->derived;
-  float32 ratio =
-    ((split*)(splitter_node->child->derived))->private_data->ratio;
+  int16 first_pane_length =
+    ((split*)(splitter_node->child->derived))->private_data->first_pane_length;
   if(s->type == SPLIT_VERTICAL)
   {
-    first_container->child->w = (widget->w - splitter_node->child->w) * ratio;
+    first_container->child->w = first_pane_length;
     second_container->child->w =
-      (widget->w - splitter_node->child->w) * ((float32)(1 - ratio));
+      widget->w - splitter_node->child->w - first_pane_length;
     first_container->child->h = widget->h;
     second_container->child->h = widget->h;
     splitter_node->child->h = widget->h;
@@ -294,9 +294,9 @@ static result_void default_pre_internal_relayout_hook(const base_widget* widget)
     first_container->child->w = widget->w;
     second_container->child->w = widget->w;
     splitter_node->child->w = widget->w;
-    first_container->child->h = (widget->h - splitter_node->child->h) * ratio;
+    first_container->child->h = first_pane_length;
     second_container->child->h =
-      (widget->h - splitter_node->child->h) * ((float32)(1 - ratio));
+      widget->h - splitter_node->child->h - first_pane_length;
   }
 
   return ok_void();
@@ -507,13 +507,14 @@ static bool split_mouse_move_callback(base_widget* widget,
     int16 delta = v->private_data->last_clicked.x - event.x;
     first_child->w -= delta;
     second_child->w += delta;
-    v->private_data->ratio = (float32)first_child->w / second_child->w;
+    v->private_data->first_pane_length -= delta;
   }
   else
   {
     int16 delta = v->private_data->last_clicked.y - event.y;
     first_child->h -= delta;
     second_child->h += delta;
+    v->private_data->first_pane_length -= delta;
   }
 
   v->private_data->last_clicked = (point){event.x, event.y};
