@@ -62,6 +62,9 @@ result_render_backend_ptr sdl2_cairo_backend_create()
   loading = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
   prohibited = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
+  log_info("Using Backend: %s", backend->name);
+  log_info("Backend Version: %d.%d.%d", backend->backend_version.major, backend->backend_version.minor, backend->backend_version.patch);
+
   return ok(result_render_backend_ptr, backend);
 }
 
@@ -420,7 +423,8 @@ result_void init_sdl2()
                             1080,
                             720,
                             SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE |
-                              SDL_WINDOW_SHOWN);
+                              SDL_WINDOW_SHOWN | SDL_WINDOW_MOUSE_FOCUS |
+                              SDL_WINDOW_ALWAYS_ON_TOP);
   if(!window)
   {
     return error(result_void, "Error while creating SDL2 window!");

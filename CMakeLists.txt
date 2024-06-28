@@ -28,4 +28,6 @@ add_library(smoll-widgets STATIC
 
 # Startup example powered by SDL2+Cairo backend.
 # Useful for testing and also SDL2 is cross-platform.
-add_subdirectory(backends/sdl2_cairo)
+#add_subdirectory(backends/sdl2_cairo)
+
+add_subdirectory(backends/win32_cairo)
