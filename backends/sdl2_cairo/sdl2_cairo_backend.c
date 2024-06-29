@@ -330,7 +330,9 @@ sdl2_cairo_backend_process_command_buffer(const command_buffer* cmd_buffer)
     return ok_void();
   }
 
-  SDL_Rect rects_to_update[buffer_length];
+  // allocating a constant size array, as MSVC doesn't support VLAs.
+  // SDL_Rect rects_to_update[buffer_length];
+  SDL_Rect rects_to_update[10000];
   int last_rect_index = 0;
 
   result_command_buffer_const_iterator_ptr _ =
