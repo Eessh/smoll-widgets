@@ -40,18 +40,32 @@ workspace("smoll-widgets")
 		})
 		filter("configurations:Debug")
     	kind("ConsoleApp")
-			libdirs({
-			    "backends/sdl2_cairo/SDL2-2.26.5/x86_64-w64-mingw32/lib",
-			    "backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
-			    "bin/Debug" -- smoll-widgets built library path
-			})
+			toolset("msc")
+				libdirs({
+					"backends/sdl2_cairo/SDL2-Devel-2.30.4/MSVC/lib/x64",
+					"backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
+					"bin/Debug" -- smoll-widgets built library path
+				})
+			toolset()
+				libdirs({
+					"backends/sdl2_cairo/SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/lib",
+					"backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
+					"bin/Debug" -- smoll-widgets built library path
+				})
 		filter("configurations:Release")
     	kind("WindowedApp")
-			libdirs({
-			    "backends/sdl2_cairo/SDL2-2.26.5/x86_64-w64-mingw32/lib",
-			    "backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
-			    "bin/Release" -- smoll-widgets built library path
-			})
+			toolset("msc")
+				libdirs({
+					"backends/sdl2_cairo/SDL2-Devel-2.30.4/MSVC/lib/x64",
+					"backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
+					"bin/Debug" -- smoll-widgets built library path
+				})
+			toolset()
+				libdirs({
+					"backends/sdl2_cairo/SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/lib",
+					"backends/sdl2_cairo/cairo-windows-1.17.2/lib/x64",
+					"bin/Debug" -- smoll-widgets built library path
+				})
 		filter({})
 
 	-- Win32 + Cairo example

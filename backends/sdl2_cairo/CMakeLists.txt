@@ -8,8 +8,8 @@ include_directories(
   if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MSVC/include
   else()
-    ${PROJECT_SOURCE_DIR}/SDL2-2.26.5/x86_64-w64-mingw32/include
-    ${PROJECT_SOURCE_DIR}/SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2
+    ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/include
+    ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/include/SDL2
   endif()
 )
 
@@ -18,8 +18,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   find_library(SDL2 SDL2 ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MSVC/lib/x64)
   find_library(SDL2main SDL2main ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MSVC/lib/x64)
 else()
-  find_library(SDL2 libSDL2 ${PROJECT_SOURCE_DIR}/SDL2-2.26.5/x86_64-w64-mingw32/lib)
-  find_library(SDL2main libSDL2main ${PROJECT_SOURCE_DIR}/SDL2-2.26.5/x86_64-w64-mingw32/lib)
+  find_library(SDL2 libSDL2 ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/lib)
+  find_library(SDL2main libSDL2main ${PROJECT_SOURCE_DIR}/SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/lib)
 endif()
 
 add_executable(sdl2_cairo_backend
