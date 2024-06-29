@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
+set(CMAKE_C_STANDARD 17)
 
 project(smoll-widgets)
-
-set(CMAKE_C_STANDARD 99)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
@@ -28,6 +27,6 @@ add_library(smoll-widgets STATIC
 
 # Startup example powered by SDL2+Cairo backend.
 # Useful for testing and also SDL2 is cross-platform.
-#add_subdirectory(backends/sdl2_cairo)
+add_subdirectory(backends/sdl2_cairo)
 
-add_subdirectory(backends/win32_cairo)
+# add_subdirectory(backends/win32_cairo)
