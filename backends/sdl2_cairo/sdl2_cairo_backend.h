@@ -1,7 +1,7 @@
 #include "../../include/backend.h"
 #include "../../include/events.h"
 #define SDL_MAIN_HANDLED
-#include "SDL2-2.26.5/x86_64-w64-mingw32/include/SDL2/SDL.h"
+#include "SDL2-Devel-2.30.4/MinGW/x86_64-w64-mingw32/include/SDL2/SDL.h"
 #include "cairo-windows-1.17.2/include/cairo.h"
 
 /// @brief Creates SDL2+Cairo render backend.
