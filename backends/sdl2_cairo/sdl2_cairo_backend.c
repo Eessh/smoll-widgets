@@ -63,7 +63,10 @@ result_render_backend_ptr sdl2_cairo_backend_create()
   prohibited = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
 
   log_info("Using Backend: %s", backend->name);
-  log_info("Backend Version: %d.%d.%d", backend->backend_version.major, backend->backend_version.minor, backend->backend_version.patch);
+  log_info("Backend Version: %d.%d.%d",
+           backend->backend_version.major,
+           backend->backend_version.minor,
+           backend->backend_version.patch);
 
   return ok(result_render_backend_ptr, backend);
 }

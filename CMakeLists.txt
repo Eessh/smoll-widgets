@@ -23,6 +23,7 @@ add_library(smoll-widgets STATIC
   ${PROJECT_SOURCE_DIR}/src/widgets/progress_bar.c
   ${PROJECT_SOURCE_DIR}/src/widgets/split_view.c
   ${PROJECT_SOURCE_DIR}/src/widgets/toggle.c
+  ${PROJECT_SOURCE_DIR}/src/widgets/scrollbar.c
 )
 
 # Startup example powered by SDL2+Cairo backend.

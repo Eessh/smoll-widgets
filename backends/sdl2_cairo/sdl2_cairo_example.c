@@ -7,6 +7,7 @@
 #include "../../include/widgets/list_view.h"
 #include "../../include/widgets/progress_bar.h"
 // #include "../../include/widgets/split.h"
+#include "../../include/widgets/scrollbar.h"
 #include "../../include/widgets/split_view.h"
 #include "../../include/widgets/toggle.h"
 #include "sdl2_cairo_backend.h"
@@ -400,6 +401,22 @@ int main()
     btn2->hover_background = (color){64, 64, 64, 255};
     btn2->click_foreground = (color){255, 0, 0, 255};
     btn2->click_background = (color){128, 128, 128, 255};
+  }
+
+  // Creating scrollbar widget
+  scrollbar* scroll_bar = NULL;
+  {
+    result_scrollbar_ptr _ = scrollbar_new_with_debug_name(
+      col_view->base,
+      NULL,
+      &(scrollbar_target_descriptor){.base = col_view->base,
+                                     .content_length = 100},
+      "scrollbar");
+    if(!_.ok)
+    {
+      printf("Error while creating button: %s", _.error);
+    }
+    scroll_bar = _.value;
   }
 
   // for (uint32 i= 0; i < 50000; i++) {
