@@ -27,8 +27,8 @@ typedef struct scrollbar_descriptor
 static const scrollbar_descriptor default_scrollbar_descriptor = {
   .cross_axis_width = 10,
   .padding = 2,
-  .foreground = {.r = 53, .g = 57, .b = 61, .a = 255},
-  .background = {.r = 174, .g = 175, .b = 177, .a = 255}};
+  .foreground = {.r = 174, .g = 175, .b = 177, .a = 255},
+  .background = {.r = 53, .g = 57, .b = 61, .a = 255}};
 
 /// Scrollbar target widget descriptor.
 typedef struct scrollbar_target_descriptor

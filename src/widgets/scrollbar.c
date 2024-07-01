@@ -14,6 +14,8 @@ struct scrollbar_private
   scrollbar_state state;
 
   scrollbar_target_descriptor target_descriptor;
+
+  float32 scroll_offset;
 };
 
 static void default_internal_derived_free_callback(base_widget* widget);
@@ -108,7 +110,9 @@ scrollbar_new(base_widget* parent_base,
   // assigning descriptors
   bar->descriptor =
     descriptor != NULL ? *descriptor : default_scrollbar_descriptor;
+  bar->private_data->state = SCROLLBAR_NORMAL;
   bar->private_data->target_descriptor = *target_descriptor;
+  bar->private_data->scroll_offset = 0;
 
   return ok(result_scrollbar_ptr, bar);
 }
@@ -180,6 +184,26 @@ static result_bool default_internal_render_callback(const base_widget* widget)
 
   result_void _ = command_buffer_add_render_rect_command(
     widget->context->cmd_buffer, bounding_rect, bar->descriptor.background);
+  if(!_.ok)
+  {
+    return error(result_bool, _.error);
+  }
+
+  // adjusting bounding rect for scroll thumb
+  bounding_rect.y += bar->private_data->scroll_offset;
+  bounding_rect.h =
+    (uint16)(((float32)(bar->private_data->target_descriptor.base->h) /
+              (int32)(bar->private_data->target_descriptor.content_length)) *
+             widget->h);
+  trace("Scrollbar(%s): target_base_height: %d, content_length: %d, "
+        "bounding_rect_height: %d",
+        widget->debug_name,
+        bar->private_data->target_descriptor.base->h,
+        bar->private_data->target_descriptor.content_length,
+        bounding_rect.h);
+
+  _ = command_buffer_add_render_rect_command(
+    widget->context->cmd_buffer, bounding_rect, bar->descriptor.foreground);
   if(!_.ok)
   {
     return error(result_bool, _.error);
