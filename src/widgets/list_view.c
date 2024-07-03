@@ -108,7 +108,7 @@ result_list_view_ptr list_view_new_with_debug_name(base_widget* parent_base,
   return _;
 }
 
-result_float32 list_view_get_scroll_offset(list_view* view) {
+result_float32 list_view_get_scroll_offset(const list_view* view) {
   if(!view)
   {
     return error(result_float32,

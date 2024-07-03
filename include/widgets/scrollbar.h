@@ -77,4 +77,9 @@ result_scrollbar_ptr scrollbar_new_with_debug_name(
   const scrollbar_target_descriptor* const target_descriptor,
   const char* debug_name);
 
+result_float32 scrollbar_get_scroll_offset(const scrollbar* bar);
+
+result_bool scrollbar_set_scroll_offset(scrollbar* bar,
+                                        const float32* new_scroll_offset);
+
 #endif

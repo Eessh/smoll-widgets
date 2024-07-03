@@ -137,6 +137,36 @@ result_scrollbar_ptr scrollbar_new_with_debug_name(
   return _;
 }
 
+result_float32 scrollbar_get_scroll_offset(const scrollbar* bar) {
+  if(!bar)
+  {
+    return error(result_float32,
+                 "Cannot get scroll offset of scrollbar pointing to NULL!");
+  }
+
+  return ok(result_float32, bar->private_data->scroll_offset);
+}
+
+result_bool scrollbar_set_scroll_offset(scrollbar* bar,
+    const float32* new_scroll_offset)
+{
+  if(!bar)
+  {
+    return error(result_bool,
+                 "Cannot set scroll offset of scrollbar pointing to NULL!");
+  }
+
+  if(!new_scroll_offset)
+  {
+    return error(result_bool,
+                 "Cannot set NULL pointing scroll offset to given scrollbar!");
+  }
+
+  bar->private_data->scroll_offset = *new_scroll_offset;
+
+  return bar->base->internal_render_callback(bar->base);
+}
+
 static void default_internal_derived_free_callback(base_widget* widget)
 {
   trace("Scrollbar(%s): internal-derived-free()", widget->debug_name);
