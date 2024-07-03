@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include "../../include/macros.h"
 
+// forward declaration
+typedef struct list_view list_view;
+
+extern result_bool
+list_view_set_scroll_offset_from_scrollbar(list_view* view,
+                                           const float32* new_scroll_offset);
+
 typedef enum scrollbar_state
 {
   SCROLLBAR_NORMAL,
@@ -163,6 +170,11 @@ result_bool scrollbar_set_scroll_offset(scrollbar* bar,
   }
 
   bar->private_data->scroll_offset = *new_scroll_offset;
+
+  // setting target list view's scroll offset
+  list_view* target_list_view = (list_view*)(bar->private_data->target_descriptor.base->derived);
+  const float32 target_scroll_offset = 1.0f;
+  list_view_set_scroll_offset_from_scrollbar(target_list_view, &target_scroll_offset);
 
   return bar->base->internal_render_callback(bar->base);
 }
