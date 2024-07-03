@@ -108,6 +108,39 @@ result_list_view_ptr list_view_new_with_debug_name(base_widget* parent_base,
   return _;
 }
 
+result_float32 list_view_get_scroll_offset(list_view* view) {
+  if(!view)
+  {
+    return error(result_float32,
+                 "Cannot get scroll offset of list view pointing to NULL!");
+  }
+
+  return ok(result_float32, view->private_data->scroll_offset);
+}
+
+result_bool list_view_set_scroll_offset(list_view* view,
+    const float32* new_scroll_offset)
+{
+  if(!view)
+  {
+    return error(result_bool,
+                 "Cannot set scroll offset of list view pointing to NULL!");
+  }
+
+  if(!new_scroll_offset)
+  {
+    error(result_bool,
+          "Cannot set NULL pointing scroll offset to given list view");
+  }
+
+  view->private_data->scroll_offset = *new_scroll_offset;
+
+  // calling post relayout hook for adjusting children offsets
+  view->base->post_internal_relayout_hook(view->base);
+
+  return view->base->internal_render_callback(view->base);
+}
+
 static void default_internal_derived_free_callback(base_widget* widget)
 {
   trace("List-View(%s): internal-derived-free()", widget->debug_name);
