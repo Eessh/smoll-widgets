@@ -39,9 +39,12 @@ typedef struct scrollbar_target_descriptor
   /// Content length of scrollbar's target.
   uint32 content_length;
 
+  /// Scroll offset of target widget.
+  float32 scroll_offset;
+
   /// Function which updates target's scroll offset.
   /// This should be implemented by target which is using this scrollbar widget.
-  /// 
+  ///
   /// This function will be called by scrollbar widget.
   /// This function implementation should not be calling `scrollbar_set_scroll_offset()`.
   result_bool (*update_scroll_offset)(base_widget* widget,
@@ -85,13 +88,17 @@ result_scrollbar_ptr scrollbar_new_with_debug_name(
   const scrollbar_target_descriptor* const target_descriptor,
   const char* debug_name);
 
-result_float32 scrollbar_get_scroll_offset(const scrollbar* bar);
-
-result_bool scrollbar_set_scroll_offset(scrollbar* bar,
-                                        const float32* new_scroll_offset);
+//result_float32 scrollbar_get_scroll_offset(const scrollbar* bar);
+//
+//result_bool scrollbar_set_scroll_offset(scrollbar* bar,
+//                                        const float32* new_scroll_offset);
 
 result_void
 scrollbar_update_target_content_length(scrollbar* bar,
-                                    const uint32 new_content_length);
+                                       const uint32 new_content_length);
+
+result_void
+scrollbar_update_target_scroll_offset(scrollbar* bar,
+                                      const float32 new_scroll_offset);
 
 #endif

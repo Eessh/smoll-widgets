@@ -31,6 +31,7 @@ result_list_view_ptr list_view_new_with_debug_name(base_widget* parent_base,
 
 result_float32 list_view_get_scroll_offset(const list_view* view);
 
-result_bool list_view_set_scroll_offset(list_view* view, const float32* new_scroll_offset);
+result_bool list_view_set_scroll_offset(list_view* view,
+                                        const float32* new_scroll_offset);
 
 #endif

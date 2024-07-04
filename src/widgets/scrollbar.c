@@ -22,7 +22,7 @@ struct scrollbar_private
 
   scrollbar_target_descriptor target_descriptor;
 
-  float32 scroll_offset;
+  //float32 scroll_offset;
 };
 
 static void default_internal_derived_free_callback(base_widget* widget);
@@ -119,7 +119,7 @@ scrollbar_new(base_widget* parent_base,
     descriptor != NULL ? *descriptor : default_scrollbar_descriptor;
   bar->private_data->state = SCROLLBAR_NORMAL;
   bar->private_data->target_descriptor = *target_descriptor;
-  bar->private_data->scroll_offset = 0;
+  //bar->private_data->scroll_offset = 0;
 
   return ok(result_scrollbar_ptr, bar);
 }
@@ -144,42 +144,44 @@ result_scrollbar_ptr scrollbar_new_with_debug_name(
   return _;
 }
 
-result_float32 scrollbar_get_scroll_offset(const scrollbar* bar) {
-  if(!bar)
-  {
-    return error(result_float32,
-                 "Cannot get scroll offset of scrollbar pointing to NULL!");
-  }
+//result_float32 scrollbar_get_scroll_offset(const scrollbar* bar)
+//{
+//  if(!bar)
+//  {
+//    return error(result_float32,
+//                 "Cannot get scroll offset of scrollbar pointing to NULL!");
+//  }
+//
+//  return ok(result_float32, bar->private_data->scroll_offset);
+//}
+//
+//result_bool scrollbar_set_scroll_offset(scrollbar* bar,
+//                                        const float32* new_scroll_offset)
+//{
+//  if(!bar)
+//  {
+//    return error(result_bool,
+//                 "Cannot set scroll offset of scrollbar pointing to NULL!");
+//  }
+//
+//  if(!new_scroll_offset)
+//  {
+//    return error(result_bool,
+//                 "Cannot set NULL pointing scroll offset to given scrollbar!");
+//  }
+//
+//  bar->private_data->scroll_offset = *new_scroll_offset;
+//
+//  // setting target widget's scroll offset
+//  bar->private_data->target_descriptor.update_scroll_offset(
+//    bar->private_data->target_descriptor.base, 1.0f);
+//
+//  return bar->base->internal_render_callback(bar->base);
+//}
 
-  return ok(result_float32, bar->private_data->scroll_offset);
-}
-
-result_bool scrollbar_set_scroll_offset(scrollbar* bar,
-    const float32* new_scroll_offset)
-{
-  if(!bar)
-  {
-    return error(result_bool,
-                 "Cannot set scroll offset of scrollbar pointing to NULL!");
-  }
-
-  if(!new_scroll_offset)
-  {
-    return error(result_bool,
-                 "Cannot set NULL pointing scroll offset to given scrollbar!");
-  }
-
-  bar->private_data->scroll_offset = *new_scroll_offset;
-
-  // setting target widget's scroll offset
-  bar->private_data->target_descriptor.update_scroll_offset(
-    bar->private_data->target_descriptor.base, 1.0f);
-
-  return bar->base->internal_render_callback(bar->base);
-}
-
-result_void scrollbar_update_target_content_length(scrollbar* bar,
-    const uint32 new_content_length)
+result_void
+scrollbar_update_target_content_length(scrollbar* bar,
+                                       const uint32 new_content_length)
 {
   if(!bar)
   {
@@ -189,6 +191,34 @@ result_void scrollbar_update_target_content_length(scrollbar* bar,
   }
 
   bar->private_data->target_descriptor.content_length = new_content_length;
+
+  result_bool _ = default_internal_render_callback(bar->base);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
+
+  return ok_void();
+}
+
+result_void
+scrollbar_update_target_scroll_offset(scrollbar* bar,
+                                      const float32 new_scroll_offset)
+{
+  if(!bar)
+  {
+    return error(
+      result_void,
+      "Cannot set target scroll offset of scrollbar pointing to NULL!");
+  }
+
+  bar->private_data->target_descriptor.scroll_offset = new_scroll_offset;
+
+  result_bool _ = default_internal_render_callback(bar->base);
+  if(!_.ok)
+  {
+    return error(result_void, _.error);
+  }
 
   return ok_void();
 }
@@ -245,12 +275,14 @@ static result_bool default_internal_render_callback(const base_widget* widget)
     return error(result_bool, _.error);
   }
 
+  // ratio of view-port length to content-length of target.
+  // here length implies width or height of target, according to type of scrollbar.
+  float32 ratio = (float32)(bar->private_data->target_descriptor.base->h) /
+                  (int32)(bar->private_data->target_descriptor.content_length);
+
   // adjusting bounding rect for scroll thumb
-  bounding_rect.y += bar->private_data->scroll_offset;
-  bounding_rect.h =
-    (uint16)(((float32)(bar->private_data->target_descriptor.base->h) /
-              (int32)(bar->private_data->target_descriptor.content_length)) *
-             widget->h);
+  bounding_rect.y += ratio * bar->private_data->target_descriptor.scroll_offset;
+  bounding_rect.h = (uint16)ratio * widget->h;
   trace("Scrollbar(%s): target_base_height: %d, content_length: %d, "
         "bounding_rect_height: %d",
         widget->debug_name,
