@@ -141,6 +141,8 @@ result_bool list_view_set_scroll_offset(list_view* view,
   return view->base->internal_render_callback(view->base);
 }
 
+/// This private function is passed in `scrollbar_target_descriptor` struct to scrollbar.
+/// This is called from scrollbar whenever scrollbar needs to update list view.
 result_bool
 list_view_set_scroll_offset_from_scrollbar(list_view* view,
     const float32* new_scroll_offset)

@@ -410,7 +410,7 @@ int main()
       col_view->base,
       NULL,
       &(scrollbar_target_descriptor){.base = col_view->base,
-                                     .content_length = 1000},
+                                     .content_length = 1000, .update_scroll_offset = NULL},
       "scrollbar");
     if(!_.ok)
     {

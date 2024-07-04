@@ -171,12 +171,26 @@ result_bool scrollbar_set_scroll_offset(scrollbar* bar,
 
   bar->private_data->scroll_offset = *new_scroll_offset;
 
-  // setting target list view's scroll offset
-  list_view* target_list_view = (list_view*)(bar->private_data->target_descriptor.base->derived);
-  const float32 target_scroll_offset = 1.0f;
-  list_view_set_scroll_offset_from_scrollbar(target_list_view, &target_scroll_offset);
+  // setting target widget's scroll offset
+  bar->private_data->target_descriptor.update_scroll_offset(
+    bar->private_data->target_descriptor.base, 1.0f);
 
   return bar->base->internal_render_callback(bar->base);
+}
+
+result_void scrollbar_update_target_content_length(scrollbar* bar,
+    const uint32 new_content_length)
+{
+  if(!bar)
+  {
+    return error(
+      result_void,
+      "Cannot set target content length of scrollbar pointing to NULL!");
+  }
+
+  bar->private_data->target_descriptor.content_length = new_content_length;
+
+  return ok_void();
 }
 
 static void default_internal_derived_free_callback(base_widget* widget)
